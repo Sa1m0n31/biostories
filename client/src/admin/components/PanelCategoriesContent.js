@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import {deleteCategory, getAllCategories, getCategory} from "../helpers/categoriesFunctions";
-import exit from "../static/img/exit.svg";
-import trash from "../static/img/trash.svg";
-
+import exit from "../static/img/trash-can.svg";
+import trash from "../static/img/edit.svg";
+import addIcon from '../static/img/add.svg'
 import Modal from 'react-modal'
 import closeImg from "../static/img/close.png";
 import {useLocation} from "react-router";
@@ -99,10 +99,6 @@ const PanelCategoriesContent = () => {
         setDeleted(false);
     }
 
-    const handleSubmit = (e) => {
-        sessionStorage.setItem('sec-category-added', 'T');
-    }
-
     return <main className="panelContent">
 
         <Modal
@@ -138,68 +134,15 @@ const PanelCategoriesContent = () => {
             </h1>
         </header>
         <section className="panelContent__frame">
-            <section className="panelContent__frame__section">
-                <h1 className="panelContent__frame__header">
-                    Dodawanie kategorii
-                </h1>
-
-                {addedMsg === "" ? <form className="panelContent__frame__form categoriesForm"
-                                         method="POST"
-                                         action={update ? "https://hideisland.pl/category/update" : "https://hideisland.pl/category/add"}
-                                         onSubmit={(e) => { handleSubmit(e) }}
-                >
-                    <input className="invisibleInput"
-                           name="id"
-                           value={id} />
-
-                    <input className="invisibleInput"
-                           name="permalink"
-                           value={convertToURL(name)} />
-
-                    <input className="invisibleInput"
-                           name="hidden"
-                           value={hidden ? "hidden" : ""} />
-
-                    <label className="addProduct__label addProduct__label--frame">
-                        <input className="addProduct__input"
-                               name="name"
-                               value={name}
-                               onChange={(e) => { setName(e.target.value) }}
-                               type="text"
-                               placeholder="Nazwa kategorii" />
-                    </label>
-
-                    <select className="addProduct__categorySelect"
-                            name="parentId"
-                            value={parentId}
-                            onChange={(e) => { setParentId(e.target.value); }}
-                    >
-                        <option value={0}>Brak rodzica</option>
-                        {categories?.map((item, index) => (
-                            <option value={item.id} key={index}>{item.name}</option>
-                        ))}
-                    </select>
-
-                    <label className="panelContent__filters__label__label panelContent__filters__label__label--category mt-4">
-                        <button className="panelContent__filters__btn" onClick={(e) => { e.preventDefault(); setHidden(!hidden); }}>
-                            <span className={hidden ? "panelContent__filters__btn--active" : "d-none"} />
-                        </button>
-                        Ukryj kategorię
-                    </label>
-
-                    <button className="addProduct__btn" type="submit">
-                        Dodaj kategorię
-                    </button>
-                </form> : <section className="addedMsgWrapper">
-                    <h2 className="addedMsg">
-                        {addedMsg}
-                    </h2>
-                </section>}
-            </section>
-
             <section className="panelContent__frame__section categoryList">
                 <h1 className="panelContent__frame__header">
                     Lista kategorii
+                    <section className="panelContent__buttons">
+                        <a className="panelContent__btn" href="/panel/dodaj-kategorie">
+                            Dodaj nową kategorię
+                            <img className="panelContent__btn__icon" src={addIcon} alt="dodaj" />
+                        </a>
+                    </section>
                 </h1>
 
                 <main className="panelContent__content">
@@ -207,10 +150,28 @@ const PanelCategoriesContent = () => {
                         <section className="panelContent__item productItem">
                             <section className="panelContent__column">
                                 <h4 className="panelContent__column__label">
+                                    Id kategorii
+                                </h4>
+                                <h3 className="panelContent__column__value">
+                                    {item.id}
+                                </h3>
+                            </section>
+
+                            <section className="panelContent__column">
+                                <h4 className="panelContent__column__label">
                                     Nazwa
                                 </h4>
                                 <h3 className="panelContent__column__value">
                                     {item.name}
+                                </h3>
+                            </section>
+
+                            <section className="panelContent__column">
+                                <h4 className="panelContent__column__label">
+                                    Priorytet wyświetlania
+                                </h4>
+                                <h3 className="panelContent__column__value">
+                                    {item.priority ? item.priority: "BRAK"}
                                 </h3>
                             </section>
 
@@ -230,12 +191,12 @@ const PanelCategoriesContent = () => {
                                 <div className="panelContent__column__value">
                                     <div className="panelContent__column__value panelContent__column__value--buttons">
                                         <button className="panelContent__column__btn">
-                                            <a className="panelContent__column__link" href={`?id=${item.id}`}>
-                                                <img className="panelContent__column__icon" src={exit} alt="przejdz" />
+                                            <a className="panelContent__column__link" href={`/panel/dodaj-kategorie?id=${item.id}`}>
+                                                <img className="panelContent__column__icon" src={trash} alt="przejdz" />
                                             </a>
                                         </button>
                                         <button className="panelContent__column__btn" onClick={() => { openModal(item.id) }}>
-                                                <img className="panelContent__column__icon" src={trash} alt="usuń" />
+                                                <img className="panelContent__column__icon" src={exit} alt="usuń" />
                                         </button>
                                     </div>
                                 </div>

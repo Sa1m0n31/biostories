@@ -44,14 +44,29 @@ a {
     height: auto;
 }
 
+.container {
+    width: clamp(200px, 90vw, 1600px);
+    max-width: 90vw;
+    margin: auto;
+}
+
 .container .siteHeader {
-    margin-top: 30px;
+    padding-top: 30px;
     align-items: flex-start;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    z-index: 5;
+    transition: .3s all;
 }
 
 .siteHeader__logoWrapper {
     display: block;
     width: 150px;
+    transform-origin: center center;
+    transition: .3s all;
 }
 
 .siteHeader__right {
@@ -66,6 +81,7 @@ a {
 .topMenu {
     border-bottom: 1px solid #CBCBCB;
     padding: 40px 5% 7px;
+    margin-top: 170px;
 }
 
 .topMenu__list {
@@ -285,9 +301,8 @@ a {
 
 .newsletter {
     border-top: 1px solid #E3E3E3;
-    border-bottom: 1px solid #E3E3E3;
-    margin: 50px auto;
-    padding: 25px 0;
+    margin: 50px auto 30px;
+    padding: 25px 0 0;
     transition: .3s all;
 }
 
@@ -361,6 +376,11 @@ label {
     width: 500px;
 }
 
+.footer {
+    border-top: 1px solid #E3E3E3;
+    padding-top: 30px;
+}
+
 .footer__bottom {
     border-top: 1px solid #E3E3E3;
     padding: 15px 0;
@@ -403,4 +423,236 @@ label {
     font-weight: 700;
     font-size: 26px;
     margin: 3px 0 8px;
+}
+
+.page {
+    margin: 40px auto;
+}
+
+.page__header {
+    color: var(--main);
+    font-size: 32px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form__header {
+    font-size: 12px;
+    font-weight: 400;
+    padding-bottom: 3px;
+    border-bottom: 1px solid #F2F2F2;
+    color: #6B6B6B;
+}
+
+.form {
+    max-width: 500px;
+    margin: 0 auto 60px;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+label {
+    width: 100%;
+    margin: 4px 0;
+    display: block;
+}
+
+.input {
+    transition: .2s all;
+    width: 100%;
+    border: 2px solid var(--main);
+    padding: 5px 12px;
+    height: 50px;
+}
+
+.form__header--2 {
+    margin-top: 20px;
+}
+
+.form__row {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--main);
+    color: #fff;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.label--name {
+    width: 40%;
+}
+
+.label--surname {
+    width: 57%;
+}
+
+.label--postalCode {
+    width: 35%;
+}
+
+.label--city {
+    width: 63%;
+}
+
+.label--street {
+    width: 50%;
+}
+
+.label--flat,
+.label--building {
+    width: 23%;
+}
+
+.icon {
+    width: 15px;
+    margin-left: 15px;
+}
+
+.btn--submit {
+    width: 100%;
+    height: 50px;
+    margin-top: 7px;
+    margin-bottom: 90px;
+}
+
+.btn .icon {
+    transition: .2s all;
+}
+
+.btn:hover .icon {
+    transform: translateX(7px);
+}
+
+.input::placeholder {
+    font-size: 12px;
+}
+
+.page--ty {
+    margin: 100px auto;
+}
+
+.ty__header, .ty__subheader {
+    text-align: center;
+    font-size: 24px;
+    max-width: 700px;
+    margin: auto;
+}
+
+.ty__subheader {
+    font-size: 17px;
+    font-weight: 400;
+    margin-top: 20px;
+}
+
+.btn--back {
+    margin: 30px auto;
+    width: 300px;
+    max-width: 100%;
+    height: 50px;
+    transition: .2s all;
+}
+
+.btn--back:hover {
+    background: var(--hover);
+}
+
+.input--error {
+    border-color: red;
+}
+
+.label--check {
+    color: #6B6B6B;
+    font-size: 12px;
+    margin: 15px 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    cursor: pointer;
+}
+
+.checkBtn {
+    width: 15px;
+    height: 15px;
+    background: transparent;
+    border: 2px solid var(--main);
+    margin-right: 10px;
+    position: relative;
+}
+
+.checkBtn img {
+    opacity: 0;
+    width: 9px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.checkBtn--checked img {
+    opacity: 1;
+}
+
+.afterLogin {
+    color: #6B6B6B;
+    font-weight: 400;
+    font-size: 13px;
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 500px;
+    margin: auto;
+    display: block;
+    text-align: left;
+}
+
+button.afterLogin,
+.afterLogin a {
+    text-decoration: underline;
+    cursor: pointer;
+    transition: .2s all;
+}
+
+button.afterLogin {
+    margin-bottom: 4px;
+}
+
+button.afterLogin:hover,
+.afterLogin a:hover {
+    opacity: .8;
+}
+
+.page--login .form,
+.page--login .btn--submit {
+    margin-bottom: 12px;
+}
+
+h4.afterLogin {
+    margin-bottom: 100px;
+}
+
+.page--login .error,
+.page--register .error {
+    width: 500px;
+    margin: auto;
+    max-width: 100%;
+    position: relative;
+    bottom: 0;
+    margin-top: -70px;
+    text-align: center;
+}
+
+.page--login .error {
+    margin-top: 20px;
+    margin-bottom: 30px;
 }

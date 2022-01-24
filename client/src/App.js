@@ -38,6 +38,11 @@ import AddOrderPage from "./admin/pages/AddOrderPage";
 import axios from "axios";
 import credentials from "./helpers/credentials";
 import Homepage from "./pages/Homepage";
+import PanelAddCategory from "./admin/pages/PanelAddCategory";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import TyAfterRegister from "./pages/TyAfterRegister";
+import VerificationPage from "./pages/VerificationPage";
 require('dotenv').config();
 
 axios.defaults.headers.common['Authorization'] = credentials.AUTH_HEADER;
@@ -171,9 +176,21 @@ function App() {
       <div className="App">
         <Router>
           {/* Website routes */}
-          <Route path="/">
+          <Route exact path="/">
               <Homepage />
           </Route>
+            <Route path="/logowanie">
+                <Login />
+            </Route>
+            <Route path="/rejestracja">
+                <Register />
+            </Route>
+            <Route path="/po-rejestracji">
+                <TyAfterRegister />
+            </Route>
+            <Route path="/weryfikacja">
+                <VerificationPage />
+            </Route>
 
             {/* Admin routes */}
             <Route exact path='/admin'>
@@ -190,6 +207,9 @@ function App() {
             </Route>
             <Route path="/panel/kategorie">
                 <PanelCategories />
+            </Route>
+            <Route path="/panel/dodaj-kategorie">
+                <PanelAddCategory />
             </Route>
             <Route path="/panel/platnosci">
                 <PanelPayment />

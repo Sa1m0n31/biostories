@@ -9,10 +9,53 @@ const con = require("../databaseConnection");
 const nodemailer = require("nodemailer");
 const smtpTransport = require('nodemailer-smtp-transport');
 
+/* Nodemailer */
+let transporter = nodemailer.createTransport(smtpTransport ({
+    auth: {
+        user: process.env.MAIL,
+        pass: process.env.PASSWORD
+    },
+    host: process.env.HOST,
+    secureConnection: true,
+    port: 465,
+    tls: {
+        rejectUnauthorized: false
+    },
+}));
+
 function isNumeric(str) {
     if (typeof str != "string") return false // we only process strings!
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
         !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+}
+
+const sendVerificationMail = (email, token, response) => {
+    let mailOptions = {
+        from: process.env.MAIL,
+        to: email,
+        subject: 'Potwierdź swój adres e-mail',
+        html: `<div>
+<p>Kliknij w poniższy link, aby aktywować swoje konto w sklepie BIO STORIES</p>
+<a href="${process.env.API_URL}/weryfikacja?token=${token}">${process.env.API_URL}/weryfikacja/?token=${token}</a>
+</div>`
+    }
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if(error) {
+            if(response) {
+                response.send({
+                    result: 0
+                })
+            }
+        }
+        else{
+            if(response) {
+                response.send({
+                    result: 1
+                })
+            }
+        }
+    });
 }
 
 con.connect(function(err) {
@@ -26,7 +69,7 @@ con.connect(function(err) {
        const values = [firstName, lastName, email, hash, city, street, building, flat ? flat : null, postalCode, phoneNumber];
        const query = 'INSERT INTO users VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
        con.query(query, values, (err, res) => {
-           console.log(err);
+           // console.log(err);
           if(err) {
               if(err.errno === 1062) {
                   /* User already exists */
@@ -113,15 +156,16 @@ con.connect(function(err) {
 
    /* REGISTER USER */
    router.post("/register-user", (request, response) => {
-       const username = request.body.username;
-       const email = request.body.email;
-       const password = request.body.password;
+       const { email, password, firstName, lastName, phoneNumber, postalCode, city, street, building, flat } = request.body;
        const hash = crypto.createHash('md5').update(password).digest('hex');
 
-       const values = [email, username, hash];
-       const query = 'INSERT INTO users VALUES (NULL, NULL, NULL, ?, ?, ?, NULL, NULL, NULL, NULL, NULL, NULL)'
+       const values = [firstName, lastName, email, phoneNumber, hash, street, building, flat, postalCode, city, false];
+       const query = 'INSERT INTO users VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+
+       console.log(request.body);
 
        con.query(query, values, (err, res) => {
+           console.log(err);
           if(err) {
               /* Error - user not registered */
               let error;
@@ -133,12 +177,60 @@ con.connect(function(err) {
           }
           else {
               /* Success - user registered */
-              response.send({
-                  result: 1
+              const token = uuidv4();
+              const values = [email, token];
+              const query = 'INSERT INTO verification VALUES (?, ?)';
+              con.query(query, values, (err, res) => {
+                  if(res) {
+                      sendVerificationMail(email, token, response);
+                  }
+                  else {
+                      response.send({
+                          result: 0
+                      });
+                  }
               });
           }
        });
+   });
 
+   router.post('/verify-user', (request, response) => {
+      const { token } = request.body;
+
+       const values = [token];
+       const query = 'SELECT email FROM verification WHERE token = ?';
+
+      con.query(query, values, (err, res) => {
+            if(res) {
+                if(res.length) {
+                    const values = [res[0].email];
+                    const query = 'UPDATE users SET active = true WHERE email = ?';
+
+                    con.query(query, values, (err, res) => {
+                        if(res) {
+                            response.send({
+                                result: 1
+                            });
+                        }
+                        else {
+                            response.send({
+                                result: 0
+                            });
+                        }
+                    });
+                }
+                else {
+                    response.send({
+                        result: 0
+                    });
+                }
+            }
+            else {
+                response.send({
+                    result: 0
+                });
+            }
+      });
    });
 
    /* REGISTER ADMIN */
@@ -171,6 +263,7 @@ con.connect(function(err) {
    });
 
     router.get("/auth", (request, response) => {
+        console.log(request.user);
         if(request.user) {
             if(isNumeric(request.user.toString())) {
                 /* Admin */
@@ -184,6 +277,15 @@ con.connect(function(err) {
         else response.send({ result: 0 });
     });
 
+    router.get("/logout", (request, response) => {
+        request.logOut();
+        request.session.destroy((err) => {
+            response.send({
+                result: 1
+            });
+        });
+    });
+
    /* LOGIN USER */
     router.post("/login-user",
         passport.authenticate('user-local', { session: true, failureFlash: true, failureRedirect: '/auth/failure' }),
@@ -195,10 +297,8 @@ con.connect(function(err) {
     );
 
     router.get('/failure', (request, response) => {
-        const errorMsg = request.flash().error[0];
         response.send({
-            result: 0,
-            msg: errorMsg
+            result: 0
         });
     });
 

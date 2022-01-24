@@ -2,26 +2,40 @@ const express = require("express");
 const router = express.Router();
 const con = require("../databaseConnection");
 
+const convertToURL = (str) => {
+    if(str) return str.toLowerCase()
+        .replace(/ /g, "-")
+        .replace(/ą/g, "a")
+        .replace(/ć/g, "c")
+        .replace(/ę/g, "e")
+        .replace(/ł/g, "l")
+        .replace(/ń/g, "n")
+        .replace(/ó/g, "o")
+        .replace(/ś/g, "s")
+        .replace(/ź/g, "z")
+        .replace(/ż/g, "z")
+    else return "";
+}
+
 con.connect(err => {
     /* ADD CATEGORY */
     router.post("/add", (request, response) => {
-        let { name, parentId, permalink, hidden } = request.body;
-        hidden = hidden === "hidden";
+        let { name, parent, priority, hidden } = request.body;
 
-        if(parentId === "0") parentId = null;
-
-        if(name === "") {
-            response.redirect("https://hideisland.pl/panel/kategorie?added=0");
-            return 0;
-        }
-
-        const values = [name, parentId, permalink, hidden];
-        const query = 'INSERT INTO categories VALUES (NULL, ?, ?, ?, ?)';
+        const values = [parent, name, convertToURL(name), priority, hidden];
+        const query = 'INSERT INTO categories VALUES (NULL, ?, ?, ?, ?, ?)';
 
         con.query(query, values, (err, res) => {
-            console.log(err);
-            if(!err) response.redirect("https://hideisland.pl/panel/kategorie?added=1");
-            else response.redirect("https://hideisland.pl/panel/kategorie?added=-1")
+            if(res) {
+                response.send({
+                    result: 1
+                });
+            }
+            else {
+                response.send({
+                    result: 0
+                });
+            }
         });
     });
 
@@ -64,7 +78,7 @@ con.connect(err => {
 
     /* GET ALL CATEGORIES */
     router.get("/get-all", (request, response) => {
-        con.query('SELECT c1.name as parent_name, c2.id, c2.name as name, c2.parent_id, c2.permalink, c2.hidden FROM categories c1 RIGHT OUTER JOIN categories c2 ON c1.id = c2.parent_id', (err, res) => {
+        con.query('SELECT c1.name as parent_name, c2.id, c2.name as name, c2.parent_id, c2.permalink, c2.hidden, c2.priority FROM categories c1 RIGHT OUTER JOIN categories c2 ON c1.id = c2.parent_id', (err, res) => {
            response.send({
                result: res
            });
@@ -138,18 +152,23 @@ con.connect(err => {
 
     /* UPDATE CATEGORY */
     router.post("/update", (request, response) => {
-    let { id, name, parentId, permalink, hidden } = request.body;
-    hidden = hidden === "hidden";
-    id = parseInt(id);
-    parentId = parseInt(parentId);
-    if(!parentId) parentId = null;
-    const values = [name, parentId, permalink, hidden, id];
-    const query = 'UPDATE categories SET name = ?, parent_id = ?, permalink = ?, hidden = ? WHERE id = ?';
+        let { id, name, parent, priority, hidden } = request.body;
 
-    con.query(query, values, (err, res) => {
-        if(!err) response.redirect("https://hideisland.pl/panel/kategorie?added=2");
-        else response.redirect("https://hideisland.pl/panel/kategorie?added=-1")
-    });
+        const values = [name, parent, convertToURL(name), priority, hidden, id];
+        const query = 'UPDATE categories SET name = ?, parent_id = ?, permalink = ?, priority = ?, hidden = ? WHERE id = ?';
+
+        con.query(query, values, (err, res) => {
+            if(res) {
+                response.send({
+                    result: 1
+                });
+            }
+            else {
+                response.send({
+                    result: 0
+                });
+            }
+        });
     });
 
     /* GET ALL PARENT CATEGORIES */

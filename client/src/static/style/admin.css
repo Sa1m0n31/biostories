@@ -1,5 +1,5 @@
 /* Global */
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,700;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
 
 * {
     box-sizing: border-box;
@@ -8,11 +8,10 @@
 }
 
 h1, h2, h3, h4, h5, h6, p, li, input, button, a, label, span {
-    font-family: 'Open sans', sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
-.panelMenu img, .panelContent--start img,
-.panelContent__column__icon
+.panelMenu img, .panelContent--start img
 {
     filter: brightness(0) invert(1) !important;
 }
@@ -109,7 +108,7 @@ ul {
 }
 
 #menuItem--active {
-    background: var(--black-primary);
+    background: #4653B1;
 }
 
 .panelMenu__menu {
@@ -131,9 +130,8 @@ ul {
 }
 
 .panelMenu__top__logoWrapper {
-    width: 40%;
+    width: 20%;
     height: auto;
-    margin-right: 25px;
 }
 
 .panelMenu .panelMenu__top .panelMenu__top__logo {
@@ -154,10 +152,14 @@ ul {
 .panelMenu {
     width: 20%;
     min-width: 200px;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    background: var(--black-secondary);
+    background: var(--main);
+}
+
+.panelMenu * {
+    color: #fff;
 }
 
 .panelMenu__list {
@@ -171,17 +173,19 @@ ul {
 }
 
 .panelMenu__list__item__link {
-    width: 100%;
-    height: 80px;
+    width: 90%;
+    height: 50px;
+    border-radius: 50px;
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 20px 0;
+    margin: 20px auto;
     text-transform: uppercase;
     background: transparent;
     border: none;
-    font-weight: 700;
-    font-size: 17px;
+    font-weight: 500;
+    font-size: 16px;
     cursor: pointer;
     color: #fff !important;
     transition: .2s all ease-in-out;
@@ -190,11 +194,11 @@ ul {
 .panelMenu__list__item__link:hover,
 .panelMenu__list__subitem:hover
 {
-    background: var(--black-primary);
+    background: #4653B1;
 }
 
 .panelMenu__list__item__img {
-    margin: 0 20px;
+    margin-right: 20px;
 }
 
 .panelMenu__list__subitem {
@@ -220,7 +224,7 @@ ul {
 
 /* Panel - content */
 .panelContent {
-    background: var(--black-primary);
+    background: #F2F2F2;
     width: 80%;
     min-height: 135vh;
     margin-left: 20%;
@@ -231,6 +235,19 @@ ul {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.logoutBtn {
+    text-decoration: underline;
+    color: #4A4A4A;
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.logoutBtn:hover {
+    opacity: .8;
 }
 
 .panelContent__header__back {
@@ -468,7 +485,8 @@ ul {
 
 .addProduct__label {
     display: block;
-    margin: 25px 0;
+    width: 100%;
+    margin: 15px 0;
 }
 
 .fileInputLabel {
@@ -512,12 +530,13 @@ ul {
 .addProduct__input {
     padding: 5px 10px;
     width: 100%;
-    height: 40px;
+    height: 50px;
     opacity: 1;
     background: transparent;
-    border: 1px solid #fff;
+    border: 1px solid #4653B1;
+    border-radius: 3px;
     outline: none;
-    color: #fff;
+    margin-top: 4px;
 }
 
 .fileUploader {
@@ -530,23 +549,26 @@ ul {
 
 .addProduct__categorySelect {
     width: 100%;
+    height: 50px;
+    font-size: 17px;
+    padding-left: 10px;
 }
 
 .addProduct__btn {
     width: 100%;
     height: 60px;
-    color: #fff;
-    border: 2px solid #000000;
-    text-transform: uppercase;
-    font-weight: 700;
-    background: transparent;
+    border-radius: 60px;
+    border: none;
+    outline: none;
+    background: var(--main);
     cursor: pointer;
+    color: #fff;
+    font-weight: 500;
     transition: .4s all ease-in-out;
 }
 
 .addProduct__btn:hover {
-    color: #fff;
-    background: #000;
+    background: var(--hover);
 }
 
 .addProduct__label--file {
@@ -666,15 +688,21 @@ input[type=file] {
 
 /* Panel - categories */
 .panelContent__frame {
-    background: transparent;
+    background: #fff;
     padding: 25px;
     margin-top: 50px;
+    box-shadow: var(--shadow);
+    border-radius: 10px;
 }
 
 .panelContent__frame__header {
     font-size: 24px;
     padding-bottom: 20px;
     border-bottom: 1px solid #E8E8E8;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .addedMsgWrapper {
@@ -689,7 +717,7 @@ input[type=file] {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 500px;
+    width: 100%;
     margin: 40px auto;
 }
 
@@ -701,8 +729,6 @@ input[type=file] {
 .addProduct__label--frame {
     width: 100%;
     font-size: 13px;
-    text-align: center;
-    text-transform: uppercase;
     color: #8c8f94;
 }
 
@@ -754,16 +780,18 @@ input[type=file] {
 }
 
 .panelModal .ReactModal__Content {
-    width: 400px !important;
+    width: 500px !important;
     height: 400px !important;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: var(--black-primary) !important;
+    background: #fff;
+    box-shadow: var(--shadow);
     position: absolute;
     top: 50% !important;
     left: 50% !important;
+    border-radius: 10px !important;
     transform: translate(-50%, -50%);
 }
 
@@ -776,7 +804,6 @@ input[type=file] {
     height: auto;
     border: none;
     cursor: pointer;
-    filter: brightness(0) invert(1);
 }
 
 .modalClose__img {
@@ -792,10 +819,15 @@ input[type=file] {
 
 .modalQuestion__btn {
     margin: 0 20px;
-    background: var(--black-secondary);
+    background: var(--main);
+    width: 150px;
+    height: 50px;
+    border-radius: 50px;
     color: #fff;
     padding: 10px 20px;
     cursor: pointer;
+    border: none;
+    outline: none;
     transition: .4s all ease-in-out;
 }
 
@@ -1076,6 +1108,13 @@ input[type=file] {
 
 .panelContent__filters__label__label--category {
     margin-bottom: 40px;
+    margin-top: 15px;
+    width: 100%;
+    justify-content: flex-start;
+}
+
+.panelContent__filters__label__label--category .panelContent__filters__btn {
+    margin-left: 10px;
 }
 
 /* Blog */
@@ -1172,11 +1211,6 @@ input[type=file] {
 
 .jodit, .jodit *, .jodit-container, .jodit-container * {
     color: #000 !important;
-}
-
-select {
-    background: var(--black-secondary);
-    color: #fff;
 }
 
 /* Modifications */
@@ -1428,7 +1462,8 @@ select {
 
 :root {
     --shadow: 0px 0px 10px #0A0E2A26;
-    --menu: #0A0E2A;
+    --main: #0A0E2A;
+    --hover: #080D19;
 }
 
 .loginPage__form {
@@ -1454,4 +1489,55 @@ select {
     color: #000;
     font-style: italic;
     text-align: center;
+}
+
+.panelContent__buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.panelContent__btn {
+    color: #fff;
+    background: var(--main);
+    padding: 10px 30px;
+    height: 50px;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: .2s all;
+}
+
+.panelContent__btn:hover {
+    background: var(--hover);
+}
+
+.panelContent__btn__icon {
+    width: 20px;
+    margin-left: 15px;
+}
+
+.response {
+    position: absolute;
+    top: 30%;
+    right: 0;
+    transform: translateY(-50%);
+    font-weight: 400;
+    font-size: 15px;
+    color: #fff;
+    height: 40px;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 40px;
+}
+
+.response--positive {
+    background: green;
+}
+
+.response--negative {
+    background: #941212;
 }

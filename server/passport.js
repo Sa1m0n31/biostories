@@ -18,11 +18,16 @@ const sendInfoAboutLogin = (id) => {
 
 const init = (passport) => {
     const userAuth = (username, password, done) => {
-        const hash = crypto.createHash('sha256').update(password).digest('hex');
+        const hash = crypto.createHash('md5').update(password).digest('hex');
         const query = 'SELECT id FROM users WHERE LOWER(email) = LOWER(?) AND password = ?';
         const values = [username, hash];
 
+        console.log(username);
+        console.log(password);
+
         db.query(query, values, (err, res) => {
+            console.log(err);
+            console.log(res);
             if(res) {
                 const user = res[0];
                 if(!user) {
@@ -50,6 +55,7 @@ const init = (passport) => {
         db.query(query, values, (err, res) => {
            if(res) {
                const admin = res[0];
+               console.log(admin);
                if(!admin) {
                    return done(null, false, { message: 'Niepoprawna nazwa użytkownika lub hasło' });
                }
@@ -66,12 +72,12 @@ const init = (passport) => {
     passport.use('admin-local', new LocalStrategy(adminAuth));
 
     passport.use('user-local', new LocalStrategy(userAuth, (ver) => {
-        console.log(ver);
+        // console.log(ver);
     }));
 
     passport.serializeUser((user, done) => {
         if(user) {
-            console.log(user.id);
+            // console.log(user.id);
             done(null, user.id); /* Local */
         }
         else done(null, null);
@@ -79,19 +85,19 @@ const init = (passport) => {
 
     passport.deserializeUser((id, done) => {
         let query, values;
-        console.log(id);
-        console.log('!!!!!!!!!!!!!');
+        // console.log(id);
+        // console.log('!!!!!!!!!!!!!');
 
         if(id) {
             if(isNumeric(id.toString())) {
-                console.log('numeric');
+                // console.log('numeric');
                 /* Admin */
                 query = 'SELECT id FROM admins WHERE id = ?';
                 values = [id];
 
                 db.query(query, values, (err, res) => {
                     if(res) {
-                        console.log(res);
+                        // console.log(res);
                         if(res.length) done(null, res[0].id);
                     }
                 });

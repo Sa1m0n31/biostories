@@ -16,38 +16,27 @@ import discount from '../static/img/discount.png'
 import banner from '../static/img/banner.png'
 import newsletterIcon from '../static/img/about-us.png'
 import fashion from '../static/img/fashion.png'
+import logo from '../../static/assets/skylo-cms-logo.png'
 
 import settings from "../helpers/settings";
 import auth from "../helpers/auth";
+import {logoutUser} from "../../helpers/userFunctions";
 
 const PanelMenu = ({active, submenu}) => {
     const [render, setRender] = useState(false);
     const menu = useRef(null);
 
     useEffect(() => {
-        auth(localStorage.getItem('sec-sessionKey'))
-            .then((res) => {
-                if(res.data.result === 1) {
+        auth()
+            .then(res => {
+                if(res.data.result === 2) {
                     setRender(true);
                 }
                 else {
-                    window.location = "/";
+                    window.location = '/';
                 }
-            })
+            });
     }, []);
-
-    const logout = () => {
-        axios.post(`${settings.API_URL}/auth/logout`, {
-            sessionKey: localStorage.getItem('sec-sessionKey')
-        })
-            .then(res => {
-                if(res.data.result === 1) {
-                    window.location = "/";
-                    localStorage.removeItem('sec-sessionKey');
-                    localStorage.removeItem('sec-username');
-                }
-            })
-    }
 
     const showMenu = () => {
         menu.current.style.display = "flex";
@@ -60,31 +49,9 @@ const PanelMenu = ({active, submenu}) => {
     return render ? <menu className="panelMenu">
             <section className="panelMenu__top d-desktop">
                 <figure className="panelMenu__top__logoWrapper">
-                    <img className="panelMenu__top__logo" src={settings.logo} alt="logo" />
+                    <img className="panelMenu__top__logo" src={logo} alt="logo" />
                 </figure>
-                <header className="panelMenu__top__info">
-                    <h3 className="panelMenu__top__header">
-                        Zalogowany jako:
-                    </h3>
-                    <h4 className="panelMenu__top__subheader">
-                        {localStorage.getItem('sec-username')}
-                    </h4>
-                </header>
             </section>
-
-            <header className="panelMenu__menuMobile d-flex d-md-none">
-                <header className="panelMenu__top__info">
-                    <h3 className="panelMenu__top__header">
-                        Zalogowany jako:
-                    </h3>
-                    <h4 className="panelMenu__top__subheader">
-                        {localStorage.getItem('sec-username')}
-                    </h4>
-                </header>
-                <button className="panelMenu__menuMobile__hamburgerWrapper" onClick={() => { showMenu(); }}>
-                    <img className="panelMenu__menuMobile__hamburgerImg" src={hamburger} alt="menu" />
-                </button>
-            </header>
 
             <nav className="panelMenu__menu" ref={menu}>
                 <button className="panelMenu__menuMobile__closeBtn d-mobile" onClick={() => { closeMenu(); }}>
@@ -103,31 +70,11 @@ const PanelMenu = ({active, submenu}) => {
                             <img className="panelMenu__list__item__img" src={layers} alt="produkty" />
                             Produkty
                         </a>
-                        { active === 1 ? <a className="panelMenu__list__subitem" id={submenu ? "menuItem--active" : ""} href="/panel/dodaj-produkt">
-                            <img className="panelMenu__list__subitem__img" src={addImg} alt="dodaj-produkt" />
-                            Dodaj produkt
-                        </a> : "" }
-                    </li>
-                    <li className="panelMenu__list__item">
-                        <a className="panelMenu__list__item__link" id={active === 2 && !submenu ? "menuItem--active" : ""} href="/panel/stany-magazynowe">
-                            <img className="panelMenu__list__item__img" src={fashion} alt="stany-magazynowe" />
-                            Stany magazynowe
-                        </a>
-                        { active === 2 ? <a className="panelMenu__list__subitem" id={submenu ? "menuItem--active" : ""} href="/panel/dodaj-stan-magazynowy">
-                            <img className="panelMenu__list__subitem__img" src={addImg} alt="dodaj-stan-magazynowy" />
-                            Dodaj stan magazynowy
-                        </a> : "" }
                     </li>
                     <li className="panelMenu__list__item">
                         <a className="panelMenu__list__item__link" id={active === 3 ? "menuItem--active" : ""} href="/panel/zamowienia">
                             <img className="panelMenu__list__item__img" src={checkboxSquare} alt="zamowienia" />
                             Zamówienia
-                        </a>
-                    </li>
-                    <li className="panelMenu__list__item">
-                        <a className="panelMenu__list__item__link" id={active === 12 ? "menuItem--active" : ""} href="/panel/dodaj-zamowienie">
-                            <img className="panelMenu__list__item__img" src={addImg} alt="zamowienia" />
-                            Nowe zamówienie
                         </a>
                     </li>
                     <li className="panelMenu__list__item">
@@ -179,7 +126,7 @@ const PanelMenu = ({active, submenu}) => {
                         </a>
                     </li>
                     <li className="panelMenu__list__item">
-                        <button className="panelMenu__list__item__link" onClick={() => logout()}>
+                        <button className="panelMenu__list__item__link" onClick={() => logoutUser() }>
                             <img className="panelMenu__list__item__img" src={powerOff} alt="wyloguj-sie" />
                             Wyloguj się
                         </button>

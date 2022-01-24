@@ -13,8 +13,7 @@ const LoginPage = () => {
     useEffect(() => {
         auth()
             .then(res => {
-                console.log(res.data);
-                if(res.data.result === 1) {
+                if(res.data.result === 2) {
                     window.location = "/panel";
                 }
                 else {
@@ -37,7 +36,9 @@ const LoginPage = () => {
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            axios.post(`${settings.API_URL}/auth/admin`, values)
+            axios.post(`${settings.API_URL}/auth/admin`, values, {
+                withCredentials: true
+            })
                 .then(res => {
                     if(res.data.result === 1) {
                         window.location = "/panel";

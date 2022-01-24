@@ -3,8 +3,46 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="5c6c6bf9-cdea-4d8b-acfa-3e7b5a5ddcfa" name="Default Changelist" comment="" />
+    <list default="true" id="5c6c6bf9-cdea-4d8b-acfa-3e7b5a5ddcfa" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/pages/Login.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/pages/Register.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/pages/TyAfterRegister.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/pages/VerificationPage.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/static/assets/check-icon.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/admin/components/PanelCategoriesContent.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/admin/components/PanelCategoriesContent.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/admin/components/PanelMenu.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/admin/components/PanelMenu.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/admin/helpers/categoriesFunctions.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/admin/helpers/categoriesFunctions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/admin/pages/LoginPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/admin/pages/LoginPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/Header.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/static/style/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/static/style/admin.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/static/style/mobile.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/static/style/mobile.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/static/style/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/static/style/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/passport.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/passport.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/routers/authRouter.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/routers/authRouter.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/routers/categoryRouter.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/routers/categoryRouter.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -17,6 +55,9 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="23gse874DWqxDrnZL2dAJBaDMp9" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -24,19 +65,21 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="javascript.nodejs.core.library.configured.version" value="16.13.2" />
     <property name="javascript.nodejs.core.library.typings.version" value="16.11.19" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../academy" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../draft4u" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\sajmo\Desktop\Programowanie\Projekty\biostories\client\src\static\assets" />
+      <recent name="C:\Users\sajmo\Desktop\Programowanie\Projekty\biostories\client\src\admin\static\img" />
+      <recent name="C:\Users\sajmo\Desktop\Programowanie\Projekty\biostories\client\src\components" />
       <recent name="C:\Users\sajmo\Desktop\Programowanie\Projekty\biostories\client" />
       <recent name="C:\Users\sajmo\Desktop\Programowanie\Projekty\biostories\client\src" />
-      <recent name="C:\Users\sajmo\Desktop\Programowanie\Projekty\biostories\server" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -50,33 +93,50 @@
       <workItem from="1642167158105" duration="607000" />
       <workItem from="1642208040052" duration="7224000" />
       <workItem from="1642791826760" duration="3826000" />
+      <workItem from="1642885926410" duration="14938000" />
+      <workItem from="1642951841469" duration="2230000" />
+      <workItem from="1642970745869" duration="8939000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
   <component name="WindowStateProjectService">
     <state x="-1230" y="267" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1642214041735">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
     <state x="-1230" y="267" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1642214041735" />
-    <state x="592" y="218" key="FileChooserDialogImpl" timestamp="1642863743122">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="-1180" y="275" key="FileChooserDialogImpl/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1642210378540" />
-    <state x="592" y="218" key="FileChooserDialogImpl/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1642863743122" />
-    <state x="-1253" y="119" width="586" height="801" key="find.popup" timestamp="1642215753294">
+    <state x="-1180" y="275" key="FileChooserDialogImpl" timestamp="1643065654687">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1253" y="119" width="586" height="801" key="find.popup/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1642215753294" />
+    <state x="-1180" y="275" key="FileChooserDialogImpl/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1643065654687" />
+    <state x="592" y="218" key="FileChooserDialogImpl/0.0.1536.824/-1920.0.1920.1040@0.0.1536.824" timestamp="1642863743122" />
+    <state x="-1180" y="275" key="FileChooserDialogImpl/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1642961865414" />
+    <state x="-1253" y="119" width="586" height="801" key="find.popup" timestamp="1643064103915">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1253" y="119" width="586" height="801" key="find.popup/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1643064103915" />
     <state x="-1304" y="240" key="run.anything.popup" timestamp="1642215197562">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
     <state x="-1304" y="240" key="run.anything.popup/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1642215197562" />
-    <state x="-1297" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1642793843572">
+    <state x="-1297" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1643065830632">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1297" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1642793843572" />
+    <state x="-1297" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1643065830632" />
+    <state x="-1297" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1642952568797" />
   </component>
 </project>
