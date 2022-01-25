@@ -37,110 +37,112 @@ con.connect(err => {
       let filenames = [];
       let categories = [];
 
+      console.log(request);
+
       /* Modify IMAGES table */
-      const storage = multer.diskStorage({
-         destination: "media/products/",
-         filename: function(req, file, cb){
-            const fName = file.fieldname + Date.now() + path.extname(file.originalname);
-            filenames.push(fName);
-            cb(null, fName);
-         }
-      });
-
-      const upload = multer({
-         storage: storage
-      }).fields([{ name: 'gallery1', maxCount: 1 },
-         { name: 'gallery2', maxCount: 1 },
-         { name: 'gallery3', maxCount: 1 },
-         { name: 'gallery4', maxCount: 1 },
-         { name: 'gallery5', maxCount: 1 },
-         { name: 'gallery6', maxCount: 1 }
-         ]);
-
-      upload(request, response, (err, res) => {
-         if (err) throw err;
-
-         /* Prepare */
-         let { id, name, price, shortDescription, recommendation, hidden } = request.body;
-         hidden = hidden === "hidden";
-         recommendation = recommendation === "true";
-
-         /* Get categories */
-         Object.entries(request.body).forEach(item => {
-            if(item[0].split("-")[0] === 'category') {
-               if(item[1] === 'true') {
-                  categories.push(parseInt(item[0].split("-")[1]));
-               }
-            }
-         });
-
-         if(!categories.length) categories.push(0);
-
-         /* 1 - ADD PRODUCT TO PRODUCTS TABLE */
-         const values = [id, name, price, shortDescription, null, recommendation, hidden];
-         const query = 'INSERT INTO products VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, NULL)';
-         con.query(query, values, (err, res) => {
-            if(res) {
-               /* 2nd - ADD CATEGORIES */
-               const productId = res.insertId;
-               categories.forEach((item, index, array) => {
-                  if(item) {
-                     const values = [productId, item];
-                     const query = 'INSERT INTO product_categories VALUES (NULL, ?, ?)';
-                     con.query(query, values, (err, res) => {
-                        if(index === array.length-1) {
-                           /* 3rd - ADD IMAGES TO IMAGES TABLE */
-                           filenames.forEach((item, index, array) => {
-                              const values = ["products/" + item, productId, index];
-                              const query = 'INSERT INTO images VALUES (NULL, ?, ?, ?)';
-
-                              con.query(query, values, (err, res) => {
-                                 if(index === 0) {
-                                    /* 4th - MODIFY MAIN_IMAGE COLUMN IN PRODUCTS TABLE */
-                                    const mainImageId = res.insertId;
-                                    const values = [mainImageId, productId];
-                                    const query = 'UPDATE products SET main_image = ? WHERE id = ?';
-                                    con.query(query, values);
-                                 }
-
-                                 if(index === array.length-1) {
-                                    if(res) response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=1");
-                                    else response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=0");
-                                 }
-                              })
-                           });
-                        }
-                     });
-                  }
-                  else {
-                     /* 4th - ADD IMAGES TO IMAGES TABLE */
-                     filenames.forEach((item, index, array) => {
-                        const values = ["products/" + item, productId, index];
-                        const query = 'INSERT INTO images VALUES (NULL, ?, ?, ?)';
-
-                        con.query(query, values, (err, res) => {
-                           if(index === 0) {
-                              const mainImageId = res.insertId;
-                              const values = [mainImageId, productId];
-                              const query = 'UPDATE products SET main_image = ? WHERE id = ?';
-                              con.query(query, values);
-                           }
-
-                           if(index === array.length-1) {
-                              /* 4 - MODIFY MAIN_IMAGE COLUMN IN PRODUCTS TABLE */
-                              if(res) response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=1");
-                              else response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=0");
-                           }
-                        })
-                     });
-                  }
-               });
-            }
-            else {
-               response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=0");
-            }
-         });
-      });
+      // const storage = multer.diskStorage({
+      //    destination: "media/products/",
+      //    filename: function(req, file, cb){
+      //       const fName = file.fieldname + Date.now() + path.extname(file.originalname);
+      //       filenames.push(fName);
+      //       cb(null, fName);
+      //    }
+      // });
+      //
+      // const upload = multer({
+      //    storage: storage
+      // }).fields([{ name: 'gallery1', maxCount: 1 },
+      //    { name: 'gallery2', maxCount: 1 },
+      //    { name: 'gallery3', maxCount: 1 },
+      //    { name: 'gallery4', maxCount: 1 },
+      //    { name: 'gallery5', maxCount: 1 },
+      //    { name: 'gallery6', maxCount: 1 }
+      //    ]);
+      //
+      // upload(request, response, (err, res) => {
+      //    if (err) throw err;
+      //
+      //    /* Prepare */
+      //    let { id, name, price, shortDescription, recommendation, hidden } = request.body;
+      //    hidden = hidden === "hidden";
+      //    recommendation = recommendation === "true";
+      //
+      //    /* Get categories */
+      //    Object.entries(request.body).forEach(item => {
+      //       if(item[0].split("-")[0] === 'category') {
+      //          if(item[1] === 'true') {
+      //             categories.push(parseInt(item[0].split("-")[1]));
+      //          }
+      //       }
+      //    });
+      //
+      //    if(!categories.length) categories.push(0);
+      //
+      //    /* 1 - ADD PRODUCT TO PRODUCTS TABLE */
+      //    const values = [id, name, price, shortDescription, null, recommendation, hidden];
+      //    const query = 'INSERT INTO products VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, NULL)';
+      //    con.query(query, values, (err, res) => {
+      //       if(res) {
+      //          /* 2nd - ADD CATEGORIES */
+      //          const productId = res.insertId;
+      //          categories.forEach((item, index, array) => {
+      //             if(item) {
+      //                const values = [productId, item];
+      //                const query = 'INSERT INTO product_categories VALUES (NULL, ?, ?)';
+      //                con.query(query, values, (err, res) => {
+      //                   if(index === array.length-1) {
+      //                      /* 3rd - ADD IMAGES TO IMAGES TABLE */
+      //                      filenames.forEach((item, index, array) => {
+      //                         const values = ["products/" + item, productId, index];
+      //                         const query = 'INSERT INTO images VALUES (NULL, ?, ?, ?)';
+      //
+      //                         con.query(query, values, (err, res) => {
+      //                            if(index === 0) {
+      //                               /* 4th - MODIFY MAIN_IMAGE COLUMN IN PRODUCTS TABLE */
+      //                               const mainImageId = res.insertId;
+      //                               const values = [mainImageId, productId];
+      //                               const query = 'UPDATE products SET main_image = ? WHERE id = ?';
+      //                               con.query(query, values);
+      //                            }
+      //
+      //                            if(index === array.length-1) {
+      //                               if(res) response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=1");
+      //                               else response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=0");
+      //                            }
+      //                         })
+      //                      });
+      //                   }
+      //                });
+      //             }
+      //             else {
+      //                /* 4th - ADD IMAGES TO IMAGES TABLE */
+      //                filenames.forEach((item, index, array) => {
+      //                   const values = ["products/" + item, productId, index];
+      //                   const query = 'INSERT INTO images VALUES (NULL, ?, ?, ?)';
+      //
+      //                   con.query(query, values, (err, res) => {
+      //                      if(index === 0) {
+      //                         const mainImageId = res.insertId;
+      //                         const values = [mainImageId, productId];
+      //                         const query = 'UPDATE products SET main_image = ? WHERE id = ?';
+      //                         con.query(query, values);
+      //                      }
+      //
+      //                      if(index === array.length-1) {
+      //                         /* 4 - MODIFY MAIN_IMAGE COLUMN IN PRODUCTS TABLE */
+      //                         if(res) response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=1");
+      //                         else response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=0");
+      //                      }
+      //                   })
+      //                });
+      //             }
+      //          });
+      //       }
+      //       else {
+      //          response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=0");
+      //       }
+      //    });
+      // });
    });
 
    const updateImages = (images, id) => {

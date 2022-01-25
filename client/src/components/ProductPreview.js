@@ -1,5 +1,6 @@
 import React from 'react';
 import plusIcon from '../static/assets/plus.svg'
+import {openCart} from "../helpers/others";
 
 const ProductPreview = ({title, subtitle, link, price, img1, img2}) => {
     return <a className="preview" href={link}>
@@ -16,7 +17,7 @@ const ProductPreview = ({title, subtitle, link, price, img1, img2}) => {
         <h5 className="preview__price">
             {price} zł
         </h5>
-        <button className="addToCartBtn w-100">
+        <button className="addToCartBtn w-100" onClick={() => { openCart(); }}>
             Do koszyka
             <img className="addToCartBtn__img" src={plusIcon} alt="dodaj" />
         </button>

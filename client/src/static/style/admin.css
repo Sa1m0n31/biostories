@@ -483,10 +483,13 @@ ul {
     border-bottom: 1px solid #E8E8E8;
 }
 
+.admin__editorWrapper,
 .addProduct__label {
     display: block;
     width: 100%;
     margin: 15px 0;
+    font-size: 14px;
+    color: #6B6B6B;
 }
 
 .fileInputLabel {
@@ -506,7 +509,7 @@ ul {
 }
 
 .addProduct__form__section {
-    width: 46%;
+    width: 100%;
 }
 
 .addProduct__form--addProduct {
@@ -1540,4 +1543,20 @@ input[type=file] {
 
 .response--negative {
     background: #941212;
+}
+
+.admin__addGallery {
+    color: #6B6B6B;
+    font-size: 14px;
+}
+
+.addProduct__categorySelect {
+    color: #6B6B6B;
+    font-size: 14px;
+    margin-bottom: 100px;
+    margin-top: 50px;
+}
+
+.addProduct__categorySelect .panelContent__filters__label__label:first-of-type {
+    margin-top: 25px;
 }

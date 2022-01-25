@@ -3,6 +3,12 @@ import settings from "./settings";
 
 const { API_URL } = settings;
 
+const addProduct = () => {
+    return axios.post(`${API_URL}/product/add`, {
+
+    });
+}
+
 const getAllProducts = () => {
     return axios.get(`${API_URL}/product/get-all-products`);
 }

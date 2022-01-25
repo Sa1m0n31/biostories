@@ -43,6 +43,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import TyAfterRegister from "./pages/TyAfterRegister";
 import VerificationPage from "./pages/VerificationPage";
+import BeforeCheckout from "./pages/BeforeCheckout";
 require('dotenv').config();
 
 axios.defaults.headers.common['Authorization'] = credentials.AUTH_HEADER;
@@ -190,6 +191,9 @@ function App() {
             </Route>
             <Route path="/weryfikacja">
                 <VerificationPage />
+            </Route>
+            <Route path="/zakupy">
+                <BeforeCheckout />
             </Route>
 
             {/* Admin routes */}

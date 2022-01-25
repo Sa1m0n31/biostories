@@ -7,18 +7,25 @@ import {
     getProductDetails,
     getProductGallery
 } from "../helpers/productFunctions";
+import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { useLocation } from "react-router";
 import {getAllCategories} from "../helpers/categoriesFunctions";
 import Dropzone from "react-dropzone-uploader";
-import JoditEditor from 'jodit-react';
 import settings from "../helpers/settings";
 import axios from "axios";
+import { convertFromRaw, convertToRaw, EditorState } from 'draft-js';
+import {logoutUser} from "../../helpers/userFunctions";
+import RUG from 'react-upload-gallery'
+import 'react-upload-gallery/dist/style.css'
 
 const AddProductContent = () => {
     const editorR = useRef(null);
 
     const [update, setUpdate] = useState(false);
     const [name, setName] = useState("");
+    const [subtitle, setSubtitle] = useState('');
+    const [stock, setStock] = useState(0);
     const [id, setId] = useState(0);
     const [product, setProduct] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -26,6 +33,10 @@ const AddProductContent = () => {
     const [recommendation, setRecommendation] = useState(false);
     const [choosenCategories, setChoosenCategories] = useState([]);
     const [gallery, setGallery] = useState([]);
+    const [response, setResponse] = useState("");
+    const [status, setStatus] = useState(-1);
+    const [attribute, setAttribute] = useState('');
+    const [attributeValues, setAttributeValues] = useState('');
 
     const [imagesChanged, setImagesChanged] = useState([false, false, false, false, false]);
 
@@ -36,7 +47,7 @@ const AddProductContent = () => {
     const [price, setPrice] = useState(0);
 
     /* Descriptions */
-    const [shortDescription, setShortDescription] = useState("");
+    const [shortDescription, setShortDescription] = useState(null);
 
     const [addMsg, setAddMsg] = useState("");
 
@@ -182,17 +193,22 @@ const AddProductContent = () => {
         });
     }
 
-    return <main className="panelContent addProduct">
-        <header className="addProduct__header">
-            <h1 className="addProduct__header__h">
-                Edycja produktu
+    return <main className="panelContent">
+        <header className="panelContent__header">
+            <h1 className="panelContent__header__h">
+                Witaj w Panelu - tu możesz zarządzać swoim sklepem
             </h1>
+            <button className="logoutBtn" onClick={() => { logoutUser(); }}>
+                Wyloguj się
+            </button>
         </header>
-        {addMsg === "" ? <form className="addProduct__form addProduct__form--addProduct"
-                               encType="multipart/form-data"
-                               method="POST"
-                               action={update ? 'https://hideisland.pl/product/update-product' : 'https://hideisland.pl/product/add-product'}
-        >
+        {addMsg === "" ? <div className="addProduct__form addProduct__form--addProduct panelContent__frame">
+            <h1 className="panelContent__frame__header">
+                Dodaj produkt
+                {response ? <span className={status ? "response response--positive" : "response response--negative"}>
+                        {response}
+                    </span> : ""}
+            </h1>
             <section className="addProduct__form__section">
                 <input className="invisibleInput"
                        name="id"
@@ -215,15 +231,23 @@ const AddProductContent = () => {
 
 
                 <label className="addProduct__label">
+                    Nazwa produktu
                     <input className="addProduct__input"
                            name="name"
                            value={name}
                            onChange={(e) => { setName(e.target.value) }}
                            placeholder="Nazwa produktu" />
                 </label>
-
-                {/* PRICES */}
                 <label className="addProduct__label">
+                    Podtytuł
+                    <input className="addProduct__input"
+                           name="name"
+                           value={subtitle}
+                           onChange={(e) => { setSubtitle(e.target.value) }}
+                           placeholder="Podtytuł produktu" />
+                </label>
+                <label className="addProduct__label">
+                    Cena
                     <input className="addProduct__input"
                            name="price"
                            type="number"
@@ -232,9 +256,62 @@ const AddProductContent = () => {
                            onChange={(e) => { setPrice(e.target.value) }}
                            placeholder="Cena" />
                 </label>
-
+                <label className="addProduct__label">
+                    Stan magazynowy
+                    <input className="addProduct__input"
+                           name="stock"
+                           type="number"
+                           value={stock}
+                           onChange={(e) => { setStock(e.target.value) }}
+                           placeholder="Na stanie" />
+                </label>
+                <main className="admin__editorWrapper">
+                    Opis na górze strony
+                    <Editor
+                        editorState={shortDescription}
+                        toolbarClassName="toolbarClassName"
+                        wrapperClassName="wrapperClassName"
+                        editorClassName="editor"
+                        onEditorStateChange={(text) => { setShortDescription(text); }}
+                    />
+                </main>
+                <label className="addProduct__label">
+                    Nazwa atrybutu (np. smak/gramatura)
+                    <input className="addProduct__input"
+                           name="stock"
+                           value={attribute}
+                           onChange={(e) => { setAttribute(e.target.value) }}
+                           placeholder="Nazwa atrybutu" />
+                </label>
+                <label className="addProduct__label">
+                    Wartości atrybutu (po przecinku, np: malinowa,traskawkowa)
+                    <input className="addProduct__input"
+                           name="attributeValues"
+                           value={attributeValues}
+                           onChange={(e) => { setAttributeValues(e.target.value) }}
+                           placeholder="Wartości atrybutów (po przecinku)" />
+                </label>
+                <main className="admin__addGallery">
+                    Galeria zdjęć
+                    <RUG
+                        onChange={(a) => {
+                            console.log('change');
+                            console.log(a);
+                        }}
+                        action="http://localhost:5000/product/add-product" // upload route
+                        source={response => response.source} // response image source
+                    />
+                </main>
+                <main className="admin__addGallery">
+                    Informacje - ikonki
+                    <RUG
+                        action="/api/upload" // upload route
+                        source={response => response.source} // response image source
+                    />
+                </main>
 
                 <section className="addProduct__categorySelect">
+                    Kategorie
                     {categories?.map((item, index) => {
                         if(!item.parent_id) {
                             return <><label className="panelContent__filters__label__label" key={index}>
@@ -266,87 +343,9 @@ const AddProductContent = () => {
                         }
                     })}
                 </section>
-
-                <label className="jodit--label">
-                    <span>Krótki opis</span>
-                    <JoditEditor
-                        name="shortDescription"
-                        ref={editorR}
-                        value={shortDescription}
-                        tabIndex={1} // tabIndex of textarea
-                        onBlur={newContent => {}} // preferred to use only this option to update the content for performance reasons
-                        onChange={newContent => { setShortDescription(newContent) }}
-                    />
-                </label>
             </section>
 
             <section className="addProduct__form__section">
-                <section className="addProduct__form__subsection addProduct__form__subsection--marginLeft marginTop30">
-                    <label className="fileInputLabel fileInputLabel--gallery">
-                        <span>Zdjęcie główne</span>
-                        <input type="file"
-                               onChange={(e) => { addNewGalleryImage(e, 0); }}
-                               multiple={false}
-                               className="product__fileInput galleryImageInput--0"
-                               name="gallery1" />
-                        <section className="galleryWrapper--0" onClick={e => { e.preventDefault(); }}>
-                            {gallery.length > 0 ? <img className="galleryProductImage" src={`${settings.API_URL}/image?url=/media/${gallery[0].file_path}`} alt="zdjecie-produktu" /> : ""}
-                        </section>
-                    </label>
-                </section>
-                <section className="addProduct__form__subsection addProduct__form__subsection--marginLeft marginTop30">
-                    <label className="fileInputLabel fileInputLabel--gallery">
-                        <span>Zdjęcie 1.</span>
-                        <input type="file"
-                               onChange={(e) => { addNewGalleryImage(e, 1); }}
-                               multiple={false}
-                               className="product__fileInput galleryImageInput--1"
-                               name="gallery2" />
-                        <section className="galleryWrapper--1" onClick={e => { e.preventDefault(); }}>
-                            {gallery.length > 1 ? <img className="galleryProductImage" src={`${settings.API_URL}/image?url=/media/${gallery[1].file_path}`} alt="zdjecie-produktu" /> : ""}
-                        </section>
-                    </label>
-                </section>
-                <section className="addProduct__form__subsection addProduct__form__subsection--marginLeft marginTop30">
-                    <label className="fileInputLabel fileInputLabel--gallery">
-                        <span>Zdjęcie 2.</span>
-                        <input type="file"
-                               onChange={(e) => { addNewGalleryImage(e, 2); }}
-                               multiple={false}
-                               className="product__fileInput galleryImageInput--2"
-                               name="gallery3" />
-                        <section className="galleryWrapper--2" onClick={e => { e.preventDefault(); }}>
-                            {gallery.length > 2 ? <img className="galleryProductImage" src={`${settings.API_URL}/image?url=/media/${gallery[2].file_path}`} alt="zdjecie-produktu" /> : ""}
-                        </section>
-                    </label>
-                </section>
-                <section className="addProduct__form__subsection addProduct__form__subsection--marginLeft marginTop30">
-                    <label className="fileInputLabel fileInputLabel--gallery">
-                        <span>Zdjęcie 3.</span>
-                        <input type="file"
-                               onChange={(e) => { addNewGalleryImage(e, 3); }}
-                               multiple={false}
-                               className="product__fileInput galleryImageInput--3"
-                               name="gallery4" />
-                        <section className="galleryWrapper--3" onClick={e => { e.preventDefault(); }}>
-                            {gallery.length > 3 ? <img className="galleryProductImage" src={`${settings.API_URL}/image?url=/media/${gallery[3].file_path}`} alt="zdjecie-produktu" /> : ""}
-                        </section>
-                    </label>
-                </section>
-                <section className="addProduct__form__subsection addProduct__form__subsection--marginLeft marginTop30">
-                    <label className="fileInputLabel fileInputLabel--gallery">
-                        <span>Zdjęcie 4.</span>
-                        <input type="file"
-                               onChange={(e) => { addNewGalleryImage(e, 4); }}
-                               multiple={false}
-                               className="product__fileInput galleryImageInput--4"
-                               name="gallery5" />
-                        <section className="galleryWrapper--4" onClick={e => { e.preventDefault(); }}>
-                            {gallery.length > 4 ? <img className="galleryProductImage" src={`${settings.API_URL}/image?url=/media/${gallery[4].file_path}`} alt="zdjecie-produktu" /> : ""}
-                        </section>
-                    </label>
-                </section>
-
                 <label className="panelContent__filters__label__label panelContent__filters__label__label--category">
                     <button className="panelContent__filters__btn" onClick={(e) => { e.preventDefault(); setHidden(!hidden); }}>
                         <span className={hidden ? "panelContent__filters__btn--active" : "d-none"} />
@@ -373,7 +372,7 @@ const AddProductContent = () => {
                     {update ? "Zaktualizuj produkt" : "Dodaj produkt"}
                 </button>
             </section>
-        </form> : <h2 className="addMsg">
+        </div> : <h2 className="addMsg">
             {addMsg}
         </h2> }
     </main>
