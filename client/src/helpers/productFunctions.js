@@ -1,12 +1,12 @@
 import axios from "axios";
 import settings from "./settings";
-
+import { convertToRaw } from 'draft-js';
 const { API_URL } = settings;
 
 const addProduct = (title, subtitle, price, stock, attribute, attributeValues,
                     description, secondDescription, thirdDescription, fourthDescription,
                     img, img2, img3, img4, img5,
-                    gallery, icons, categories) => {
+                    gallery, icons, categories, recommendation, top, hidden) => {
     const config = { headers: { 'Content-Type': 'multipart/form-data' } };
     let formData = new FormData();
     formData.append('title', title);
@@ -15,33 +15,24 @@ const addProduct = (title, subtitle, price, stock, attribute, attributeValues,
     formData.append('stock', stock);
     formData.append('attribute', attribute);
     formData.append('attributeValues', attributeValues);
-    formData.append('categories', categories);
+    formData.append('recommendation', recommendation);
+    formData.append('top', top);
+    formData.append('hidden', hidden);
+    formData.append('categories', JSON.stringify(categories));
     formData.append('img', img?.file);
     formData.append('img2', img2?.file);
-    formData.append('img3', img3);
-    formData.append('img4', img4);
-    formData.append('img5', img5);
-    formData.append('title', title);
-    formData.append('secondDescription', secondDescription);
-    formData.append('thirdDescription', thirdDescription);
-    formData.append('fourthDescription', fourthDescription);
-    // formData.append('gallery', );
+    formData.append('img3', img3?.file);
+    formData.append('img4', img4?.file);
+    formData.append('img5', img5?.file);
+    formData.append('gallery', gallery);
     formData.append('icons', icons);
+    formData.append('description', description ? JSON.stringify(convertToRaw(description?.getCurrentContent())) : '');
+    formData.append('secondDescription', secondDescription ? JSON.stringify(convertToRaw(secondDescription?.getCurrentContent())) : '');
+    formData.append('thirdDescription', thirdDescription ? JSON.stringify(convertToRaw(thirdDescription?.getCurrentContent())) : '');
+    formData.append('fourthDescription', fourthDescription ? JSON.stringify(convertToRaw(fourthDescription?.getCurrentContent())) : '');
 
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', gallery[0].source, true);
-    xhr.responseType = 'blob';
-    // JEST OK!
-    xhr.onload = function(e) {
-        if (this.status == 200) {
-            var myBlob = this.response;
-            console.log(myBlob);
-            formData.append('gallery', new File([myBlob], 'name'));
-
-            return axios.post(`${API_URL}/product/add-product`, formData, config);
-        }
-    };
-    xhr.send();
+    console.log('send');
+    return axios.post(`${API_URL}/product/add-product`, formData, config);
 }
 
 const getAllProducts = () => {

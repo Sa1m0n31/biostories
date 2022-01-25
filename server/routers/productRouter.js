@@ -4,6 +4,7 @@ const got = require("got");
 const con = require("../databaseConnection");
 const path = require("path");
 const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
 const multer  = require('multer')
 const upload = multer({ dest: 'media/products' })
 
@@ -34,18 +35,85 @@ con.connect(err => {
       })
    });
 
-   /* ADD PRODUCT */
-   router.post("/add-product", upload.fields([{name: 'gallery', maxCount: 10}, { name: 'img2', maxCount: 1 }]), (request, response) => {
-      let filenames = [];
-      let categories = [];
+   const addGallery = (gallery, id) => {
+      gallery.forEach((item, index, array) => {
+         const values = [item, id];
+         const query = 'INSERT INTO images VALUES (NULL, ?, ?)';
+         con.query(query, values);
+      });
+   }
 
-      // JSON.parse(request.body.gallery).forEach(async (item) => {
-      //
-      //    // const response = await fetch(item.source);
-      //    // const buffer = await response.buffer();
-      //    // var imageBuffer = request.file.buffer;
-      //    fs.createWriteStream('dsadsa.png').write(item.source);
-      // });
+   const addIcons = (icons, id) => {
+      icons.forEach((item, index, array) => {
+         const values = [item, id];
+         const query = 'INSERT INTO icons VALUES (NULL, ?, ?)';
+         con.query(query, values);
+      });
+   }
+
+   const addCategories = (cat, id) => {
+      cat.forEach((item) => {
+         const values = [id, item.id];
+         const query = 'INSERT INTO product_categories VALUES (NULL, ?, ?)';
+         con.query(query, values);
+      })
+   }
+
+   const addAttribute = () => {
+
+   }
+
+   const addAttributeValues = (val) => {
+
+   }
+
+   /* ADD PRODUCT */
+   router.post("/add-product", upload.fields([
+      { name: 'gallery', maxCount: 10 },
+      { name: 'icons', maxCount: 10 },
+      { name: 'img', maxCount: 1 },
+      { name: 'img2', maxCount: 1 },
+      { name: 'img3', maxCount: 1 },
+      { name: 'img4', maxCount: 1 },
+      { name: 'img5', maxCount: 1 }
+   ]), (request, response) => {
+      const { title, subtitle, price, stock, attribute, attributeValues, categories,
+            description, secondDescription, thirdDescription, fourthDescription, recommendation, top, hidden
+      } = request.body;
+      const files = request.files;
+      const id = uuidv4();
+      let img1 = null, img2 = null, img3 = null, img4 = null, img5 = null;
+      if(files.img) img1 = files.img[0].filename;
+      if(files.img2) img2 = files.img2[0].filename;
+      if(files.img3) img3 = files.img3[0].filename;
+      if(files.img4) img4 = files.img4[0].filename;
+      if(files.img5) img5 = files.img5[0].filename;
+
+      const values = [id, title, subtitle, price, stock, description, secondDescription, thirdDescription, fourthDescription,
+         img1, img2, img3, img4, img5, recommendation, top, hidden
+      ]
+      const query = 'INSERT INTO products VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)';
+      con.query(query, values, (err, res) => {
+         if(res) {
+            if(files.gallery) {
+               addGallery(files.gallery, id);
+            }
+            if(files.icons) {
+               addIcons(files.icons, id);
+            }
+            if(categories) {
+               addCategories(JSON.parse(categories), id);
+            }
+            response.send({
+               result: 1
+            });
+         }
+         else {
+            response.send({
+               result: 0
+            });
+         }
+      });
    });
 
    const updateImages = (images, id) => {

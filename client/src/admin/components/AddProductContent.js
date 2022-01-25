@@ -299,22 +299,61 @@ const AddProductContent = () => {
     }
 
     const handleSubmit = () => {
-        addProduct(name, subtitle, price, stock, attribute, attributeValues,
-                shortDescription, description2, description3, description4,
-                img, img2, img3, img4, img5,
-                gallery, infoIcons, categories
-            )
-            .then((res) => {
-                if(res?.data?.result) {
-                    setResponse("Produkt został dodany");
-                    setStatus(1);
+        let galleryItems = [], iconsItems = [];
+
+        gallery.forEach((item, index, array) => {
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', item.source, true);
+            xhr.responseType = 'blob';
+            xhr.onload = function(e) {
+                if(this.status == 200) {
+                    let myBlob = this.response;
+                    galleryItems.push(new File([myBlob], 'name'));
                 }
-                else {
-                    setResponse("Wystąpił błąd. Prosimy spróbować później");
-                    setStatus(0);
+                if(index === array.length-1) {
+                    infoIcons.forEach((item, index, array) => {
+                        let xhr = new XMLHttpRequest();
+                        xhr.open('GET', item.source, true);
+                        xhr.responseType = 'blob';
+                        xhr.onload = function(e) {
+                            if (this.status == 200) {
+                                let myBlob = this.response;
+                                iconsItems.push(new File([myBlob], 'name'));
+                            }
+                            if(index === array.length-1) {
+                                addProduct(name, subtitle, price, stock, attribute, attributeValues,
+                                    shortDescription, description2, description3, description4,
+                                    img, img2, img3, img4, img5,
+                                    gallery, infoIcons, categories, recommendation, top, hidden
+                                )
+                                    .then((res) => {
+                                        if(res?.data?.result) {
+                                            setResponse("Produkt został dodany");
+                                            setStatus(1);
+                                        }
+                                        else {
+                                            setResponse("Wystąpił błąd. Prosimy spróbować później");
+                                            setStatus(0);
+                                        }
+                                    });
+                            }
+                        };
+                        xhr.send();
+                    });
                 }
-            });
+            };
+            xhr.send();
+        });
     }
+
+    useEffect(() => {
+        if(status !== -1) {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    }, [status]);
 
     return <main className="panelContent">
         <header className="panelContent__header">
