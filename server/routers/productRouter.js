@@ -3,9 +3,11 @@ const router = express.Router();
 const got = require("got");
 const con = require("../databaseConnection");
 const path = require("path");
-
+const fs = require('fs');
 const multer  = require('multer')
 const upload = multer({ dest: 'media/products' })
+
+const util = require('util')
 
 con.connect(err => {
    /* ADD CROSS-SELLS */
@@ -33,174 +35,21 @@ con.connect(err => {
    });
 
    /* ADD PRODUCT */
-   router.post("/add-product", (request, response) => {
+   router.post("/add-product", upload.fields([{name: 'gallery', maxCount: 10}, { name: 'img2', maxCount: 1 }]), (request, response) => {
       let filenames = [];
       let categories = [];
 
-      console.log(request);
-
-      /* Modify IMAGES table */
-      // const storage = multer.diskStorage({
-      //    destination: "media/products/",
-      //    filename: function(req, file, cb){
-      //       const fName = file.fieldname + Date.now() + path.extname(file.originalname);
-      //       filenames.push(fName);
-      //       cb(null, fName);
-      //    }
-      // });
+      // JSON.parse(request.body.gallery).forEach(async (item) => {
       //
-      // const upload = multer({
-      //    storage: storage
-      // }).fields([{ name: 'gallery1', maxCount: 1 },
-      //    { name: 'gallery2', maxCount: 1 },
-      //    { name: 'gallery3', maxCount: 1 },
-      //    { name: 'gallery4', maxCount: 1 },
-      //    { name: 'gallery5', maxCount: 1 },
-      //    { name: 'gallery6', maxCount: 1 }
-      //    ]);
-      //
-      // upload(request, response, (err, res) => {
-      //    if (err) throw err;
-      //
-      //    /* Prepare */
-      //    let { id, name, price, shortDescription, recommendation, hidden } = request.body;
-      //    hidden = hidden === "hidden";
-      //    recommendation = recommendation === "true";
-      //
-      //    /* Get categories */
-      //    Object.entries(request.body).forEach(item => {
-      //       if(item[0].split("-")[0] === 'category') {
-      //          if(item[1] === 'true') {
-      //             categories.push(parseInt(item[0].split("-")[1]));
-      //          }
-      //       }
-      //    });
-      //
-      //    if(!categories.length) categories.push(0);
-      //
-      //    /* 1 - ADD PRODUCT TO PRODUCTS TABLE */
-      //    const values = [id, name, price, shortDescription, null, recommendation, hidden];
-      //    const query = 'INSERT INTO products VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, NULL)';
-      //    con.query(query, values, (err, res) => {
-      //       if(res) {
-      //          /* 2nd - ADD CATEGORIES */
-      //          const productId = res.insertId;
-      //          categories.forEach((item, index, array) => {
-      //             if(item) {
-      //                const values = [productId, item];
-      //                const query = 'INSERT INTO product_categories VALUES (NULL, ?, ?)';
-      //                con.query(query, values, (err, res) => {
-      //                   if(index === array.length-1) {
-      //                      /* 3rd - ADD IMAGES TO IMAGES TABLE */
-      //                      filenames.forEach((item, index, array) => {
-      //                         const values = ["products/" + item, productId, index];
-      //                         const query = 'INSERT INTO images VALUES (NULL, ?, ?, ?)';
-      //
-      //                         con.query(query, values, (err, res) => {
-      //                            if(index === 0) {
-      //                               /* 4th - MODIFY MAIN_IMAGE COLUMN IN PRODUCTS TABLE */
-      //                               const mainImageId = res.insertId;
-      //                               const values = [mainImageId, productId];
-      //                               const query = 'UPDATE products SET main_image = ? WHERE id = ?';
-      //                               con.query(query, values);
-      //                            }
-      //
-      //                            if(index === array.length-1) {
-      //                               if(res) response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=1");
-      //                               else response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=0");
-      //                            }
-      //                         })
-      //                      });
-      //                   }
-      //                });
-      //             }
-      //             else {
-      //                /* 4th - ADD IMAGES TO IMAGES TABLE */
-      //                filenames.forEach((item, index, array) => {
-      //                   const values = ["products/" + item, productId, index];
-      //                   const query = 'INSERT INTO images VALUES (NULL, ?, ?, ?)';
-      //
-      //                   con.query(query, values, (err, res) => {
-      //                      if(index === 0) {
-      //                         const mainImageId = res.insertId;
-      //                         const values = [mainImageId, productId];
-      //                         const query = 'UPDATE products SET main_image = ? WHERE id = ?';
-      //                         con.query(query, values);
-      //                      }
-      //
-      //                      if(index === array.length-1) {
-      //                         /* 4 - MODIFY MAIN_IMAGE COLUMN IN PRODUCTS TABLE */
-      //                         if(res) response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=1");
-      //                         else response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=0");
-      //                      }
-      //                   })
-      //                });
-      //             }
-      //          });
-      //       }
-      //       else {
-      //          response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=0");
-      //       }
-      //    });
+      //    // const response = await fetch(item.source);
+      //    // const buffer = await response.buffer();
+      //    // var imageBuffer = request.file.buffer;
+      //    fs.createWriteStream('dsadsa.png').write(item.source);
       // });
    });
 
    const updateImages = (images, id) => {
-      const { gallery1, gallery2, gallery3, gallery4, gallery5 } = images;
 
-      if(gallery1) {
-         const query = 'DELETE FROM images WHERE product_id = ? AND priority = 0';
-         const values = [id];
-         con.query(query, values, (err, res) => {
-            const values = ["products/" + gallery1[0].filename, id];
-            const query = 'INSERT INTO images VALUES (NULL, ?, ?, 0)';
-            con.query(query, values, (err, res) => {
-               const mainImageId = res.insertId;
-               const values = [mainImageId, id];
-               const query = 'UPDATE products SET main_image = ? WHERE id = ?';
-               con.query(query, values)
-            });
-         });
-      }
-      if(gallery2) {
-         const query = 'DELETE FROM images WHERE product_id = ? AND priority = 1';
-         const values = [id];
-         con.query(query, values, (err, res) => {
-            const values = ["products/" + gallery2[0].filename, id];
-            const query = 'INSERT INTO images VALUES (NULL, ?, ?, 1)';
-            con.query(query, values);
-         });
-      }
-      if(gallery3) {
-         console.log('3');
-         const query = 'DELETE FROM images WHERE product_id = ? AND priority = 2';
-         const values = [id];
-         con.query(query, values, (err, res) => {
-            const values = ["products/" + gallery3[0].filename, id];
-            const query = 'INSERT INTO images VALUES (NULL, ?, ?, 2)';
-            con.query(query, values);
-         });
-      }
-      if(gallery4) {
-         console.log('4');
-         const query = 'DELETE FROM images WHERE product_id = ? AND priority = 3';
-         const values = [id];
-         con.query(query, values, (err, res) => {
-            const values = ["products/" + gallery4[0].filename, id];
-            const query = 'INSERT INTO images VALUES (NULL, ?, ?, 3)';
-            con.query(query, values);
-         });
-      }
-      if(gallery5) {
-         console.log('5');
-         const query = 'DELETE FROM images WHERE product_id = ? AND priority = 4';
-         const values = [id];
-         con.query(query, values, (err, res) => {
-            const values = ["products/" + gallery5[0].filename, id];
-            const query = 'INSERT INTO images VALUES (NULL, ?, ?, 4)';
-            con.query(query, values);
-         });
-      }
    }
 
    /* UPDATE PRODUCT */

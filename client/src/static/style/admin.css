@@ -1110,7 +1110,7 @@ input[type=file] {
 }
 
 .panelContent__filters__label__label--category {
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     margin-top: 15px;
     width: 100%;
     justify-content: flex-start;
@@ -1559,4 +1559,94 @@ input[type=file] {
 
 .addProduct__categorySelect .panelContent__filters__label__label:first-of-type {
     margin-top: 25px;
+}
+
+.admin__label__imgUpload__trashBtn {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .7);
+    z-index: 99999;
+}
+
+.admin__label__imgUpload__trashBtn .btn__img {
+    width: 40%;
+}
+
+.admin__label__imgUpload::after {
+    content: "+";
+    font-size: 120px;
+    text-align: center;
+    color: #6B6B6B;
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.admin__label__imgUpload__updateImgWrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    z-index: 5;
+}
+
+.admin__label__imgUpload__updateImg {
+    height: 190px;
+    width: auto;
+    max-width: 100%;
+}
+
+.admin__label__imgUpload {
+    width: 300px;
+    height: 200px;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 5px dashed #6B6B6B;
+    margin-top: 10px;
+    position: relative;
+}
+
+.admin__label {
+    font-size: 14px;
+    color: #6B6B6B;
+}
+
+.dzu-inputLabel {
+    opacity: 0;
+}
+
+.admin__label--imgUpload {
+    cursor: pointer;
+    margin-bottom: 30px;
+}
+
+.admin__flex .dzu-previewImage {
+    max-width: 290px;
+    max-height: 190px;
+    margin: 0;
+}
+
+.dzu-previewStatusContainer {
+    display: none !important;
+}
+
+.admin__label--imgUpload--section {
+    width: 60%;
+}
+
+.alignTop {
+    align-items: flex-start !important;
 }
