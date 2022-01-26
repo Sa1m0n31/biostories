@@ -10,6 +10,7 @@ import {getDate, getTime} from "../helpers/formatFunctions";
 import settings from "../helpers/settings";
 import Modal from 'react-modal'
 import closeImg from "../static/img/close.png";
+import addIcon from "../static/img/add.svg";
 
 const PanelProductsContent = () => {
     const [products, setProducts] = useState([]);
@@ -20,10 +21,9 @@ const PanelProductsContent = () => {
     useEffect(() => {
         getAllProducts()
             .then(res => {
-                console.log(res.data);
+               console.log(res.data);
                const result = res.data.result;
                setProducts(result);
-               sessionStorage.setItem('skylo-e-commerce-products', JSON.stringify(result));
             });
     }, [modal]);
 
@@ -81,10 +81,19 @@ const PanelProductsContent = () => {
 
         <header className="panelContent__header">
             <h1 className="panelContent__header__h">
-                Produkty
+                Witaj w panelu - tu możesz zarządzać swoim sklepem
             </h1>
         </header>
-        <main className="panelContent__contentWrapper">
+        <main className="panelContent__contentWrapper panelContent__frame ">
+            <h1 className="panelContent__frame__header">
+                Lista produktów
+                <section className="panelContent__buttons">
+                    <a className="panelContent__btn" href="/panel/dodaj-produkt">
+                        Dodaj nowy produkt
+                        <img className="panelContent__btn__icon" src={addIcon} alt="dodaj" />
+                    </a>
+                </section>
+            </h1>
             <header className="panelContent__filters">
                 <section className="panelContent__filters__item">
                     <span className="panelContent__filters__label">
@@ -105,8 +114,8 @@ const PanelProductsContent = () => {
             <main className="panelContent__content">
                 {products?.map((item, index) => (
                     <section className="panelContent__item productItem">
-                        <section className="panelContent__column">
-                            {item.image ? <img className="panelContent__productImg" src={settings.API_URL + "/image?url=/media/" + item.image} alt="produkt" /> : ""}
+                        <section className="panelContent__column panelContent__column--img">
+                            {item.main_image ? <img className="panelContent__productImg" src={settings.API_URL + "/image?url=/media/products/" + item.main_image} alt="produkt" /> : ""}
                         </section>
 
                         <section className="panelContent__column">

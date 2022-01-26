@@ -44,6 +44,10 @@ import Register from "./pages/Register";
 import TyAfterRegister from "./pages/TyAfterRegister";
 import VerificationPage from "./pages/VerificationPage";
 import BeforeCheckout from "./pages/BeforeCheckout";
+import Shop from "./pages/Shop";
+import CartPage from "./pages/CartPage";
+import DeliveryDataPage from "./pages/DeliveryDataPage";
+import ShippingAndPayment from "./pages/ShippingAndPayment";
 require('dotenv').config();
 
 axios.defaults.headers.common['Authorization'] = credentials.AUTH_HEADER;
@@ -54,59 +58,52 @@ const CartContext = React.createContext(null);
 function App() {
     const [cartContent, setCartContent] = useState(localStorage.getItem('hideisland-cart') ? JSON.parse(localStorage.getItem('hideisland-cart')) : []);
 
-    const addToCart = (id, title, amount, img, size, price) => {
+    const addToCart = (id, title, amount, img, attributeName, attributeValue, price) => {
         const uuid = uuidv4();
 
         let existedUuid, existedAmount = 0;
 
+        console.log(id, title, amount, img, attributeName, attributeValue, price);
+
+        console.log(cartContent);
         /* If product already in cart - increase amount */
         if(cartContent.findIndex((item) => {
-           if((item.id === id)&&(item.size === size)) {
+            console.log(item.id, item.attributeName, item.attributeValue);
+           if((item.id === id)&&(item.attributeName === attributeName)&&(item.attributeValue === attributeValue)) {
                existedUuid = item.uuid;
                existedAmount = item.amount;
                return true;
            }
            else return false;
         }) !== -1) {
+            console.log(existedUuid);
             if(existedUuid) {
                 getProductStock(id)
                     .then(res => {
-                        const result = res?.data?.result[0];
-                        if(result) {
-                            const sizes = [
-                                { name: result.size_1_name, value: result.size_1_stock },
-                                { name: result.size_2_name, value: result.size_2_stock },
-                                { name: result.size_3_name, value: result.size_3_stock },
-                                { name: result.size_4_name, value: result.size_4_stock },
-                                { name: result.size_5_name, value: result.size_5_stock }
-                            ];
-                            sizes.forEach((item) => {
-                                if(item.name === size) {
-                                    if(item.value >= existedAmount+amount) {
-                                        editCart(existedUuid, id, title, existedAmount+amount, img, size, price);
-                                    }
-                                }
-                            })
+                        console.log(res?.data?.result);
+                        const result = res?.data?.result[0].stock;
+                        if(result >= existedAmount+amount) {
+                            editCart(existedUuid, id, title, existedAmount+amount, img, attributeName, attributeValue, price);
                         }
-                    })
+                    });
             }
         }
         else {
             localStorage.setItem('hideisland-cart', JSON.stringify([...cartContent, {
-                uuid, id, title, amount, img, size, price
+                uuid, id, title, amount, img, attributeName, attributeValue, price
             }]));
 
             setCartContent([...cartContent, {
-                uuid, id, title, amount, img, size, price
+                uuid, id, title, amount, img, attributeName, attributeValue, price
             }]);
         }
     }
 
-    const editCart = (uuid, id, title, amount, img, size, price) => {
+    const editCart = (uuid, id, title, amount, img, attributeName, attributeValue, price) => {
         localStorage.setItem('hideisland-cart', JSON.stringify(cartContent.map((item) => {
             if(item.uuid === uuid) {
                 return {
-                    uuid, id, title, amount, img, size, price
+                    uuid, id, title, amount, img, attributeName, attributeValue, price
                 }
             }
             else return item;
@@ -115,7 +112,7 @@ function App() {
         setCartContent(cartContent.map((item) => {
             if(item.uuid === uuid) {
                 return {
-                    uuid, id, title, amount, img, size, price
+                    uuid, id, title, amount, img, attributeName, attributeValue, price
                 }
             }
             else return item;
@@ -194,6 +191,18 @@ function App() {
             </Route>
             <Route path="/zakupy">
                 <BeforeCheckout />
+            </Route>
+            <Route path="/sklep">
+                <Shop />
+            </Route>
+            <Route path="/koszyk">
+                <CartPage />
+            </Route>
+            <Route path="/dane-dostawy">
+                <DeliveryDataPage />
+            </Route>
+            <Route path="/dostawa-i-platnosc">
+                <ShippingAndPayment />
             </Route>
 
             {/* Admin routes */}

@@ -301,6 +301,7 @@ const AddProductContent = () => {
     const handleSubmit = () => {
         let galleryItems = [], iconsItems = [];
 
+        let formData = new FormData();
         gallery.forEach((item, index, array) => {
             let xhr = new XMLHttpRequest();
             xhr.open('GET', item.source, true);
@@ -308,7 +309,7 @@ const AddProductContent = () => {
             xhr.onload = function(e) {
                 if(this.status == 200) {
                     let myBlob = this.response;
-                    galleryItems.push(new File([myBlob], 'name'));
+                    formData.append('gallery', new File([myBlob], 'name'));
                 }
                 if(index === array.length-1) {
                     infoIcons.forEach((item, index, array) => {
@@ -318,13 +319,13 @@ const AddProductContent = () => {
                         xhr.onload = function(e) {
                             if (this.status == 200) {
                                 let myBlob = this.response;
-                                iconsItems.push(new File([myBlob], 'name'));
+                                formData.append('icons', new File([myBlob], 'name'));
                             }
                             if(index === array.length-1) {
-                                addProduct(name, subtitle, price, stock, attribute, attributeValues,
+                                addProduct(formData, name, subtitle, price, stock, attribute, attributeValues,
                                     shortDescription, description2, description3, description4,
                                     img, img2, img3, img4, img5,
-                                    gallery, infoIcons, categories, recommendation, top, hidden
+                                    categories, recommendation, top, hidden
                                 )
                                     .then((res) => {
                                         if(res?.data?.result) {
@@ -602,7 +603,8 @@ const AddProductContent = () => {
                         />
                     </main>
                 </div>
-
+            </section>
+            <div className="flex alignTop addProduct__bottom">
                 <section className="addProduct__categorySelect">
                     Kategorie
                     {categories?.map((item, index) => {
@@ -636,35 +638,34 @@ const AddProductContent = () => {
                         }
                     })}
                 </section>
-            </section>
+                <section className="addProduct__form__section addProduct__form__section--bottom">
+                    <label className="panelContent__filters__label__label panelContent__filters__label__label--category">
+                        <button className="panelContent__filters__btn" onClick={(e) => { e.preventDefault(); setHidden(!hidden); }}>
+                            <span className={hidden ? "panelContent__filters__btn--active" : "d-none"} />
+                        </button>
+                        Ukryj produkt
+                    </label>
+                    <label className="panelContent__filters__label__label panelContent__filters__label__label--category">
+                        <button className="panelContent__filters__btn" onClick={(e) => { e.preventDefault(); setRecommendation(!recommendation); }}>
+                            <span className={recommendation ? "panelContent__filters__btn--active" : "d-none"} />
+                        </button>
+                        Pokaż produkt w polecanych
+                    </label>
+                    <label className="panelContent__filters__label__label panelContent__filters__label__label--category">
+                        <button className="panelContent__filters__btn" onClick={(e) => { e.preventDefault(); setTop(!top); }}>
+                            <span className={top ? "panelContent__filters__btn--active" : "d-none"} />
+                        </button>
+                        Pokaż produkt w idealne połączenie
+                    </label>
 
-            <section className="addProduct__form__section">
-                <label className="panelContent__filters__label__label panelContent__filters__label__label--category">
-                    <button className="panelContent__filters__btn" onClick={(e) => { e.preventDefault(); setHidden(!hidden); }}>
-                        <span className={hidden ? "panelContent__filters__btn--active" : "d-none"} />
-                    </button>
-                    Ukryj produkt
-                </label>
-                <label className="panelContent__filters__label__label panelContent__filters__label__label--category">
-                    <button className="panelContent__filters__btn" onClick={(e) => { e.preventDefault(); setRecommendation(!recommendation); }}>
-                        <span className={recommendation ? "panelContent__filters__btn--active" : "d-none"} />
-                    </button>
-                    Pokaż produkt w polecanych
-                </label>
-                <label className="panelContent__filters__label__label panelContent__filters__label__label--category">
-                    <button className="panelContent__filters__btn" onClick={(e) => { e.preventDefault(); setTop(!top); }}>
-                        <span className={top ? "panelContent__filters__btn--active" : "d-none"} />
-                    </button>
-                    Pokaż produkt w idealne połączenie
-                </label>
-
-                <input className="invisibleInput"
-                       value={hidden ? "hidden" : ""}
-                       name="hidden" />
-                <input className="invisibleInput"
-                       value={recommendation ? "true" : ""}
-                       name="recommendation" />
-            </section>
+                    <input className="invisibleInput"
+                           value={hidden ? "hidden" : ""}
+                           name="hidden" />
+                    <input className="invisibleInput"
+                           value={recommendation ? "true" : ""}
+                           name="recommendation" />
+                </section>
+            </div>
 
             <section className="addProduct__btnWrapper">
                 <button className="addProduct__btn" onClick={() => { handleSubmit(); }}>

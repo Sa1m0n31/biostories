@@ -36,17 +36,19 @@ con.connect(err => {
    });
 
    const addGallery = (gallery, id) => {
-      gallery.forEach((item, index, array) => {
-         const values = [item, id];
-         const query = 'INSERT INTO images VALUES (NULL, ?, ?)';
+      gallery.forEach((item) => {
+         const imageId = uuidv4();
+         const values = [imageId, item.filename, id];
+         const query = 'INSERT INTO images VALUES (?, ?, ?)';
          con.query(query, values);
       });
    }
 
    const addIcons = (icons, id) => {
-      icons.forEach((item, index, array) => {
-         const values = [item, id];
-         const query = 'INSERT INTO icons VALUES (NULL, ?, ?)';
+      icons.forEach((item) => {
+         const imageId = uuidv4();
+         const values = [imageId, item.filename, id];
+         const query = 'INSERT INTO icons VALUES (?, ?, ?)';
          con.query(query, values);
       });
    }
@@ -59,12 +61,21 @@ con.connect(err => {
       })
    }
 
-   const addAttribute = () => {
-
+   const addAttribute = (attr, val, id) => {
+      const attributeId = uuidv4();
+      const values = [attributeId, id, attr];
+      const query = 'INSERT INTO products_attributes VALUES (?, ?, ?)';
+      con.query(query, values, (err, res) => {
+         addAttributeValues(val, attributeId);
+      });
    }
 
-   const addAttributeValues = (val) => {
-
+   const addAttributeValues = (val, attributeId) => {
+      val.forEach((item) => {
+         const values = [attributeId, item];
+         const query = 'INSERT INTO attributes_values VALUES (?, ?, 0)';
+         con.query(query, values);
+      });
    }
 
    /* ADD PRODUCT */
@@ -90,7 +101,7 @@ con.connect(err => {
       if(files.img5) img5 = files.img5[0].filename;
 
       const values = [id, title, subtitle, price, stock, description, secondDescription, thirdDescription, fourthDescription,
-         img1, img2, img3, img4, img5, recommendation, top, hidden
+         img1, img2, img3, img4, img5, recommendation ? 1 : 0, top ? 1 : 0, hidden ? 1 : 0
       ]
       const query = 'INSERT INTO products VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)';
       con.query(query, values, (err, res) => {
@@ -103,6 +114,9 @@ con.connect(err => {
             }
             if(categories) {
                addCategories(JSON.parse(categories), id);
+            }
+            if(attribute) {
+               addAttribute(attribute, attributeValues.split(','), id);
             }
             response.send({
                result: 1
@@ -261,10 +275,10 @@ con.connect(err => {
 
    /* GET ALL PRODUCTS */
    router.get("/get-all-products", (request, response) => {
-      const query = 'SELECT p.id, p.name, i.file_path as image, p.price, p.date, p.stock_id, COALESCE(c.name, "Brak") as category_name, p.hidden FROM products p ' +
+      const query = 'SELECT p.id, p.name, p.subtitle, p.main_image, p.second_image, p.price, p.stock, p.date, COALESCE(c.name, "Brak") as category_name, p.hidden FROM products p ' +
       'LEFT OUTER JOIN product_categories pc ON pc.product_id = p.id ' +
           'LEFT OUTER JOIN categories c ON c.id = pc.category_id ' +
-      'LEFT OUTER JOIN images i ON p.main_image = i.id GROUP BY p.id ORDER BY p.date DESC';
+      'GROUP BY p.id ORDER BY p.date DESC';
 
       con.query(query, (err, res) => {
          if(res) {

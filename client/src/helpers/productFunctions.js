@@ -3,12 +3,11 @@ import settings from "./settings";
 import { convertToRaw } from 'draft-js';
 const { API_URL } = settings;
 
-const addProduct = (title, subtitle, price, stock, attribute, attributeValues,
+const addProduct = (formData, title, subtitle, price, stock, attribute, attributeValues,
                     description, secondDescription, thirdDescription, fourthDescription,
                     img, img2, img3, img4, img5,
-                    gallery, icons, categories, recommendation, top, hidden) => {
+                    categories, recommendation, top, hidden) => {
     const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-    let formData = new FormData();
     formData.append('title', title);
     formData.append('subtitle', subtitle);
     formData.append('price', price);
@@ -24,14 +23,11 @@ const addProduct = (title, subtitle, price, stock, attribute, attributeValues,
     formData.append('img3', img3?.file);
     formData.append('img4', img4?.file);
     formData.append('img5', img5?.file);
-    formData.append('gallery', gallery);
-    formData.append('icons', icons);
     formData.append('description', description ? JSON.stringify(convertToRaw(description?.getCurrentContent())) : '');
     formData.append('secondDescription', secondDescription ? JSON.stringify(convertToRaw(secondDescription?.getCurrentContent())) : '');
     formData.append('thirdDescription', thirdDescription ? JSON.stringify(convertToRaw(thirdDescription?.getCurrentContent())) : '');
     formData.append('fourthDescription', fourthDescription ? JSON.stringify(convertToRaw(fourthDescription?.getCurrentContent())) : '');
 
-    console.log('send');
     return axios.post(`${API_URL}/product/add-product`, formData, config);
 }
 

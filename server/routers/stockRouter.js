@@ -169,7 +169,7 @@ con.connect(err => {
        const { id } = request.body;
 
        const values = [id];
-       const query = 'SELECT * FROM products_stock ps JOIN products p ON ps.id = p.stock_id WHERE p.id = ?';
+       const query = 'SELECT stock FROM products WHERE id = ?';
        con.query(query, values, (err, res) => {
           if(res) {
               response.send({

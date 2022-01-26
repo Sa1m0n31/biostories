@@ -22,4 +22,28 @@ const closeCart = () => {
     }, 200);
 }
 
-export { openCart, closeCart }
+const openMenu = () => {
+    const menu = document.querySelector('.menu');
+    const menuChildren = Array.from(document.querySelectorAll('.menu>*'));
+
+    menu.style.transform = 'scaleX(1)';
+    setTimeout(() => {
+        menuChildren.forEach((item) => {
+            item.style.opacity = '1';
+        });
+    }, 200);
+}
+
+const closeMenu = () => {
+    const menu = document.querySelector('.menu');
+    const menuChildren = Array.from(document.querySelectorAll('.menu>*'));
+
+    menuChildren.forEach((item) => {
+        item.style.opacity = '0';
+    });
+    setTimeout(() => {
+        menu.style.transform = 'scaleX(0)';
+    }, 200);
+}
+
+export { openCart, closeCart, openMenu, closeMenu }

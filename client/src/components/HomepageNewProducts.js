@@ -23,6 +23,7 @@ const HomepageNewProducts = () => {
             {products.map((item, index) => {
                 return <ProductPreview
                     key={index}
+                    id={item.id}
                     title={item.title}
                     subtitle={item.subtitle}
                     price={item.price}

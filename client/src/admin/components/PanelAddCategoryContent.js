@@ -112,39 +112,48 @@ const PanelAddCategoryContent = () => {
 
     const resetFields = () => {
         setName("");
-        setParentId(null);
         setPriority(0);
         setHidden(false);
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if(update) {
-            updateCategory(id, name, parentId, priority, hidden)
-                .then((res) => {
-                    if(res?.data?.result) {
-                        setResponse("Kategoria została zaktualizowana");
-                        setStatus(1);
-                    }
-                    else {
-                        setResponse("Wystąpił błąd. Prosimy spróbować później");
-                        setStatus(0);
-                    }
-                });
-        }
-        else {
-            addCategory(name, parentId, priority, hidden)
-                .then((res) => {
-                    if(res?.data?.result) {
-                        setResponse("Kategoria została dodana");
-                        setStatus(1);
-                    }
-                    else {
-                        setResponse("Wystąpił błąd. Prosimy spróbować później");
-                        setStatus(0);
-                    }
-                    resetFields();
-                });
+        if(name) {
+            if(update) {
+                updateCategory(id, name, parentId, priority, hidden)
+                    .then((res) => {
+                        if(res?.data?.result) {
+                            setResponse("Kategoria została zaktualizowana");
+                            setStatus(1);
+                        }
+                        else {
+                            setResponse("Wystąpił błąd. Prosimy spróbować później");
+                            setStatus(0);
+                        }
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                    });
+            }
+            else {
+                addCategory(name, parentId, priority, hidden)
+                    .then((res) => {
+                        if(res?.data?.result) {
+                            setResponse("Kategoria została dodana");
+                            setStatus(1);
+                        }
+                        else {
+                            setResponse("Wystąpił błąd. Prosimy spróbować później");
+                            setStatus(0);
+                        }
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                        resetFields();
+                    });
+            }
         }
     }
 

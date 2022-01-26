@@ -15,4 +15,10 @@ const getCategoryById = (id) => {
     return axios.post(`${API_URL}/category/get-category-by-id`, { id });
 }
 
-export  { getAllCategories, getCategoryByName, getCategoryById }
+const getCategoryBySlug = (slug, parent) => {
+    return axios.post(`${API_URL}/category/get-category-by-slug`, {
+        slug, parent
+    });
+}
+
+export  { getAllCategories, getCategoryByName, getCategoryById, getCategoryBySlug }
