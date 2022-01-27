@@ -7,16 +7,23 @@ import {CartContext} from "../App";
 import {getProductStock} from "../admin/helpers/stockFunctions";
 import settings from "../helpers/settings";
 
-const Cart = () => {
+const Cart = ({deliveryProp}) => {
     const { cartContent, editCart, removeFromCart } = useContext(CartContext);
 
     const [sum, setSum] = useState(0);
     const [remove, setRemove] = useState(false);
     const [currentCart, setCurrentCart] = useState(cartContent);
+    const [delivery, setDelivery] = useState(0);
 
     useEffect(() => {
         calculateCartSum();
     }, []);
+
+    useEffect(() => {
+        if(deliveryProp) {
+            setDelivery(deliveryProp);
+        }
+    }, [deliveryProp]);
 
     useEffect(() => {
         setCurrentCart(cartContent);
@@ -100,7 +107,7 @@ const Cart = () => {
             Twoje zakupy
         </h3>
         <div>
-            {currentCart?.map((item, index) => {
+            {currentCart?.length ? currentCart?.map((item, index) => {
                 return <div className="cart__item flex" key={index}>
                     <div className="cart__item__firstCol flex">
                         <figure className="cart__item__imgWrapper">
@@ -125,20 +132,46 @@ const Cart = () => {
                         {item.price} zł
                     </h3>
                 </div>
-            })}
+            }) : <div className="emptyCart emptyCart--right">
+                <h3 className="emptyCart__header">
+                    Twój koszyk jest pusty
+                </h3>
+            </div>}
         </div>
-        <div className="cart__sum flex">
-            <h4>
-                Łączna wartość zamówienia
-            </h4>
-            <h5>
-                {sum} PLN
-            </h5>
+       <div className={currentCart?.length ? "cart__sumWrapper" : "hidden"}>
+            <div className="cart__sum cart__sum--noBorder flex">
+                <h4>
+                    Wartość koszyka
+                </h4>
+                <h5>
+                    {sum} PLN
+                </h5>
+            </div>
+            <div className="cart__sum cart__sum--noBorder flex">
+                <h4>
+                    Dostawa
+                </h4>
+                <h5>
+                    {delivery} PLN
+                </h5>
+            </div>
+            <div className="cart__sum flex">
+                <h4>
+                    Łączna wartość zamówienia
+                </h4>
+                <h5>
+                    {sum + delivery} PLN
+                </h5>
+            </div>
+            <a className="btn btn--cart" href="/zakupy">
+                Przejdź dalej
+                <img className="icon" src={arrowIcon} alt="dalej" />
+            </a>
+            <a className="btn btn--cart btn--payment" href="/zakupy">
+                Zamawiam i płacę
+                <img className="icon" src={arrowIcon} alt="dalej" />
+            </a>
         </div>
-        <a className="btn btn--cart" href="/zakupy">
-            Przejdź dalej
-            <img className="icon" src={arrowIcon} alt="dalej" />
-        </a>
     </div>
 };
 

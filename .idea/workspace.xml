@@ -23,38 +23,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5c6c6bf9-cdea-4d8b-acfa-3e7b5a5ddcfa" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/client/src/components/Menu.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/pages/CartPage.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/pages/DeliveryDataPage.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/pages/ShippingAndPayment.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/pages/Shop.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/components/GeolocationWidget.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/admin/components/AddProductContent.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/admin/components/AddProductContent.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/admin/components/PanelAddCategoryContent.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/admin/components/PanelAddCategoryContent.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/admin/components/PanelProductsContent.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/admin/components/PanelProductsContent.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/public/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/components/Cart.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/Cart.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/Header.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/HomepageFirstRow.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/HomepageFirstRow.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/HomepageNewProducts.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/HomepageNewProducts.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/HomepagePopular.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/HomepagePopular.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/ProductPreview.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/ProductPreview.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/helpers/categoryFunctions.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/helpers/categoryFunctions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/helpers/others.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/helpers/others.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/helpers/productFunctions.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/helpers/productFunctions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/static/style/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/static/style/admin.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/CartPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/CartPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/DeliveryDataPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/DeliveryDataPage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/ShippingAndPayment.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/ShippingAndPayment.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/static/style/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/static/style/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/media/products/34cc6e3ee75525f4379dcee48a09bd69" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/media/products/34e6b4ca1a633208c953ccebe09c5a69" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/media/products/58191006ada7369fc8f5edcf66e09d15" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/media/products/6d323f974fa10c1f5454151c15ec2078" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/media/products/94999a19249de86596e55965f735292d" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/media/products/a068857526652973da4c07aa779f69f1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/media/products/b295c72a83144924c175f0915dabcf55" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/media/products/e7e76a124babf4e1ca227e9daea492b4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/media/products/f71f1b9480aa1e2df77288af3874cc35" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/routers/productRouter.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/routers/productRouter.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/routers/stockRouter.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/routers/stockRouter.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -109,7 +85,7 @@
       <workItem from="1642885926410" duration="14938000" />
       <workItem from="1642951841469" duration="2230000" />
       <workItem from="1642970745869" duration="25024000" />
-      <workItem from="1643110471256" duration="23385000" />
+      <workItem from="1643110471256" duration="28884000" />
     </task>
     <servers />
   </component>
@@ -151,10 +127,10 @@
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
     <state x="-1304" y="240" key="run.anything.popup/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1642215197562" />
-    <state x="-1297" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1643228896917">
+    <state x="-1297" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1643251969232">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1297" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1643228896917" />
+    <state x="-1297" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1536.824/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1643251969232" />
     <state x="-1297" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1642952568797" />
   </component>
 </project>
