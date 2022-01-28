@@ -14,7 +14,7 @@ import settings from "../helpers/settings";
 const OrderDetailsContent = () => {
     const location = useLocation();
 
-    const [id, setId] = useState(0);
+    const [id, setId] = useState('');
     const [cart, setCart] = useState([1]);
     const [sum, setSum] = useState(0);
     const [modal, setModal] = useState(false);
@@ -29,7 +29,7 @@ const OrderDetailsContent = () => {
 
     useEffect(() => {
         /* Get order id from url string */
-        const id = parseInt(new URLSearchParams(location.search).get("id"));
+        const id = new URLSearchParams(location.search).get("id");
 
         if(!id) window.location = "/panel";
         setId(id);
@@ -37,6 +37,7 @@ const OrderDetailsContent = () => {
         /* Get order info */
         getOrderDetails(id)
             .then(res => {
+                console.log(res?.data?.result);
                if(res?.data?.result?.length) {
                    setCart(res.data.result);
                    setOrderStatus(res.data.result[0].order_status);
@@ -146,7 +147,7 @@ const OrderDetailsContent = () => {
 
         <header className="panelContent__header">
             <h1 className="panelContent__header__h">
-                Szczegóły zamówienia #{id}
+                Szczegóły zamówienia #{id.substring(0, 6)}
             </h1>
         </header>
 
@@ -157,7 +158,7 @@ const OrderDetailsContent = () => {
                         Zawartość koszyka
                     </h2>
 
-                    <section className="panelContent__buttons">
+                    <section className="panelContent__buttons panelContent__buttons--orderDetails">
                         <button className="panelContent__btn btn--neutral">
                             <a className="button--link" href="/panel/zamowienia">
                                 Wróć do zamówień
@@ -189,6 +190,9 @@ const OrderDetailsContent = () => {
                         </section>
                     })}
                 </main>
+                <h4 className="panelContent__cart__summary">
+                    <span>Rabat:</span> {cart[0].discount} PLN
+                </h4>
                 <h4 className="panelContent__cart__summary">
                     <span>Cena zamówienia (po rabacie):</span> {cart[0].order_price} PLN
                 </h4>
@@ -222,7 +226,7 @@ const OrderDetailsContent = () => {
                     </main> : ""}
 
                     {cart?.length ? <section className="panelContent__orderStatus">
-                        <h2 className="panelContent__orderStatus__header">
+                        <h2 className="panelContent__orderStatus__header flex">
                             Opłacone:
                             <img className="panelContent__orderStatus__img" src={(cart[0].payment_status?.toLowerCase() === "opłacone" && payClicked !== 0) || payClicked === 1 ? tick : x} alt="oplacone" />
                             {(cart[0].payment_status?.toLowerCase() === "opłacone" && payClicked !== 0) || payClicked === 1 ? <button onClick={() => { payOrder(0, cart[0].id); setPayClicked(0); }}>
@@ -231,10 +235,10 @@ const OrderDetailsContent = () => {
                                 Oznacz jako opłacone
                             </button>}
                         </h2>
-                        <h2 className="panelContent__orderStatus__header">
-                            Faktura VAT:
-                            <img className="panelContent__orderStatus__img" src={cart[0].company_name ? tick : x} alt="faktura-vat" />
-                        </h2>
+                        {/*<h2 className="panelContent__orderStatus__header">*/}
+                        {/*    Faktura VAT:*/}
+                        {/*    <img className="panelContent__orderStatus__img" src={cart[0].company_name ? tick : x} alt="faktura-vat" />*/}
+                        {/*</h2>*/}
                     </section> : ""}
                 </section>
 
@@ -269,13 +273,6 @@ const OrderDetailsContent = () => {
                     </address> : "" }
 
                     <h2 className="panelContent__header--smaller mt-3">
-                        Numer listu przewozowego:
-                        <input className="panelContent__input panelContent__input--letterNumber"
-                               value={letterNumber}
-                               onChange={(e) => { setLetterNumber(e.target.value); }} />
-                    </h2>
-
-                    <h2 className="panelContent__header--smaller mt-3">
                         Status zamówienia:
                         <select className="panelContent__select"
                                 onChange={e => { setOrderStatus(e.target.value); }}
@@ -284,13 +281,6 @@ const OrderDetailsContent = () => {
                             <option value="przyjęte do realizacji">przyjęte do realizacji</option>
                             <option value="zrealizowane">zrealizowane</option>
                         </select>
-                    </h2>
-
-                    <h2 className="panelContent__header--smaller panelContent__header--smaller--adminComment mt-3">
-                        Twój komentarz:
-                        <textarea className="panelContent__input panelContent__input--adminComment"
-                               value={adminComment}
-                               onChange={(e) => { setAdminComment(e.target.value); }} />
                     </h2>
 
                     {orderUpdated === -1 ? <button className="panelContent__editOrderBtn" onClick={() => { changeOrderStatus(); }}>

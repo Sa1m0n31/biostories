@@ -34,10 +34,11 @@ const SingleProduct = () => {
                 const result = res.data?.result;
                 if(result) {
                     const productInfo = result[0];
+                    console.log(productInfo);
                     if(productInfo.description) setDesc1(stateToHTML((convertFromRaw(JSON.parse(productInfo.description)))));
-                    if(productInfo.second_description) setDesc2(stateToHTML((convertFromRaw(JSON.parse(productInfo.second_description)))));
-                    if(productInfo.third_description) setDesc3(stateToHTML((convertFromRaw(JSON.parse(productInfo.third_description)))));
-                    if(productInfo.fourth_description) setDesc4(stateToHTML((convertFromRaw(JSON.parse(productInfo.fourth_description)))));
+                    if(productInfo.second_description && productInfo.second_description !== '0') setDesc2(stateToHTML((convertFromRaw(JSON.parse(productInfo.second_description)))));
+                    if(productInfo.third_description && productInfo.third_description !== '0') setDesc3(stateToHTML((convertFromRaw(JSON.parse(productInfo.third_description)))));
+                    if(productInfo.fourth_description && productInfo.fourth_description !== '0') setDesc4(stateToHTML((convertFromRaw(JSON.parse(productInfo.fourth_description)))));
 
                     setProduct(productInfo);
 

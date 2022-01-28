@@ -133,16 +133,7 @@ const PanelOrdersContent = () => {
                                     Id
                                 </h4>
                                 <h3 className="panelContent__column__value">
-                                    {item.id}
-                                </h3>
-                            </section>
-
-                            <section className="panelContent__column">
-                                <h4 className="panelContent__column__label">
-                                    Adres email
-                                </h4>
-                                <h3 className="panelContent__column__value">
-                                    {item.email}
+                                    #{item.id.substring(0, 6)}
                                 </h3>
                             </section>
 
@@ -179,24 +170,6 @@ const PanelOrdersContent = () => {
                                     <span className={item.order_status.toLowerCase() === "zrealizowane" ? "panelContent__column__status status--positive" : "panelContent__column__status status--negative"}>
                                 {item.order_status}
                             </span>
-                                </h3>
-                            </section>
-
-                            <section className="panelContent__column">
-                                <h4 className="panelContent__column__label">
-                                    Nr listu przewozowego
-                                </h4>
-                                <h3 className="panelContent__column__value">
-                                    {item.letter_number ? item.letter_number : ""}
-                                </h3>
-                            </section>
-
-                            <section className="panelContent__column">
-                                <h4 className="panelContent__column__label">
-                                    Komentarz
-                                </h4>
-                                <h3 className="panelContent__column__value">
-                                    {item.admin_comment ? item.admin_comment : "BRAK"}
                                 </h3>
                             </section>
 

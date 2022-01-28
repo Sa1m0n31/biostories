@@ -10,22 +10,28 @@ import GeolocationWidget from "../components/GeolocationWidget";
 import locationIcon from '../static/assets/location-icon.svg'
 import {getAllCoupons} from "../admin/helpers/couponFunctions";
 import tickIcon from '../static/img/tick-sign.svg'
+import auth from "../admin/helpers/auth";
+import {getUserData} from "../helpers/userFunctions";
+import { v4 as uuidv4 } from 'uuid';
+import axios from "axios";
+import settings from "../helpers/settings";
 
 const ShippingAndPayment = () => {
     const [shippingMethods, setShippingMethods] = useState([]);
     const [paymentMethods, setPaymentMethods] = useState([]);
-
+    const [shippingIndex, setShippingIndex] = useState(null);
     const [shipping, setShipping] = useState(null);
     const [payment, setPayment] = useState(null);
     const [code, setCode] = useState('');
     const [codes, setCodes] = useState([]);
-
+    const [toPay, setToPay] = useState(0);
     const [inPostAddress, setInPostAddress] = useState("");
     const [inPostCode, setInPostCode] = useState("");
     const [inPostCity, setInPostCity] = useState("");
     const [inPostModal, setInPostModal] = useState(false);
     const [codeUpdated, setCodeUpdated] = useState(false);
     const [codeVerified, setCodeVerified] = useState(false);
+    const [fullDiscount, setFullDiscount] = useState(0);
 
     useEffect(() => {
         openCart();
@@ -83,7 +89,7 @@ const ShippingAndPayment = () => {
     }, [inPostModal]);
 
     useEffect(() => {
-        if(shipping === 0) {
+        if(shippingIndex === 0) {
             /* Paczkomaty */
             document.querySelector(".bigModal").style.display = "block";
             document.querySelector(".bigModal").style.opacity = "1";
@@ -103,7 +109,118 @@ const ShippingAndPayment = () => {
         const building = localStorage.getItem('building');
         const flat = localStorage.getItem('flat');
 
-        
+        getUserData()
+            .then((res) => {
+                const result = res?.data?.result;
+                let sessionId = uuidv4();
+                let formData;
+                if(result) {
+                    formData = {
+                        paymentMethod: payment+1,
+                        shippingMethod: shipping,
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
+                        phoneNumber: phoneNumber,
+                        city: city,
+                        street: street,
+                        building: building,
+                        flat: flat,
+                        postalCode: postalCode,
+                        user: result.id,
+                        sessionId: sessionId,
+                        amount: toPay,
+                        inPostName: sessionStorage.getItem('paczkomat-id'),
+                        inPostAddress: sessionStorage.getItem('paczkomat-adres'),
+                        inPostCode: sessionStorage.getItem('paczkomat-kod'),
+                        inPostCity: sessionStorage.getItem('paczkomat-miasto'),
+                        discount: fullDiscount
+                    }
+                }
+                else {
+                    formData = {
+                        paymentMethod: payment+1,
+                        shippingMethod: shipping,
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
+                        phoneNumber: phoneNumber,
+                        city: city,
+                        street: street,
+                        building: building,
+                        flat: flat,
+                        postalCode: postalCode,
+                        sessionId: sessionId,
+                        amount: toPay,
+                        inPostName: sessionStorage.getItem('paczkomat-id'),
+                        inPostAddress: sessionStorage.getItem('paczkomat-adres'),
+                        inPostCode: sessionStorage.getItem('paczkomat-kod'),
+                        inPostCity: sessionStorage.getItem('paczkomat-miasto'),
+                        discount: fullDiscount
+                    }
+                }
+
+                axios.post(`${settings.API_URL}/order/add`, formData)
+                    .then(res => {
+                        const orderId = res.data.result;
+
+                        if(orderId) {
+                            /* Add sells */
+                            const cart = JSON.parse(localStorage.getItem('hideisland-cart'));
+                            cart?.forEach((item, cartIndex, cartArray) => {
+                                /* Add sells */
+                                axios.post(`${settings.API_URL}/order/add-sell`, {
+                                    orderId,
+                                    productId: item.id,
+                                    attributeName: item.attribute,
+                                    attributeValue: item.attributeValue,
+                                    quantity: item.amount,
+                                    paymentMethod: payment
+                                })
+                                    .then(res => {
+                                        if(cartIndex === cartArray.length-1) {
+                                            if(payment === 2 || payment === 1) {
+                                                /* COD or standard transfer */
+                                                localStorage.setItem('hideisland-ty', 'true');
+                                                window.location = "/dziekujemy";
+
+                                                /* Remove cart from local storage */
+                                                localStorage.removeItem('hideisland-cart');
+                                            }
+                                            else {
+                                                /* PAYMENT PROCESS */
+                                                alert(toPay.toFixed(2));
+                                                let paymentUri = "https://sandbox.przelewy24.pl/trnRequest/";
+
+                                                axios.post(`${settings.API_URL}/payment/payment`, {
+                                                    sessionId,
+                                                    email: email,
+                                                    amount: Math.round(toPay.toFixed(2) * 100)
+                                                })
+                                                    .then(res => {
+                                                        /* Remove cart from local storage */
+                                                        localStorage.removeItem('hideisland-cart');
+
+                                                        const token = res.data.result;
+                                                        window.location.href = `${paymentUri}${token}`;
+                                                    });
+                                            }
+
+                                            axios.post(`${settings.API_URL}/order/send-order-info`, {
+                                                orderId
+                                            })
+                                                .then((res) => {
+                                                    console.log("order info sended");
+                                                });
+                                        }
+                                    });
+                            });
+                        }
+                        else {
+                            window.location = "/";
+                        }
+                });
+            });
     }
 
     return <div className="container container--deliveryData container--sAndP">
@@ -142,9 +259,9 @@ const ShippingAndPayment = () => {
                     Wybierz sposób dostawy
                 </h2>
                 {shippingMethods?.map((item, index) => {
-                    return <label className="label--check label--check--delivery">
-                        <button className={shipping === index ? "checkBtn checkBtn--checked" : "checkBtn" }
-                                onClick={() => { setShipping(index); }}>
+                    return <label className="label--check label--check--delivery" key={index}>
+                        <button className={shipping === item.id ? "checkBtn checkBtn--checked" : "checkBtn" }
+                                onClick={() => { setShipping(item.id); setShippingIndex(index); }}>
                             <img src={checkIcon} alt="tak" />
                         </button>
                         <span className="label__deliveryBlock">
@@ -156,7 +273,7 @@ const ShippingAndPayment = () => {
                                     {item.price} zł
                                 </h5>
                             </div>
-                            {index === 0 && shipping === 0 ? <address className="inPostAddress">
+                            {index === 0 && shipping === item.id ? <address className="inPostAddress">
                                 <img className="locationIcon" src={locationIcon} alt="lokalizacja" />
                                 <span>
                                     {inPostAddress} <br/>
@@ -248,11 +365,13 @@ const ShippingAndPayment = () => {
                 </div>
             </main>
         </main>
-        <Cart deliveryProp={shipping || shipping === 0 ? shippingMethods[shipping].price : 0}
+        <Cart deliveryProp={shipping || shipping === 0 ? shippingMethods[shippingIndex].price : 0}
               addOrder={addOrder}
               code={code}
               codes={codes}
               codeUpdated={codeUpdated}
+              setToPay={setToPay}
+              setFullDiscount={setFullDiscount}
               setCodeVerified={setCodeVerified}
         />
     </div>

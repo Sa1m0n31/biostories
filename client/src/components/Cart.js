@@ -8,7 +8,7 @@ import {getProductStock} from "../admin/helpers/stockFunctions";
 import settings from "../helpers/settings";
 import auth from "../admin/helpers/auth";
 
-const Cart = ({deliveryProp, addOrder, codes, code, codeUpdated, setCodeVerified}) => {
+const Cart = ({deliveryProp, addOrder, codes, code, codeUpdated, setCodeVerified, setFullDiscount, setToPay}) => {
     const { cartContent, editCart, removeFromCart } = useContext(CartContext);
 
     const [sum, setSum] = useState(0);
@@ -34,7 +34,7 @@ const Cart = ({deliveryProp, addOrder, codes, code, codeUpdated, setCodeVerified
     }, []);
 
     useEffect(() => {
-        verifyCode();
+        if(codeUpdated) verifyCode();
     }, [codeUpdated, currentCart]);
 
     useEffect(() => {
@@ -129,6 +129,7 @@ const Cart = ({deliveryProp, addOrder, codes, code, codeUpdated, setCodeVerified
                 setAmount(Math.round(sum - sum * (coupon.percent / 100)));
                 setDiscount("-" + coupon.percent + "%");
                 setDiscountInPLN(Math.round(sum * (coupon.percent / 100)));
+                setFullDiscount(Math.round(sum * (coupon.percent / 100)));
             }
             else if(coupon.amount) {
                 setCodeVerified(true);
@@ -136,6 +137,7 @@ const Cart = ({deliveryProp, addOrder, codes, code, codeUpdated, setCodeVerified
                 setAmount(sum - coupon.amount);
                 setDiscount("-" + coupon.amount + " PLN");
                 setDiscountInPLN(coupon.amount);
+                setFullDiscount(coupon.amount);
             }
             else {
                 setCodeVerified(false);
@@ -143,6 +145,10 @@ const Cart = ({deliveryProp, addOrder, codes, code, codeUpdated, setCodeVerified
             }
         }
     }
+
+    useEffect(() => {
+        if(setToPay) setToPay(sum+delivery-discountInPLN);
+    }, [sum, delivery, discountInPLN]);
 
     return <div className="cart">
         <button className="cart__close" onClick={() => { closeCart(); }}>

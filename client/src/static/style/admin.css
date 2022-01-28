@@ -707,6 +707,7 @@ input[type=file] {
 }
 
 /* Panel - categories */
+.panelContent__contentWrapper,
 .panelContent__frame {
     background: #fff;
     padding: 25px;
@@ -962,9 +963,14 @@ input[type=file] {
     font-size: 15px;
     font-weight: 400;
     border: 1px solid #000;
-    padding: 20px;
+    padding: 0 20px;
     color: #757575;
     margin: 8px 0;
+    height: 40px;
+    border-radius: 40px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 .w-100 {
@@ -990,11 +996,12 @@ input[type=file] {
 .panelContent__orderStatus__header {
     margin-top: 30px;
     font-size: 20px;
+    justify-content: flex-start;
 }
 
 .panelContent__orderStatus__img {
-    margin-left: 20px;
-    width: 30px;
+    margin-left: 10px;
+    width: 20px;
     height: auto;
 }
 
@@ -1050,6 +1057,11 @@ input[type=file] {
     justify-content: center;
     align-items: center;
     padding: 5px 10px;
+}
+
+.panelContent__buttons--orderDetails .panelContent__btn {
+    height: 35px;
+    padding: 10px 15px;
 }
 
 .product__fileInput {
@@ -1237,18 +1249,6 @@ input[type=file] {
 /* Modifications */
 .d-flex > .addProduct__input {
     width: 47%;
-}
-
-.panelContent__cart__column,
-.panelContent__data
-
-{
-    color: #fff;
-    border-color: #fff;
-}
-
-.panelContent__orderStatus__img {
-    filter: brightness(0) invert(1);
 }
 
 .inPost__address__header {
@@ -1470,14 +1470,22 @@ input[type=file] {
     margin-top: 25px;
 }
 
-.panelContent__orderStatus__header button {
-    padding: 5px 10px;
-    background: var(--black-primary);
-    color: #fff;
+.panelContent__orderStatus__header {
+    justify-content: flex-start !important;
     font-size: 15px;
+}
+
+.panelContent__orderStatus__header button {
+    padding: 5px 20px;
+    background: var(--main);
+    color: #fff;
+    font-size: 13px;
     text-transform: uppercase;
     border: 1px solid #fff;
     margin-left: 25px;
+    height: 35px;
+    border-radius: 40px;
+    cursor: pointer;
 }
 
 .panelContent--addOrder__header {

@@ -52,8 +52,7 @@ con.connect(err => {
             let crc = res[0].crc;
             let marchantId = res[0].marchant_id;
 
-            console.log(crc);
-            console.log(marchantId);
+            console.log(request.body.amount);
 
             let hash, data, gen_hash;
             hash = crypto.createHash('sha384');
@@ -65,39 +64,32 @@ con.connect(err => {
                 sessionId: sessionId,
                 posId: marchantId,
                 merchantId: marchantId,
-                amount: parseFloat(request.body.amount) * 100,
+                amount: parseFloat(request.body.amount),
                 currency: "PLN",
                 description: "Platnosc za zakupy w sklepie HideIsland",
                 email: request.body.email,
                 country: "PL",
                 language: "pl",
-                urlReturn: "https://hideisland.pl/dziekujemy",
-                urlStatus: "https://hideisland.pl/payment/verify",
+                urlReturn: `${process.env.API_URL}/dziekujemy`,
+                urlStatus: `${process.env.API_URL}/payment/verify`,
                 sign: gen_hash
             };
+
+            console.log(postData);
 
             // console.log(postData);
             let responseToClient;
 
             /* FIRST STEP - REGISTER */
-            got.post("https://secure.przelewy24.pl/api/v1/transaction/register", {
+            got.post("https://sandbox.przelewy24.pl/api/v1/transaction/register", {
                 json: postData,
                 responseType: 'json',
                 headers: {
-                    'Authorization': 'Basic MTUyMTE1Ojk5NDQyZmQ3MmQyNzQ3MjE0MDcxNmQwYTlhNDlkMDcw'
+                    'Authorization': 'Basic MTM4MzU0OjU0Nzg2ZGJiOWZmYTY2MzgwOGZmNGExNWRiMzI3MTNm'
                 }
             })
                 .then(res => {
                     responseToClient = res.body.data.token;
-                    // if(res.body.data.token) {
-                        /* TMP */
-                        // const query = 'UPDATE orders SET payment_status = "opłacone" WHERE id = (SELECT id FROM orders ORDER BY date DESC LIMIT 1)';
-                        // con.query(query, (err, res) => {
-                        //     console.log("UPDATING PAYMENT STATUS");
-                        //     console.log(err);
-                        // });
-                    // }
-
                     response.send({
                         result: responseToClient
                     });
@@ -118,6 +110,8 @@ con.connect(err => {
         let currency = request.body.currency;
         let orderId = request.body.orderId;
 
+        console.log('verify');
+
         /* Get data */
         const query = 'SELECT * FROM przelewy24 WHERE id = 1';
         con.query(query, (err, res) => {
@@ -129,7 +123,7 @@ con.connect(err => {
             data = hash.update(`{"sessionId":"${sessionId}","orderId":${orderId},"amount":${amount},"currency":"PLN","crc":"${crc}"}`, 'utf-8');
             gen_hash= data.digest('hex');
 
-            got.put("https://secure.przelewy24.pl/api/v1/transaction/verify", {
+            got.put("https://sandbox.przelewy24.pl/api/v1/transaction/verify", {
                 json: {
                     merchantId,
                     posId,
@@ -141,7 +135,7 @@ con.connect(err => {
                 },
                 responseType: 'json',
                 headers: {
-                    'Authorization': 'Basic MTUyMTE1Ojk5NDQyZmQ3MmQyNzQ3MjE0MDcxNmQwYTlhNDlkMDcw' // tmp
+                    'Authorization': 'Basic MTM4MzU0OjU0Nzg2ZGJiOWZmYTY2MzgwOGZmNGExNWRiMzI3MTNm' // tmp
                 }
             })
                 .then(res => {
@@ -160,7 +154,7 @@ con.connect(err => {
                             if(res) {
                                 if(res) {
                                     JSON.parse(JSON.stringify(res)).forEach(item => {
-                                         decrementStock(item.product_id, item.size, item.quantity);
+                                         decrementStock(item.product_id, item.quantity);
                                     });
                                 }
                             }
@@ -182,19 +176,10 @@ con.connect(err => {
         });
     });
 
-    const decrementStock = (productId, size, quantity) => {
-        const values = [quantity, productId, size];
-        const query1 = 'UPDATE products_stock ps JOIN products p ON ps.id = p.stock_id SET ps.size_1_stock = ps.size_1_stock - ? WHERE p.id = ? AND size_1_name = ?'
-        const query2 = 'UPDATE products_stock ps JOIN products p ON ps.id = p.stock_id SET ps.size_2_stock = ps.size_2_stock - ? WHERE p.id = ? AND size_2_name = ?'
-        const query3 = 'UPDATE products_stock ps JOIN products p ON ps.id = p.stock_id SET ps.size_3_stock = ps.size_3_stock - ? WHERE p.id = ? AND size_3_name = ?'
-        const query4 = 'UPDATE products_stock ps JOIN products p ON ps.id = p.stock_id SET ps.size_4_stock = ps.size_4_stock - ? WHERE p.id = ? AND size_4_name = ?'
-        const query5 = 'UPDATE products_stock ps JOIN products p ON ps.id = p.stock_id SET ps.size_5_stock = ps.size_5_stock - ? WHERE p.id = ? AND size_5_name = ?'
-
-        con.query(query1, values);
-        con.query(query2, values);
-        con.query(query3, values);
-        con.query(query4, values);
-        con.query(query5, values);
+    const decrementStock = (productId, quantity) => {
+        const values = [quantity, productId];
+        const query = 'UPDATE products SET stock = stock - ? WHERE id = ?'
+        con.query(query, values);
     }
 });
 

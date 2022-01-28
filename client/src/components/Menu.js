@@ -16,21 +16,23 @@ const Menu = () => {
     }, []);
 
     useEffect(() => {
-        const parents = categories.filter((item) => {
-            return !item.parent_name;
-        });
-        let childrenArrays = [];
-        parents.forEach((item) => {
-           childrenArrays.push(categories.filter((itemChild) => {
-               return itemChild.parent_name === item.name;
-           }));
-        });
-        setCategoryList(parents.map((item, index) => {
-            return {
-                parent: item,
-                children: childrenArrays[index]
-            }
-        }));
+        if(categories) {
+            const parents = categories.filter((item) => {
+                return !item.parent_name;
+            });
+            let childrenArrays = [];
+            parents.forEach((item) => {
+                childrenArrays.push(categories.filter((itemChild) => {
+                    return itemChild.parent_name === item.name;
+                }));
+            });
+            setCategoryList(parents.map((item, index) => {
+                return {
+                    parent: item,
+                    children: childrenArrays[index]
+                }
+            }));
+        }
     }, [categories]);
 
     return <div className="menu">

@@ -338,6 +338,68 @@ con.connect(err => {
       });
    });
 
+   router.get('/get-new', (request, response) => {
+      const query = 'SELECT p.id, p.name, p.subtitle, p.main_image, p.second_image, p.price, p.stock, p.date, COALESCE(c.name, "Brak") as category_name, p.hidden FROM products p ' +
+          'LEFT OUTER JOIN product_categories pc ON pc.product_id = p.id ' +
+          'LEFT OUTER JOIN categories c ON c.id = pc.category_id ' +
+          'GROUP BY p.id ORDER BY p.date DESC LIMIT 4';
+
+      con.query(query, (err, res) => {
+         if(res) {
+            response.send({
+               result: res
+            });
+         }
+         else {
+            response.send({
+               result: null
+            });
+         }
+      });
+   });
+
+   router.get('/get-top-products', (request, response) => {
+      const query = 'SELECT p.id, p.name, p.subtitle, p.main_image, p.second_image, p.price, p.stock, p.date, COALESCE(c.name, "Brak") as category_name, p.hidden FROM products p ' +
+          'LEFT OUTER JOIN product_categories pc ON pc.product_id = p.id ' +
+          'LEFT OUTER JOIN categories c ON c.id = pc.category_id ' +
+          'WHERE p.top = 1 GROUP BY p.id ORDER BY p.date DESC LIMIT 4';
+
+      con.query(query, (err, res) => {
+         if(res) {
+            response.send({
+               result: res
+            });
+         }
+         else {
+            response.send({
+               result: null
+            });
+         }
+      });
+   });
+
+   router.get('/get-popular', (request, response) => {
+      const query = 'SELECT p.id, p.name, p.subtitle, p.main_image, p.second_image, p.price, p.stock, p.date, COALESCE(c.name, "Brak") as category_name, p.hidden FROM products p ' +
+          'LEFT OUTER JOIN product_categories pc ON pc.product_id = p.id ' +
+          'LEFT OUTER JOIN categories c ON c.id = pc.category_id ' +
+          'LEFT OUTER JOIN sells s ON s.product_id = p.id ' +
+          'LEFT OUTER JOIN orders o ON o.id = s.order_id ' +
+          'GROUP BY p.id ORDER BY o.date DESC LIMIT 4';
+
+      con.query(query, (err, res) => {
+         if(res) {
+            response.send({
+               result: res
+            });
+         }
+         else {
+            response.send({
+               result: null
+            });
+         }
+      });
+   });
+
    /* GET IMAGE BY ID */
    router.post("/get-image", (request, response) => {
       const { id } = request.body;
