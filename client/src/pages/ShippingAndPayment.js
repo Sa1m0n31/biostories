@@ -95,7 +95,7 @@ const ShippingAndPayment = () => {
                     Dostawa i płatność
                 </h1>
                 <div className="deliveryData__bottom">
-                    <a className="page--beforeCheckout__back" href="/koszyk">
+                    <a className="page--beforeCheckout__back" href="/dane-dostawy">
                         <img className="icon" src={arrowBack} alt="wroc" />
                         Wróć
                     </a>

@@ -12,6 +12,8 @@ const logoutUser = () => {
 const loginUser = (username, password) => {
     return axios.post(`${API_URL}/auth/login-user`, {
         username, password
+    }, {
+        withCredentials: true
     });
 }
 
@@ -27,4 +29,10 @@ const verifyUser = (token) => {
     });
 }
 
-export { logoutUser, loginUser, registerUser, verifyUser }
+const getUserData = () => {
+    return axios.get(`${API_URL}/user/get-user-data`, {
+        withCredentials: true
+    });
+}
+
+export { logoutUser, loginUser, registerUser, verifyUser, getUserData }

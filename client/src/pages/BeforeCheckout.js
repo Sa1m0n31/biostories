@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import arrowIcon from "../static/assets/arrow-right.svg";
 import {loginUser} from "../helpers/userFunctions";
 import arrowBack from '../static/assets/arrow-back.svg'
@@ -15,7 +15,6 @@ const BeforeCheckout = () => {
             .then((res) => {
                 if(res?.data?.result) window.location = '/koszyk';
                 else {
-                    console.log(res?.data);
                     setError('Niepoprawna nazwa użytkownika, niepoprawne hasło lub nieaktywowane konto');
                 }
             });

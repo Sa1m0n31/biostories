@@ -130,70 +130,76 @@ con.connect(err => {
       });
    });
 
-   const updateImages = (images, id) => {
-
+   const deleteCategories = (id) => {
+      const query = 'DELETE FROM product_categories WHERE product_id = ?';
+      const values = [id];
+      con.query(query, values);
    }
 
-   /* UPDATE PRODUCT */
-   router.post("/update-product", upload.fields([{ name: 'gallery1', maxCount: 1 }, { name: 'gallery2', maxCount: 1 },
-      { name: 'gallery3', maxCount: 1 },
-      { name: 'gallery4', maxCount: 1 },
-      { name: 'gallery5', maxCount: 1 }]), (request, response) => {
-      let filenames = [];
-      let categories = [];
+   const deleteAttributes = (id) => {
+      const query = 'DELETE FROM products_attributes WHERE product = ?';
+      const values = [id];
+      con.query(query, values);
+   }
 
-      const images = request.files;
+   router.post("/update-product", upload.fields([
+      { name: 'gallery', maxCount: 10 },
+      { name: 'icons', maxCount: 10 },
+      { name: 'img', maxCount: 1 },
+      { name: 'img2', maxCount: 1 },
+      { name: 'img3', maxCount: 1 },
+      { name: 'img4', maxCount: 1 },
+      { name: 'img5', maxCount: 1 }
+   ]), (request, response) => {
+      const { id, title, subtitle, price, stock, attribute, attributeValues, categories,
+         description, secondDescription, thirdDescription, fourthDescription, recommendation, top, hidden
+      } = request.body;
+      const files = request.files;
+      let img1 = null, img2 = null, img3 = null, img4 = null, img5 = null;
+      if(files) {
+         if(files.img) img1 = files.img[0].filename;
+         if(files.img2) img2 = files.img2[0].filename;
+         if(files.img3) img3 = files.img3[0].filename;
+         if(files.img4) img4 = files.img4[0].filename;
+         if(files.img5) img5 = files.img5[0].filename;
+      }
 
-      /* Prepare */
-      let { id, name, price, shortDescription, recommendation, hidden } = request.body;
-      hidden = hidden === "hidden";
-      recommendation = recommendation === "true";
-      filenames.reverse();
+      console.log('ID: ' + id);
+      console.log(secondDescription);
+      console.log(thirdDescription);
 
-      /* Get categories */
-      Object.entries(request.body).forEach(item => {
-         if(item[0].split("-")[0] === 'category') {
-            if(item[1] === 'true') {
-               categories.push(parseInt(item[0].split("-")[1]));
-            }
-         }
-      });
-
-      if(!categories.length) categories.push(0);
-
-      /* 1 - ADD PRODUCT TO PRODUCTS TABLE */
-      const values = [name, price, shortDescription, recommendation, hidden, id];
-      const query = 'UPDATE products SET name = ?, price = ?, description = ?, recommendation = ?, hidden = ? WHERE id = ?';
-      con.query(query, values, (err, res) => {
+      const values = [title, subtitle, price, stock, description, secondDescription, thirdDescription, fourthDescription,
+         img1, img2, img3, img4, img5, recommendation === 'true' ? 1 : 0, top === 'true' ? 1 : 0, hidden === 'true' ? 1 : 0, id
+      ]
+      const query = 'UPDATE products SET name = ?, subtitle = ?, price = ?, stock = ?, description = ?, second_description = ?, third_description = ?, fourth_description = ?, main_image = COALESCE(?, main_image), ' +
+          'second_image = COALESCE(?, second_image), third_image = COALESCE(?, third_image), fourth_image = COALESCE(?, fourth_image), fifth_image = COALESCE(?, fifth_image), recommendation = ?, top = ?, hidden = ? WHERE id = ?';
+      con.query(query, values, async (err, res) => {
+         console.log(res);
+         console.log(err);
          if(res) {
-            /* 2 - ADD CATEGORIES */
-            categories.forEach((item, index, array) => {
-               const valuesDelete = [id];
-               const queryDelete = 'DELETE FROM product_categories WHERE product_id = ?';
-               con.query(queryDelete, valuesDelete, (err, res) => {
-                  if(item) {
-                     console.log("category: " + item);
-                     /* THERE ARE CATEGORIES */
-                     const values = [id, item];
-                     const query = 'INSERT INTO product_categories VALUES (NULL, ?, ?)';
-                     con.query(query, values);
-                     if(index === array.length-1) {
-                        /* 3 - ADD IMAGES TO IMAGES TABLE */
-                        updateImages(images, id);
-                        response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=1");
-                     }
-                  }
-                  else {
-                     /* THERE IS NO ANY CATEGORY */
-                     /* 3rd - ADD IMAGES TO IMAGES TABLE */
-                     updateImages(images, id);
-                     response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=1");
-                  }
-               });
+            if(files.gallery) {
+               addGallery(files.gallery, id);
+            }
+            if(files.icons) {
+               addIcons(files.icons, id);
+            }
+            console.log(categories);
+            if(categories) {
+               await deleteCategories(id);
+               await addCategories(JSON.parse(categories), id);
+            }
+            if(attribute) {
+               deleteAttributes(id);
+               addAttribute(attribute, attributeValues.split(','), id);
+            }
+            response.send({
+               result: 1
             });
          }
          else {
-            response.redirect("https://hideisland.pl/panel/dodaj-produkt?add=0");
+            response.send({
+               result: 0
+            });
          }
       });
    });
@@ -319,15 +325,13 @@ con.connect(err => {
       const values = [name];
       /* Query uses custom MySQL function - SPLIT_STR */
       const query = 'SELECT p.id as id, p.name, p.price, ' +
-          'p.description, p.date, i.file_path as file_path, ' +
-          's.size_1_name, s.size_2_name, s.size_3_name, s.size_4_name, s.size_5_name, ' +
-          's.size_1_stock, s.size_2_stock, s.size_3_stock, s.size_4_stock, s.size_5_stock ' +
-          'FROM products p LEFT OUTER JOIN images i ON i.id = p.main_image ' +
-          'LEFT OUTER JOIN products_stock s ON p.stock_id = s.id ' +
+          'p.description, p.second_description, p.third_description, p.fourth_description, p.date, ' +
+          'p.main_image, p.second_image, p.third_image, p.fourth_image, p.fifth_image, pa.name as attribute_name, av.value as attribute_value ' +
+          'FROM products p ' +
+          'LEFT OUTER JOIN products_attributes pa ON p.id = pa.product ' +
+          'LEFT OUTER JOIN attributes_values av ON pa.id = av.attribute ' +
           'WHERE REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(SPLIT_STR(p.name, "/", 1)), "ł", "l"), "ę", "e"), "ą", "a"), "ć", "c"), "ń", "n"), "ó", "o"), "ś", "s"), "ź", "z"), "ż", "z") = ?';
       con.query(query, values, (err, res) => {
-         console.log(res);
-         console.log(err);
          response.send({
             result: res
          });
@@ -357,8 +361,10 @@ con.connect(err => {
    router.post("/get-product-categories", (request, response) => {
       const { id } = request.body;
       const values = [id];
+      console.log('productId: ' + id);
       const query = 'SELECT * FROM product_categories WHERE product_id = ?';
       con.query(query, values, (err, res) => {
+         console.log(res);
          if(res) {
             response.send({
                result: res
@@ -376,12 +382,12 @@ con.connect(err => {
    router.post("/single-product", (request, response) => {
       const { id } = request.body;
       const values = [id];
-      const query = 'SELECT p.id as id, p.name, p.price, ' +
-          'p.description, p.date, p.recommendation, p.hidden, ' +
-          'i.file_path as file_path, s.size_1_name, s.size_1_stock, s.size_2_name, s.size_2_stock, s.size_3_name, s.size_3_stock, s.size_4_name, s.size_4_stock, s.size_5_name, s.size_5_stock ' +
+      const query = 'SELECT p.id as id, p.name, p.subtitle, p.stock, p.price, p.recommendation, p.top, p.hidden, ' +
+          'p.description, p.second_description, p.third_description, p.fourth_description, p.date, ' +
+          'p.main_image, p.second_image, p.third_image, p.fourth_image, p.fifth_image, pa.name as attribute_name, av.value as attribute_value ' +
           'FROM products p ' +
-          'LEFT OUTER JOIN images i ON i.id = p.main_image ' +
-          'LEFT OUTER JOIN products_stock s ON s.id = p.stock_id ' +
+          'LEFT OUTER JOIN products_attributes pa ON p.id = pa.product ' +
+          'LEFT OUTER JOIN attributes_values av ON pa.id = av.attribute ' +
           'WHERE p.id = ?';
       con.query(query, values, (err, res) => {
          if(res) {
@@ -439,7 +445,25 @@ con.connect(err => {
    router.post("/get-gallery", (request, response) => {
       const { id } = request.body;
       const values = [id];
-      const query = 'SELECT * FROM images WHERE product_id = ? ORDER BY (priority IS NOT NULL), priority ASC';
+      const query = 'SELECT file_path FROM images WHERE product_id = ?';
+      con.query(query, values, (err, res) => {
+         if(res) {
+            response.send({
+               result: res
+            });
+         }
+         else {
+            response.send({
+               result: 0
+            });
+         }
+      });
+   });
+
+   router.post("/get-icons", (request, response) => {
+      const { id } = request.body;
+      const values = [id];
+      const query = 'SELECT file_path FROM icons WHERE product_id = ?';
       con.query(query, values, (err, res) => {
          if(res) {
             response.send({

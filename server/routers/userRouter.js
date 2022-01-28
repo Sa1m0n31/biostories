@@ -147,11 +147,36 @@ con.connect((err) => {
         });
     });
 
+    router.get('/get-user-data', (request, response) => {
+        const email = request.user;
+        if(email) {
+            const query = 'SELECT * FROM users WHERE email = ?';
+            const values = [email];
+            con.query(query, values, (err, res) => {
+                if(res) {
+                    response.send({
+                        result: res[0]
+                    });
+                }
+                else {
+                    response.send({
+                        result: 0
+                    });
+                }
+            })
+        }
+        else {
+            response.send({
+                result: 0
+            });
+        }
+    });
+
     /* GET USER ORDERS */
     router.post("/get-user-orders", (request, response) => {
-        const { id } = request.body;
-        const values = [id];
-        const query = 'SELECT * FROM orders o JOIN sells s ON o.id = s.order_id WHERE o.user = ? GROUP BY o.id';
+        const email = request.user;
+        const values = [email];
+        const query = 'SELECT * FROM orders o JOIN sells s ON o.id = s.order_id JOIN users u ON o.user = u.id WHERE u.email = ? GROUP BY o.id';
         con.query(query, values, (err, res) => {
             if(res) {
                 response.send({

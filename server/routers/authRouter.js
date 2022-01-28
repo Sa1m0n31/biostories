@@ -288,7 +288,7 @@ con.connect(function(err) {
 
    /* LOGIN USER */
     router.post("/login-user",
-        passport.authenticate('user-local', { session: true, failureFlash: true, failureRedirect: '/auth/failure' }),
+        passport.authenticate('user-local', { session: true }),
             (request, response) => {
                 response.send({
                     result: 1
@@ -298,7 +298,7 @@ con.connect(function(err) {
 
     router.get('/failure', (request, response) => {
         response.send({
-            result: 0
+            result: 0,
         });
     });
 

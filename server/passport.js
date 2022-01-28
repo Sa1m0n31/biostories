@@ -19,15 +19,10 @@ const sendInfoAboutLogin = (id) => {
 const init = (passport) => {
     const userAuth = (username, password, done) => {
         const hash = crypto.createHash('md5').update(password).digest('hex');
-        const query = 'SELECT id FROM users WHERE LOWER(email) = LOWER(?) AND password = ?';
+        const query = 'SELECT id, email FROM users WHERE LOWER(email) = LOWER(?) AND password = ?';
         const values = [username, hash];
 
-        console.log(username);
-        console.log(password);
-
         db.query(query, values, (err, res) => {
-            console.log(err);
-            console.log(res);
             if(res) {
                 const user = res[0];
                 if(!user) {
@@ -37,7 +32,6 @@ const init = (passport) => {
                     return done(null, false, { message: 'Zweryfikuj swój adres email aby się zalogować' });
                 }
                 else {
-                    sendInfoAboutLogin(user.id);
                     return done(null, user);
                 }
             }
@@ -55,7 +49,6 @@ const init = (passport) => {
         db.query(query, values, (err, res) => {
            if(res) {
                const admin = res[0];
-               console.log(admin);
                if(!admin) {
                    return done(null, false, { message: 'Niepoprawna nazwa użytkownika lub hasło' });
                }
@@ -71,48 +64,48 @@ const init = (passport) => {
 
     passport.use('admin-local', new LocalStrategy(adminAuth));
 
-    passport.use('user-local', new LocalStrategy(userAuth, (ver) => {
-        // console.log(ver);
-    }));
+    passport.use('user-local', new LocalStrategy(userAuth));
 
     passport.serializeUser((user, done) => {
         if(user) {
-            // console.log(user.id);
-            done(null, user.id); /* Local */
+            console.log(user);
+            if(user.email) done(null, user.email); // User
+            else done(null, user.id); // Admin
         }
         else done(null, null);
     });
 
     passport.deserializeUser((id, done) => {
         let query, values;
-        // console.log(id);
-        // console.log('!!!!!!!!!!!!!');
 
         if(id) {
-            if(isNumeric(id.toString())) {
-                // console.log('numeric');
-                /* Admin */
-                query = 'SELECT id FROM admins WHERE id = ?';
-                values = [id];
+            /* Admin or user */
+            query = 'SELECT id FROM admins WHERE id = ?';
+            values = [id];
 
-                db.query(query, values, (err, res) => {
-                    if(res) {
-                        // console.log(res);
-                        if(res.length) done(null, res[0].id);
+            db.query(query, values, (err, res) => {
+                if(res) {
+                    if(res.length) done(null, res[0].id);
+                    else {
+                        query = 'SELECT email FROM users WHERE email = ?';
+                        db.query(query, values, (err, res) => {
+                            if(res) {
+                                if(res.length) done(null, res[0].email);
+                            }
+                            else done(null, null);
+                        });
                     }
-                });
-            }
-            else {
-                /* User */
-                query = 'SELECT i.id FROM identities i LEFT OUTER JOIN users u ON i.user_id = u.id LEFT OUTER JOIN clubs c ON i.id = c.id WHERE i.id = ?';
-                values = [id];
-
-                db.query(query, values, (err, res) => {
-                    if(res) {
-                        if(res.length) done(null, res[0].id);
-                    }
-                });
-            }
+                }
+                else {
+                    query = 'SELECT email FROM users WHERE email = ?';
+                    db.query(query, values, (err, res) => {
+                        if(res) {
+                            if(res.length) done(null, res[0].email);
+                        }
+                        else done(null, null);
+                    });
+                }
+            });
         }
         else {
             done(null, null);

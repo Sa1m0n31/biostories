@@ -5,12 +5,28 @@ import checkIcon from "../static/assets/check-icon.svg";
 import arrowIcon from "../static/assets/arrow-right.svg";
 import * as Yup from "yup";
 import {useFormik} from "formik";
-import {registerUser} from "../helpers/userFunctions";
+import {getUserData, registerUser} from "../helpers/userFunctions";
 import arrowBack from "../static/assets/arrow-back.svg";
 
 const DeliveryDataPage = () => {
     useEffect(() => {
         openCart();
+
+        getUserData()
+            .then((res) => {
+                const result = res?.data?.result;
+                if(result) {
+                    formik.setFieldValue('firstName', result.first_name);
+                    formik.setFieldValue('lastName', result.last_name);
+                    formik.setFieldValue('email', result.email);
+                    formik.setFieldValue('phoneNumber', result.phone_number);
+                    formik.setFieldValue('postalCode', result.postal_code);
+                    formik.setFieldValue('city', result.city);
+                    formik.setFieldValue('street', result.street);
+                    formik.setFieldValue('building', result.building);
+                    formik.setFieldValue('flat', result.flat);
+                }
+            })
     }, []);
 
     const [error, setError] = useState("");

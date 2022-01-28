@@ -48,6 +48,9 @@ import Shop from "./pages/Shop";
 import CartPage from "./pages/CartPage";
 import DeliveryDataPage from "./pages/DeliveryDataPage";
 import ShippingAndPayment from "./pages/ShippingAndPayment";
+import TyPage from "./pages/TyPage";
+import MyAccount from "./pages/MyAccount";
+import SingleProduct from "./pages/SingleProduct";
 require('dotenv').config();
 
 axios.defaults.headers.common['Authorization'] = credentials.AUTH_HEADER;
@@ -203,6 +206,15 @@ function App() {
             </Route>
             <Route path="/dostawa-i-platnosc">
                 <ShippingAndPayment />
+            </Route>
+            <Route path="/dziekujemy">
+                <TyPage />
+            </Route>
+            <Route path="/moje-konto">
+                <MyAccount />
+            </Route>
+            <Route path="/produkt">
+                <SingleProduct />
             </Route>
 
             {/* Admin routes */}

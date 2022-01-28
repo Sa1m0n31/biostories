@@ -17,7 +17,6 @@ const Login = () => {
             .then((res) => {
                 if(res?.data?.result) window.location = '/sklep';
                 else {
-                    console.log(res?.data);
                     setError('Niepoprawna nazwa użytkownika, niepoprawne hasło lub nieaktywowane konto');
                 }
             });

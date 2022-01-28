@@ -19,14 +19,14 @@ import {logoutUser} from "../../helpers/userFunctions";
 import RUG from 'react-upload-gallery'
 import 'react-upload-gallery/dist/style.css'
 import trashIcon from '../static/img/trash-can.svg'
-import {addProduct} from "../../helpers/productFunctions";
+import {addProduct, updateProduct} from "../../helpers/productFunctions";
 
 const AddProductContent = () => {
     const [update, setUpdate] = useState(false);
     const [name, setName] = useState("");
     const [subtitle, setSubtitle] = useState('');
     const [stock, setStock] = useState(0);
-    const [id, setId] = useState(0);
+    const [id, setId] = useState(null);
     const [product, setProduct] = useState([]);
     const [categories, setCategories] = useState([]);
     const [hidden, setHidden] = useState(false);
@@ -85,77 +85,66 @@ const AddProductContent = () => {
     }
 
     useEffect(() => {
-        /* PRODUCT ADDED */
-        const added = parseInt(new URLSearchParams(location.search).get("add"));
-        if(added) {
-            if(added === 1) {
-                setAddMsg("Produkt został dodany");
-                /* Add allergens */
-                addAllergens(parseInt(localStorage.getItem('sec-product-id')), JSON.parse(localStorage.getItem('sec-allergens-to-add')))
-                    .then(res => {
-                        localStorage.removeItem('sec-product-id');
-                        localStorage.removeItem('sec-allergens-to-add');
-                    });
-            }
-            else if(added === 0) {
-                setAddMsg("Nie udało się dodać produktu. Prosimy spróbować później lub skontaktować się z administratorem systemu");
-            }
-        }
-
         /* Get all categories */
         getAllCategories()
-            .then(res => {
-                setCategories(res.data.result);
-                setChoosenCategories(res.data.result.map((item) => {
+            .then(async res => {
+                await setCategories(res.data.result);
+                await setChoosenCategories(res.data.result.map((item) => {
                     return {
                         id: item.id,
                         selected: false
                     }
                 }));
+                await getProductCategories(param)
+                    .then(res => {
+                        console.log(res?.data?.result);
+                        if(res.data.result) {
+                            initializeCategories(res.data.result);
+                        }
+                    });
             });
 
         /* UPDATE PRODUCT MODE */
-        const param = parseInt(new URLSearchParams(location.search).get("id"));
+        const param = new URLSearchParams(location.search).get("id");
         if(param) {
+            setUpdateMode(true);
             setId(param);
             setUpdate(true);
 
             getProductDetails(param)
                 .then(async res => {
-                    await setProduct(res.data.result[0]);
-                    await setInitialValues(res.data.result[0]);
-                });
-
-            getProductGallery(param)
-                .then(res => {
-                    setGallery(res.data?.result);
-                });
-
-            getProductCategories(param)
-                .then(res => {
-                    if(res.data.result) {
-                        initializeCategories(res.data.result);
-                    }
-                });
-        }
-        else {
-            getNewId()
-                .then(res => {
-                   setId(res.data.result+1);
+                    setProduct(res.data.result[0]);
+                    setInitialValues(res.data.result[0]);
                 });
         }
     }, []);
 
     const setInitialValues = (productData) => {
         setName(productData.name);
-
+        setSubtitle(productData.subtitle);
         setPrice(productData.price);
-
+        setStock(productData.stock);
         setHidden(productData.hidden);
+        setTop(productData.top);
         setRecommendation(productData.recommendation);
 
-        setShortDescription(productData.description);
+        if(productData.main_image) setUpdateImage(productData.main_image);
+        if(productData.second_image) setUpdateImage2(productData.second_image);
+        if(productData.third_image) setUpdateImage3(productData.third_image);
+        if(productData.fourth_image) setUpdateImage4(productData.fourth_image);
+        if(productData.fifth_image) setUpdateImage5(productData.fifth_image);
+
+        console.log(productData.second_description);
+
+        if(productData.description) setShortDescription(EditorState.createWithContent(convertFromRaw(JSON.parse(productData.description))));
+        if(productData.second_description) setDescription2(EditorState.createWithContent(convertFromRaw(JSON.parse(productData.second_description))));
+        if(productData.third_description) setDescription3(EditorState.createWithContent(convertFromRaw(JSON.parse(productData.third_description))));
+        if(productData.fourth_description) setDescription4(EditorState.createWithContent(convertFromRaw(JSON.parse(productData.fourth_description))));
     }
+
+    useEffect(() => {
+        console.log(choosenCategories);
+    }, [choosenCategories]);
 
     const isInArray = (categoryId) => {
         return choosenCategories.filter(item => {
@@ -299,33 +288,90 @@ const AddProductContent = () => {
     }
 
     const handleSubmit = () => {
-        let galleryItems = [], iconsItems = [];
-
         let formData = new FormData();
-        gallery.forEach((item, index, array) => {
-            let xhr = new XMLHttpRequest();
-            xhr.open('GET', item.source, true);
-            xhr.responseType = 'blob';
-            xhr.onload = function(e) {
-                if(this.status == 200) {
-                    let myBlob = this.response;
-                    formData.append('gallery', new File([myBlob], 'name'));
-                }
-                if(index === array.length-1) {
-                    infoIcons.forEach((item, index, array) => {
-                        let xhr = new XMLHttpRequest();
-                        xhr.open('GET', item.source, true);
-                        xhr.responseType = 'blob';
-                        xhr.onload = function(e) {
-                            if (this.status == 200) {
-                                let myBlob = this.response;
-                                formData.append('icons', new File([myBlob], 'name'));
+        if(gallery?.length) {
+            gallery.forEach((item, index, array) => {
+                let xhr = new XMLHttpRequest();
+                xhr.open('GET', item.source, true);
+                xhr.responseType = 'blob';
+                xhr.onload = function(e) {
+                    if(this.status == 200) {
+                        let myBlob = this.response;
+                        formData.append('gallery', new File([myBlob], 'name'));
+                    }
+                    if(index === array.length-1) {
+                        if(infoIcons?.length) {
+                            infoIcons.forEach((item, index, array) => {
+                                let xhr = new XMLHttpRequest();
+                                xhr.open('GET', item.source, true);
+                                xhr.responseType = 'blob';
+                                xhr.onload = function(e) {
+                                    if (this.status == 200) {
+                                        let myBlob = this.response;
+                                        formData.append('icons', new File([myBlob], 'name'));
+                                    }
+                                    if(index === array.length-1) {
+                                        if(updateMode) {
+                                            updateProduct(formData, id, name, subtitle, price, stock, attribute, attributeValues,
+                                                shortDescription, description2, description3, description4,
+                                                img, img2, img3, img4, img5,
+                                                choosenCategories, recommendation, top, hidden)
+                                                .then((res) => {
+                                                    if(res?.data?.result) {
+                                                        setResponse("Produkt został zaktualizowany");
+                                                        setStatus(1);
+                                                    }
+                                                    else {
+                                                        setResponse("Wystąpił błąd. Prosimy spróbować później");
+                                                        setStatus(0);
+                                                    }
+                                                });
+                                        }
+                                        else {
+                                            addProduct(formData, name, subtitle, price, stock, attribute, attributeValues,
+                                                shortDescription, description2, description3, description4,
+                                                img, img2, img3, img4, img5,
+                                                choosenCategories, recommendation, top, hidden
+                                            )
+                                                .then((res) => {
+                                                    if(res?.data?.result) {
+                                                        setResponse("Produkt został dodany");
+                                                        setStatus(1);
+                                                    }
+                                                    else {
+                                                        setResponse("Wystąpił błąd. Prosimy spróbować później");
+                                                        setStatus(0);
+                                                    }
+                                                });
+                                        }
+                                    }
+                                };
+                                xhr.send();
+                            });
+                        }
+                        else {
+                            formData.append('icons', null);
+                            if(updateMode) {
+                                updateProduct(formData, id, name, subtitle, price, stock, attribute, attributeValues,
+                                    shortDescription, description2, description3, description4,
+                                    img, img2, img3, img4, img5,
+                                    choosenCategories, recommendation, top, hidden)
+                                    .then((res) => {
+                                        if(res?.data?.result) {
+                                            setResponse("Produkt został zaktualizowany");
+                                            setStatus(1);
+                                        }
+                                        else {
+                                            setResponse("Wystąpił błąd. Prosimy spróbować później");
+                                            setStatus(0);
+                                        }
+                                    });
                             }
-                            if(index === array.length-1) {
+                            else {
                                 addProduct(formData, name, subtitle, price, stock, attribute, attributeValues,
                                     shortDescription, description2, description3, description4,
                                     img, img2, img3, img4, img5,
-                                    categories, recommendation, top, hidden
+                                    choosenCategories, recommendation, top, hidden
                                 )
                                     .then((res) => {
                                         if(res?.data?.result) {
@@ -338,13 +384,100 @@ const AddProductContent = () => {
                                         }
                                     });
                             }
-                        };
-                        xhr.send();
-                    });
+                        }
+                    }
+                };
+                xhr.send();
+            });
+        }
+        else {
+            formData.append('gallery', null);
+            if(infoIcons?.length) {
+                infoIcons.forEach((item, index, array) => {
+                    let xhr = new XMLHttpRequest();
+                    xhr.open('GET', item.source, true);
+                    xhr.responseType = 'blob';
+                    xhr.onload = function(e) {
+                        if (this.status == 200) {
+                            let myBlob = this.response;
+                            formData.append('icons', new File([myBlob], 'name'));
+                        }
+                        if(index === array.length-1) {
+                            if(updateMode) {
+                                updateProduct(formData, id, name, subtitle, price, stock, attribute, attributeValues,
+                                    shortDescription, description2, description3, description4,
+                                    img, img2, img3, img4, img5,
+                                    choosenCategories, recommendation, top, hidden)
+                                    .then((res) => {
+                                        if(res?.data?.result) {
+                                            setResponse("Produkt został zaktualizowany");
+                                            setStatus(1);
+                                        }
+                                        else {
+                                            setResponse("Wystąpił błąd. Prosimy spróbować później");
+                                            setStatus(0);
+                                        }
+                                    });
+                            }
+                            else {
+                                addProduct(formData, name, subtitle, price, stock, attribute, attributeValues,
+                                    shortDescription, description2, description3, description4,
+                                    img, img2, img3, img4, img5,
+                                    choosenCategories, recommendation, top, hidden
+                                )
+                                    .then((res) => {
+                                        if(res?.data?.result) {
+                                            setResponse("Produkt został dodany");
+                                            setStatus(1);
+                                        }
+                                        else {
+                                            setResponse("Wystąpił błąd. Prosimy spróbować później");
+                                            setStatus(0);
+                                        }
+                                    });
+                            }
+                        }
+                    };
+                    xhr.send();
+                });
+            }
+            else {
+                formData.append('icons', null);
+                if(updateMode) {
+                    updateProduct(formData, id, name, subtitle, price, stock, attribute, attributeValues,
+                        shortDescription, description2, description3, description4,
+                        img, img2, img3, img4, img5,
+                        choosenCategories, recommendation, top, hidden)
+                        .then((res) => {
+                            if(res?.data?.result) {
+                                setResponse("Produkt został zaktualizowany");
+                                setStatus(1);
+                            }
+                            else {
+                                setResponse("Wystąpił błąd. Prosimy spróbować później");
+                                setStatus(0);
+                            }
+                        });
                 }
-            };
-            xhr.send();
-        });
+                else {
+                    addProduct(formData, name, subtitle, price, stock, attribute, attributeValues,
+                        shortDescription, description2, description3, description4,
+                        img, img2, img3, img4, img5,
+                        choosenCategories, recommendation, top, hidden
+                    )
+                        .then((res) => {
+                            if(res?.data?.result) {
+                                setResponse("Produkt został dodany");
+                                setStatus(1);
+                            }
+                            else {
+                                setResponse("Wystąpił błąd. Prosimy spróbować później");
+                                setStatus(0);
+                            }
+                        });
+                }
+            }
+        }
     }
 
     useEffect(() => {
@@ -460,7 +593,7 @@ const AddProductContent = () => {
                         Dodaj obrazek wyróżniający
                         <span className="admin__label__imgUpload">
                             {updateImage ? <figure className="admin__label__imgUpload__updateImgWrapper">
-                                <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/${updateImage}`} alt="foto" />
+                                <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/products/${updateImage}`} alt="foto" />
                             </figure> : ""}
                             {img || updateImage ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg(); }}>
                                 <img className="btn__img" src={trashIcon} alt="usun" />
@@ -477,7 +610,7 @@ const AddProductContent = () => {
                         Dodaj obrazek po najechaniu myszką
                         <span className="admin__label__imgUpload">
                             {updateImage2 ? <figure className="admin__label__imgUpload__updateImgWrapper">
-                                <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/${updateImage2}`} alt="foto" />
+                                <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/products/${updateImage2}`} alt="foto" />
                             </figure> : ""}
                             {img2 || updateImage2 ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg2(); }}>
                                 <img className="btn__img" src={trashIcon} alt="usun" />
@@ -519,7 +652,7 @@ const AddProductContent = () => {
                         Zdjęcie w sekcji 2.
                         <span className="admin__label__imgUpload">
                             {updateImage3 ? <figure className="admin__label__imgUpload__updateImgWrapper">
-                                <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/${updateImage3}`} alt="foto" />
+                                <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/products/${updateImage3}`} alt="foto" />
                             </figure> : ""}
                             {img3 || updateImage3 ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg3(); }}>
                                 <img className="btn__img" src={trashIcon} alt="usun" />
@@ -549,7 +682,7 @@ const AddProductContent = () => {
                         Zdjęcie w sekcji 3.
                         <span className="admin__label__imgUpload">
                             {updateImage4 ? <figure className="admin__label__imgUpload__updateImgWrapper">
-                                <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/${updateImage4}`} alt="foto" />
+                                <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/products/${updateImage4}`} alt="foto" />
                             </figure> : ""}
                             {img4 || updateImage4 ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg4(); }}>
                                 <img className="btn__img" src={trashIcon} alt="usun" />
@@ -579,7 +712,7 @@ const AddProductContent = () => {
                         Zdjęcie w sekcji 4.
                         <span className="admin__label__imgUpload">
                             {updateImage5 ? <figure className="admin__label__imgUpload__updateImgWrapper">
-                                <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/${updateImage5}`} alt="foto" />
+                                <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/products/${updateImage5}`} alt="foto" />
                             </figure> : ""}
                             {img5 || updateImage5 ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg5(); }}>
                                 <img className="btn__img" src={trashIcon} alt="usun" />

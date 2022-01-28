@@ -6,6 +6,7 @@ import example from '../static/assets/product-2.png'
 import {CartContext} from "../App";
 import {getProductStock} from "../admin/helpers/stockFunctions";
 import settings from "../helpers/settings";
+import auth from "../admin/helpers/auth";
 
 const Cart = ({deliveryProp}) => {
     const { cartContent, editCart, removeFromCart } = useContext(CartContext);
@@ -14,9 +15,15 @@ const Cart = ({deliveryProp}) => {
     const [remove, setRemove] = useState(false);
     const [currentCart, setCurrentCart] = useState(cartContent);
     const [delivery, setDelivery] = useState(0);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
         calculateCartSum();
+
+        auth()
+            .then((res) => {
+                setIsLoggedIn(res?.data?.result === 1);
+            });
     }, []);
 
     useEffect(() => {
@@ -163,11 +170,11 @@ const Cart = ({deliveryProp}) => {
                     {sum + delivery} PLN
                 </h5>
             </div>
-            <a className="btn btn--cart" href="/zakupy">
+            <a className="btn btn--cart" href={isLoggedIn ? "/koszyk" : "/zakupy"}>
                 Przejdź dalej
                 <img className="icon" src={arrowIcon} alt="dalej" />
             </a>
-            <a className="btn btn--cart btn--payment" href="/zakupy">
+            <a className="btn btn--cart btn--payment" href={isLoggedIn ? "/koszyk" : "/zakupy"}>
                 Zamawiam i płacę
                 <img className="icon" src={arrowIcon} alt="dalej" />
             </a>

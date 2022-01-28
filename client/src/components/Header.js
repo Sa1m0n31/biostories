@@ -1,13 +1,24 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import menuIcon from '../static/assets/nasz-sklep.png'
-import loginIcon from '../static/assets/zaloguj-sie.png'
-import cartIcon from '../static/assets/twoje-zakupy.png'
+import loginIcon from '../static/assets/users.svg'
+import cartIcon from '../static/assets/shipping-bag.svg'
 import logo from '../static/assets/logo.png'
 import Cart from "./Cart";
 import {openCart, openMenu} from "../helpers/others";
 import Menu from "./Menu";
+import auth from "../admin/helpers/auth";
 
-const Header = ({topSmall}) => {
+const Header = ({topSmall, restricted}) => {
+    const [isAuth, setIsAuth] = useState(false);
+
+    useEffect(() => {
+        auth()
+            .then((res) => {
+                setIsAuth(res?.data?.result === 1);
+                if(!res?.data?.result && restricted) window.location = '/';
+            });
+    }, [])
+
     const changeTopStyle = () => {
         const y = window.pageYOffset;
         if(y > 5) {
@@ -51,11 +62,13 @@ const Header = ({topSmall}) => {
                 <img className="btn__img" src={logo} alt="bio-stories" />
             </a>
             <section className="siteHeader__right flex">
-                <a className="siteHeader__right__item" href="/logowanie">
+                <a className="siteHeader__right__item" href={isAuth ? "/moje-konto" : "/logowanie"}>
                     <img className="btn__img" src={loginIcon} alt="zaloguj-sie" />
+                    {isAuth ? 'Moje konto' : 'Zaloguj się'}
                 </a>
                 <button className="siteHeader__right__item trans" onClick={() => { openCart(); }}>
                     <img className="btn__img" src={cartIcon} alt="zaloguj-sie" />
+                    Twoje zakupy
                 </button>
             </section>
         </header>
