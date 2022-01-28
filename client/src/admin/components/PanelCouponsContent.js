@@ -106,6 +106,13 @@ const PanelCouponsContent = () => {
                 .then(res => {
                     if(res.data.result) {
                         setAddedMsg("Kupon został dodany");
+                        setCode('');
+                        setFrom(null);
+                        setTo(null);
+                        setPercent(true);
+                        setDiscountValue(0);
+                        setTimesToUse(0);
+                        setError('');
                     }
                     else {
                         setAddedMsg("Coś poszło nie tak... Prosimy spróbować później");
@@ -202,7 +209,7 @@ const PanelCouponsContent = () => {
                         />
                     </label>
 
-                    <section className="d-flex">
+                    <section className="flex w-100">
                         <label className="panelContent__filters__btnWrapper mr-3">
                             <button className="panelContent__filters__btn panelContent__filters__btn--options" onClick={(e) => { e.preventDefault(); setPercent(true); }}>
                                 <span className={percent ? "panelContent__filters__btn--active" : "d-none"} />
@@ -263,7 +270,7 @@ const PanelCouponsContent = () => {
                         {error ? error : ""}
                     </span>
                     <button className="addProduct__btn" type="submit">
-                        Dodaj kod rabatowy
+                        {update ? 'Aktualizuj kod rabatowy' : 'Dodaj kod rabatowy'}
                     </button>
                 </form> : <section className="addedMsgWrapper">
                     <h2 className="addedMsg">

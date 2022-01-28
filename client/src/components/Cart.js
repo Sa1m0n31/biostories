@@ -8,7 +8,7 @@ import {getProductStock} from "../admin/helpers/stockFunctions";
 import settings from "../helpers/settings";
 import auth from "../admin/helpers/auth";
 
-const Cart = ({deliveryProp}) => {
+const Cart = ({deliveryProp, addOrder, codes, code, codeUpdated, setCodeVerified}) => {
     const { cartContent, editCart, removeFromCart } = useContext(CartContext);
 
     const [sum, setSum] = useState(0);
@@ -16,6 +16,13 @@ const Cart = ({deliveryProp}) => {
     const [currentCart, setCurrentCart] = useState(cartContent);
     const [delivery, setDelivery] = useState(0);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const [coupon, setCoupon] = useState(false);
+    const [couponCode, setCouponCode] = useState("");
+    const [couponVerified, setCouponVerified] = useState(-1);
+    const [discount, setDiscount] = useState("");
+    const [amount, setAmount] = useState(0);
+    const [discountInPLN, setDiscountInPLN] = useState(0);
 
     useEffect(() => {
         calculateCartSum();
@@ -27,8 +34,13 @@ const Cart = ({deliveryProp}) => {
     }, []);
 
     useEffect(() => {
-        if(deliveryProp) {
+        verifyCode();
+    }, [codeUpdated, currentCart]);
+
+    useEffect(() => {
+        if(deliveryProp || deliveryProp === 0) {
             setDelivery(deliveryProp);
+            setAmount(sum + deliveryProp);
         }
     }, [deliveryProp]);
 
@@ -106,6 +118,32 @@ const Cart = ({deliveryProp}) => {
             });
     }
 
+    const verifyCode = () => {
+        const coupon = codes.find((item) => {
+            return item.code === code && new Date(item.date_from) <= new Date() && new Date(item.date_to) >= new Date();
+        });
+        if(coupon) {
+            if(coupon.percent) {
+                setCouponVerified(1);
+                setCodeVerified(true);
+                setAmount(Math.round(sum - sum * (coupon.percent / 100)));
+                setDiscount("-" + coupon.percent + "%");
+                setDiscountInPLN(Math.round(sum * (coupon.percent / 100)));
+            }
+            else if(coupon.amount) {
+                setCodeVerified(true);
+                setCouponVerified(1);
+                setAmount(sum - coupon.amount);
+                setDiscount("-" + coupon.amount + " PLN");
+                setDiscountInPLN(coupon.amount);
+            }
+            else {
+                setCodeVerified(false);
+                setCouponVerified(0);
+            }
+        }
+    }
+
     return <div className="cart">
         <button className="cart__close" onClick={() => { closeCart(); }}>
             <img className="btn__img" src={closeIcon} alt="close"/>
@@ -162,22 +200,30 @@ const Cart = ({deliveryProp}) => {
                     {delivery} PLN
                 </h5>
             </div>
+           {couponVerified === 1 ? <div className="cart__sum cart__sum--noBorder flex">
+               <h4>
+                   Kod rabatowy
+               </h4>
+               <h5>
+                   - {discountInPLN} PLN
+               </h5>
+           </div> : ""}
             <div className="cart__sum flex">
                 <h4>
                     Łączna wartość zamówienia
                 </h4>
                 <h5>
-                    {sum + delivery} PLN
+                    {sum + delivery - discountInPLN} PLN
                 </h5>
             </div>
             <a className="btn btn--cart" href={isLoggedIn ? "/koszyk" : "/zakupy"}>
                 Przejdź dalej
                 <img className="icon" src={arrowIcon} alt="dalej" />
             </a>
-            <a className="btn btn--cart btn--payment" href={isLoggedIn ? "/koszyk" : "/zakupy"}>
+            <button className="btn btn--cart btn--payment" onClick={() => { addOrder(); }} >
                 Zamawiam i płacę
                 <img className="icon" src={arrowIcon} alt="dalej" />
-            </a>
+            </button>
         </div>
     </div>
 };

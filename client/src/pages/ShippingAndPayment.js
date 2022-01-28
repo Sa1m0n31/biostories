@@ -7,6 +7,9 @@ import checkIcon from "../static/assets/check-icon.svg";
 import Modal from "react-modal";
 import closeImg from '../static/img/close.png'
 import GeolocationWidget from "../components/GeolocationWidget";
+import locationIcon from '../static/assets/location-icon.svg'
+import {getAllCoupons} from "../admin/helpers/couponFunctions";
+import tickIcon from '../static/img/tick-sign.svg'
 
 const ShippingAndPayment = () => {
     const [shippingMethods, setShippingMethods] = useState([]);
@@ -14,11 +17,15 @@ const ShippingAndPayment = () => {
 
     const [shipping, setShipping] = useState(null);
     const [payment, setPayment] = useState(null);
+    const [code, setCode] = useState('');
+    const [codes, setCodes] = useState([]);
 
     const [inPostAddress, setInPostAddress] = useState("");
     const [inPostCode, setInPostCode] = useState("");
     const [inPostCity, setInPostCity] = useState("");
     const [inPostModal, setInPostModal] = useState(false);
+    const [codeUpdated, setCodeUpdated] = useState(false);
+    const [codeVerified, setCodeVerified] = useState(false);
 
     useEffect(() => {
         openCart();
@@ -28,8 +35,19 @@ const ShippingAndPayment = () => {
     useEffect(() => {
         getAllShippingMethods()
             .then((res) => {
-                setShippingMethods(res?.data?.result);
+                setShippingMethods(res?.data?.shippingMethods);
             });
+
+        getAllCoupons()
+            .then((res) => {
+                setCodes(res?.data?.result);
+            });
+
+        document.addEventListener("click", () => {
+            setInPostAddress(sessionStorage.getItem('paczkomat-adres'));
+            setInPostCode(sessionStorage.getItem('paczkomat-kod'));
+            setInPostCity(sessionStorage.getItem('paczkomat-miasto'));
+        });
     }, []);
 
     useEffect(() => {
@@ -74,6 +92,20 @@ const ShippingAndPayment = () => {
         }
     }, [shipping]);
 
+    const addOrder = () => {
+        const firstName = localStorage.getItem('firstName');
+        const lastName = localStorage.getItem('lastName');
+        const email = localStorage.getItem('email');
+        const phoneNumber = localStorage.getItem('phoneNumber');
+        const postalCode = localStorage.getItem('postalCode');
+        const city = localStorage.getItem('city');
+        const street = localStorage.getItem('street');
+        const building = localStorage.getItem('building');
+        const flat = localStorage.getItem('flat');
+
+        
+    }
+
     return <div className="container container--deliveryData container--sAndP">
 
         <Modal
@@ -109,27 +141,34 @@ const ShippingAndPayment = () => {
                 <h2 className="form__header">
                     Wybierz sposób dostawy
                 </h2>
-                <label className="label--check label--check--delivery">
-                    <button className={shipping === 0 ? "checkBtn checkBtn--checked" : "checkBtn" }
-                            type="button"
-                            onClick={() => { setShipping(0); }}>
-                        <img src={checkIcon} alt="tak" />
-                    </button>
-                    <span className="label__deliveryBlock">
-                        <div className="flex">
-                            <h4 className="delivery__title">
-                                Kurier DPD
-                            </h4>
-                            <h5 className="delivery__price">
-                                9.99 zł
-                            </h5>
-                        </div>
-                        <p className="delivery__desc">
-                            Zamówienia złożone w dni robocze do godziny 14:00 są wysyłane od razu. Darmowa dostawa dla zwykłych paczek od 250 PLN.
-                        </p>
-                    </span>
-                </label>
-
+                {shippingMethods?.map((item, index) => {
+                    return <label className="label--check label--check--delivery">
+                        <button className={shipping === index ? "checkBtn checkBtn--checked" : "checkBtn" }
+                                onClick={() => { setShipping(index); }}>
+                            <img src={checkIcon} alt="tak" />
+                        </button>
+                        <span className="label__deliveryBlock">
+                            <div className="flex">
+                                <h4 className="delivery__title">
+                                    {item.name}
+                                </h4>
+                                <h5 className="delivery__price">
+                                    {item.price} zł
+                                </h5>
+                            </div>
+                            {index === 0 && shipping === 0 ? <address className="inPostAddress">
+                                <img className="locationIcon" src={locationIcon} alt="lokalizacja" />
+                                <span>
+                                    {inPostAddress} <br/>
+                                    {inPostCode} {inPostCity}
+                                </span>
+                            </address> : ""}
+                            <p className="delivery__desc">
+                                {item.description}
+                            </p>
+                        </span>
+                    </label>
+                })}
 
 
                 <h2 className="form__header form__header--mt">
@@ -184,9 +223,38 @@ const ShippingAndPayment = () => {
                         </div>
                     </span>
                 </label>
+
+                <h2 className="form__header form__header--mt">
+                    Kod rabatowy
+                </h2>
+                <div className="codeForm flex">
+                    {codeVerified ? <>
+                        <img className="icon" src={tickIcon} alt="dodano" />
+                        <h3 className="codeHeader">
+                            Kod rabatowy został dodany
+                        </h3>
+                    </> : <>
+                        <label>
+                            <input className="input input--code"
+                                   name="code"
+                                   value={code}
+                                   onChange={(e) => { setCode(e.target.value); }}
+                                   placeholder="Kod rabatowy" />
+                        </label>
+                        <button className="btn btn--code" onClick={() => { setCodeUpdated(!codeUpdated); }}>
+                            Dodaj kod rabatowy
+                        </button>
+                    </>}
+                </div>
             </main>
         </main>
-        <Cart deliveryProp={shipping || shipping === 0 ? shippingMethods[shipping] : 0} />
+        <Cart deliveryProp={shipping || shipping === 0 ? shippingMethods[shipping].price : 0}
+              addOrder={addOrder}
+              code={code}
+              codes={codes}
+              codeUpdated={codeUpdated}
+              setCodeVerified={setCodeVerified}
+        />
     </div>
 };
 

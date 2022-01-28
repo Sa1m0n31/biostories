@@ -20,6 +20,7 @@ const PanelShippingContent = () => {
     const [methods, setMethods] = useState([]);
     const [deleted, setDeleted] = useState(false);
     const [deleteMsg, setDeleteMsg] = useState("");
+    const [description, setDescription] = useState('');
 
     const location = useLocation();
 
@@ -43,9 +44,11 @@ const PanelShippingContent = () => {
             axios.post(`${settings.API_URL}/shipping/get-shipping-method`, { id: param })
                 .then(res => {
                     const result = res.data?.result;
+                    console.log(result);
                     if(result) {
                         setUpdate(true);
                         setName(result.name);
+                        setDescription(result.description);
                         setPrice(result.price);
                     }
                 })
@@ -65,7 +68,7 @@ const PanelShippingContent = () => {
         e.preventDefault();
         if(update) {
             axios.post(`${settings.API_URL}/shipping/update`, {
-                id, name, price
+                id, name, price, description
             })
                 .then(res => {
                     if(res.data.result) setAddedMsg("Metoda wysyłki została zaktualizowana");
@@ -74,10 +77,15 @@ const PanelShippingContent = () => {
         }
         else {
             axios.post(`${settings.API_URL}/shipping/add`, {
-                name, price
+                name, price, description
             })
                 .then(res => {
-                    if(res.data.result) setAddedMsg("Metoda wysyłki została dodana");
+                    if(res.data.result) {
+                        setAddedMsg("Metoda wysyłki została dodana");
+                        setName('');
+                        setDescription('');
+                        setPrice(null);
+                    }
                     else setAddedMsg("Coś poszło nie tak... Prosimy spróbować później");
                 });
         }
@@ -166,6 +174,14 @@ const PanelShippingContent = () => {
                                placeholder="Nazwa metody wysyłki" />
                     </label>
                     <label className="addProduct__label addProduct__label--frame addShipping__input">
+                        <textarea className="addProduct__input addProduct__input--textarea"
+                               name="description"
+                               value={description}
+                               onChange={(e) => { setDescription(e.target.value) }}
+                               placeholder="Opis">
+                        </textarea>
+                    </label>
+                    <label className="addProduct__label addProduct__label--frame addShipping__input">
                         <input className="addProduct__input"
                                name="price"
                                value={price}
@@ -175,8 +191,8 @@ const PanelShippingContent = () => {
                                placeholder="Cena" />
                     </label>
 
-                    <button className="addProduct__btn btn--maxWidth" type="submit">
-                        Aktualizuj
+                    <button className="addProduct__btn btn--maxWidth btn--shipping" type="submit">
+                        {update ? 'Aktualizuj metodę wysyłki' : 'Dodaj metodę wysyłki'}
                     </button>
                 </form> : <section className="addedMsgWrapper">
                     <h2 className="addedMsgWrapper">

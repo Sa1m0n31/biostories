@@ -1267,6 +1267,7 @@ input[type=file] {
 
 .addShipping__input {
     max-width: 500px;
+    margin: 10px 0;
 }
 
 .btn--editSectionHeader {
@@ -1275,6 +1276,16 @@ input[type=file] {
 
 .pl-5 {
     padding-left: 25px;
+}
+
+.addProduct__input--textarea {
+    height: 100px;
+    margin-bottom: 0;
+    resize: none;
+}
+
+.btn--shipping {
+    margin-top: 10px;
 }
 
 /* Update - 20.08.21 */

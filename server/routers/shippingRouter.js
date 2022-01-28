@@ -10,10 +10,10 @@ const upload = multer({ dest: 'uploads/' });
 con.connect((err) => {
     /* UPDATE INFO */
     router.post("/update", (request, response) => {
-        let { id, name, price } = request.body;
+        let { id, name, description, price } = request.body;
 
-        const values = [name, price, id];
-        const query = 'UPDATE shipping_methods SET name = ?, price = ? WHERE id = ?';
+        const values = [name, price, description, id];
+        const query = 'UPDATE shipping_methods SET name = ?, price = ?, description = ? WHERE id = ?';
         con.query(query, values, (err, res) => {
            if(res) {
                response.send({
@@ -48,10 +48,10 @@ con.connect((err) => {
 
     /* ADD SHIPPING METHOD */
     router.post("/add",(request, response) => {
-        const {name, price} = request.body;
+        const {name, price, description} = request.body;
 
-        const values = [name, price];
-        const query = 'INSERT INTO shipping_methods VALUES (NULL, ?, ?)';
+        const values = [name, description, price];
+        const query = 'INSERT INTO shipping_methods VALUES (NULL, ?, ?, ?)';
 
         con.query(query, values, (err, res) => {
             if(res) {
@@ -89,7 +89,7 @@ con.connect((err) => {
 
     /* GET ALL SHIPPING METHODS */
     router.get("/get-all-shipping-methods", (request, response) => {
-        con.query(`SELECT sm.id, sm.name, sm.price, sm.delivery_time, i.file_path as img_path FROM shipping_methods sm LEFT OUTER JOIN images i ON sm.image = i.id`, (err, res) => {
+        con.query(`SELECT * FROM shipping_methods`, (err, res) => {
             let result, shippingMethods = 0;
            if(err) result = 0;
            else {

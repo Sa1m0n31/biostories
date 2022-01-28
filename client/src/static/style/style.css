@@ -1134,6 +1134,7 @@ h4.afterLogin {
 
 .label--check--delivery {
     padding-top: 10px;
+    flex-wrap: wrap;
 }
 
 .sAndP__main {
@@ -1241,6 +1242,57 @@ h4.afterLogin {
     border-bottom: 1px solid #E3E3E3;
 }
 
-.singleMiddle {
+.inPostAddress {
+    width: 100%;
+    margin: 10px 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
 
+.locationIcon {
+    width: 30px;
+    margin-right: 15px;
+}
+
+.codeForm {
+    margin-bottom: 40px;
+    margin-top: 10px;
+}
+
+.codeForm label {
+    width: 70%;
+    max-width: 300px;
+    height: 40px;
+    margin-right: 20px;
+}
+
+.input--code {
+    height: 40px;
+    margin-top: 0;
+}
+
+.codeForm {
+    justify-content: flex-start !important;
+}
+
+.btn--code {
+    width: 28%;
+    min-width: 200px;
+    height: 40px;
+    transition: .2s all;
+}
+
+.btn--code:hover {
+    background: var(--hover);
+}
+
+.codeForm .icon {
+    margin-left: 0 !important;
+}
+
+.codeHeader {
+    font-weight: 400;
+    font-size: 15px;
+    margin-left: 10px;
 }
