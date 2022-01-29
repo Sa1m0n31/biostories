@@ -107,4 +107,35 @@ const getProductIcons = (id) => {
     });
 }
 
-export { getAllProducts, getSingleProduct, getProductByName, getProductsByCategory, getImageById, getProductById, addProduct, getProductGallery, getProductIcons, updateProduct };
+const getNewProducts = () => {
+    return axios.get(`${API_URL}/product/get-new`);
+}
+
+const getTopProducts = () => {
+    return axios.get(`${API_URL}/product/get-top-products`);
+}
+
+const getPopularProducts = () => {
+    return axios.get(`${API_URL}/product/get-popular`);
+}
+
+const getDefaultAttribute = (id) => {
+    return axios.get(`${API_URL}/product/get-default-attribute`, {
+        params: {
+            id
+        }
+    });
+}
+
+const getSimilarProducts = (product) => {
+    return axios.get(`${API_URL}/product/get-similar`, {
+        params: {
+            product
+        }
+    })
+}
+
+export { getAllProducts, getSingleProduct, getProductByName,
+    getProductsByCategory, getImageById, getProductById, addProduct,
+    getNewProducts, getTopProducts, getPopularProducts, getDefaultAttribute,
+    getProductGallery, getProductIcons, updateProduct, getSimilarProducts };

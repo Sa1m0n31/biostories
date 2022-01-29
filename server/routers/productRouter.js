@@ -71,9 +71,14 @@ con.connect(err => {
    }
 
    const addAttributeValues = (val, attributeId) => {
-      val.forEach((item) => {
-         const values = [attributeId, item];
-         const query = 'INSERT INTO attributes_values VALUES (?, ?, 0)';
+      val.map((item, index) => {
+         return {
+            name: item,
+            priority: index
+         }
+      }).forEach((item) => {
+         const values = [attributeId, item.name, item.priority];
+         const query = 'INSERT INTO attributes_values VALUES (?, ?, 0, ?)';
          con.query(query, values);
       });
    }
@@ -137,6 +142,7 @@ con.connect(err => {
    }
 
    const deleteAttributes = (id) => {
+      console.log('delete attribute with product-id = ' + id);
       const query = 'DELETE FROM products_attributes WHERE product = ?';
       const values = [id];
       con.query(query, values);
@@ -164,10 +170,6 @@ con.connect(err => {
          if(files.img5) img5 = files.img5[0].filename;
       }
 
-      console.log('ID: ' + id);
-      console.log(secondDescription);
-      console.log(thirdDescription);
-
       const values = [title, subtitle, price, stock, description, secondDescription, thirdDescription, fourthDescription,
          img1, img2, img3, img4, img5, recommendation === 'true' ? 1 : 0, top === 'true' ? 1 : 0, hidden === 'true' ? 1 : 0, id
       ]
@@ -183,14 +185,15 @@ con.connect(err => {
             if(files.icons) {
                addIcons(files.icons, id);
             }
-            console.log(categories);
             if(categories) {
                await deleteCategories(id);
                await addCategories(JSON.parse(categories), id);
             }
+            console.log(attribute);
+            console.log(attributeValues.split(','));
             if(attribute) {
-               deleteAttributes(id);
-               addAttribute(attribute, attributeValues.split(','), id);
+               await deleteAttributes(id);
+               await addAttribute(attribute, attributeValues.split(','), id);
             }
             response.send({
                result: 1
@@ -222,40 +225,6 @@ con.connect(err => {
       })
    });
 
-   /* GET MEN RECOMMENDATIONS */
-   router.get("/get-men-recommendations", (request, response) => {
-         const query = 'SELECT p.name, i.file_path, p.price FROM products p JOIN images i ON p.main_image = i.id JOIN product_categories pc ON pc.product_id = p.id JOIN categories c ON c.id = pc.category_id WHERE recommendation = 1 AND LOWER(c.name) != "damskie" AND c.parent_id IS NULL LIMIT 3;'
-         con.query(query, (err, res) => {
-            if(res) {
-               response.send({
-                  result: res
-               });
-            }
-            else {
-               response.send({
-                  result: 0
-               });
-            }
-         });
-   });
-
-   /* GET Women RECOMMENDATIONS */
-   router.get("/get-women-recommendations", (request, response) => {
-      const query = 'SELECT p.name, i.file_path, p.price FROM products p JOIN images i ON p.main_image = i.id JOIN product_categories pc ON pc.product_id = p.id JOIN categories c ON c.id = pc.category_id WHERE recommendation = 1 AND LOWER(c.name) != "męskie" AND c.parent_id IS NULL LIMIT 3;'
-      con.query(query, (err, res) => {
-         if(res) {
-            response.send({
-               result: res
-            });
-         }
-         else {
-            response.send({
-               result: 0
-            });
-         }
-      });
-   });
-
    /* REMOVE PRODUCT */
    router.post("/delete", (request, response) => {
       const { id } = request.body;
@@ -281,7 +250,8 @@ con.connect(err => {
 
    /* GET ALL PRODUCTS */
    router.get("/get-all-products", (request, response) => {
-      const query = 'SELECT p.id, p.name, p.subtitle, p.main_image, p.second_image, p.price, p.stock, p.date, COALESCE(c.name, "Brak") as category_name, p.hidden FROM products p ' +
+      const query = 'SELECT p.id, p.name, p.subtitle, p.main_image, p.second_image, p.price, p.stock, p.date, ' +
+          'COALESCE(c.name, "Brak") as category_name, p.hidden FROM products p ' +
       'LEFT OUTER JOIN product_categories pc ON pc.product_id = p.id ' +
           'LEFT OUTER JOIN categories c ON c.id = pc.category_id ' +
       'GROUP BY p.id ORDER BY p.date DESC';
@@ -319,22 +289,81 @@ con.connect(err => {
       })
    });
 
+   router.get('/get-default-attribute', (request, response) => {
+      const { id } = request.query;
+
+      const query = 'SELECT av.value, a.name FROM attributes_values av ' +
+          'JOIN products_attributes a ON a.id = av.attribute ' +
+          'WHERE a.product = ? GROUP BY av.value ORDER BY av.date ASC';
+      const values = [id];
+      con.query(query, values, (err, res) => {
+         console.log(err);
+         if(res) {
+            if(res[0]) {
+               response.send({
+                  result: res[0]
+               });
+            }
+            else {
+               response.send({
+                  result: 0
+               });
+            }
+         }
+         else {
+            response.send({
+               result: 0
+            });
+         }
+      });
+   });
+
    /* GET SINGLE PRODUCT BY NAME */
    router.post("/get-product-by-name", (request, response) => {
       const { name } = request.body;
       const values = [name];
       /* Query uses custom MySQL function - SPLIT_STR */
       const query = 'SELECT p.id as id, p.name, p.price, ' +
-          'p.description, p.second_description, p.third_description, p.fourth_description, p.date, ' +
+          'p.description, p.second_description, p.third_description, p.fourth_description, p.date, pc.category_id, ' +
           'p.main_image, p.second_image, p.third_image, p.fourth_image, p.fifth_image, pa.name as attribute_name, av.value as attribute_value ' +
           'FROM products p ' +
           'LEFT OUTER JOIN products_attributes pa ON p.id = pa.product ' +
           'LEFT OUTER JOIN attributes_values av ON pa.id = av.attribute ' +
-          'WHERE REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(SPLIT_STR(p.name, "/", 1)), "ł", "l"), "ę", "e"), "ą", "a"), "ć", "c"), "ń", "n"), "ó", "o"), "ś", "s"), "ź", "z"), "ż", "z") = ?';
+          'LEFT OUTER JOIN product_categories pc ON pc.product_id = p.id ' +
+          'WHERE REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(SPLIT_STR(p.name, "/", 1)), "ł", "l"), "ę", "e"), "ą", "a"), "ć", "c"), "ń", "n"), "ó", "o"), "ś", "s"), "ź", "z"), "ż", "z") = ? ' +
+          'GROUP BY av.value ORDER BY av.date ASC';
       con.query(query, values, (err, res) => {
          response.send({
             result: res
          });
+      });
+   });
+
+   router.get('/get-similar', (request, response) => {
+      const { product } = request.query;
+
+      const query = 'SELECT p.id, p.name, p.subtitle, p.main_image, p.second_image, p.price, p.stock, p.date, COALESCE(c.name, "Brak") as category_name, p.hidden FROM products p ' +
+          'LEFT OUTER JOIN product_categories pc ON pc.product_id = p.id ' +
+          'LEFT OUTER JOIN categories c ON c.id = pc.category_id ' +
+          'WHERE pc.category_id IN (' +
+          'SELECT category_id FROM product_categories WHERE product_id = ?' +
+          ') ' +
+          'GROUP BY p.id ORDER BY p.date DESC LIMIT 4';
+      const values = [product];
+
+      con.query(query, values, (err, res) => {
+         console.log(err);
+         console.log(res);
+         if(res) {
+            response.send({
+               result: res
+            });
+         }
+         else {
+            response.send({
+               result: null
+            });
+         }
       });
    });
 
@@ -450,7 +479,7 @@ con.connect(err => {
           'FROM products p ' +
           'LEFT OUTER JOIN products_attributes pa ON p.id = pa.product ' +
           'LEFT OUTER JOIN attributes_values av ON pa.id = av.attribute ' +
-          'WHERE p.id = ?';
+          'WHERE p.id = ? GROUP BY av.value ORDER BY av.date';
       con.query(query, values, (err, res) => {
          if(res) {
             response.send({
@@ -488,8 +517,13 @@ con.connect(err => {
    router.post("/get-products-by-category", (request, response) => {
       const { id } = request.body;
       const values = [id];
-      const query = 'SELECT *, i.file_path as image FROM products p JOIN images i ON p.main_image = i.id JOIN product_categories pc ON pc.product_id = p.id WHERE pc.category_id = ?';
+      const query = 'SELECT p.id, p.name, p.subtitle, p.main_image, p.second_image, p.price, p.stock, p.date, ' +
+          'COALESCE(c.name, "Brak") as category_name, p.hidden FROM products p ' +
+          'LEFT OUTER JOIN product_categories pc ON pc.product_id = p.id ' +
+          'LEFT OUTER JOIN categories c ON c.id = pc.category_id ' +
+          'WHERE pc.category_id = ? GROUP BY p.id ORDER BY p.date DESC';
       con.query(query, values, (err, res) => {
+         console.log(err);
          if(res) {
             response.send({
                result: res

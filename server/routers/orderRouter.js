@@ -679,7 +679,7 @@ con.connect(err => {
     router.post("/send-order-info", (request, response) => {
         const { orderId } = request.body;
 
-        const query = 'SELECT o.id, o.order_price, o.order_comment, p.name, p.price, s.quantity, s.size, pm.name as payment_method, sm.name as shipping_method, sm.price as shipping_method_price, o.inpost_id, o.inpost_address, o.inpost_postal_code, o.inpost_city, o.nip, o.company_name, u.email, u.first_name, u.last_name, u.phone_number, u.street, u.building, u.flat, u.city, u.postal_code, i.file_path FROM orders o JOIN users u ON u.id = o.user JOIN payment_methods pm ON pm.id = o.payment_method JOIN shipping_methods sm ON sm.id = o.shipping_method JOIN sells s ON s.order_id = o.id JOIN products p ON p.id = s.product_id JOIN images i ON i.id = p.main_image WHERE o.id = ?';
+        const query = 'SELECT o.id, o.order_price, o.order_comment, p.name, p.price, s.quantity, pm.name as payment_method, sm.name as shipping_method, sm.price as shipping_method_price, o.inpost_id, o.inpost_address, o.inpost_postal_code, o.inpost_city, o.nip, o.company_name, u.email, u.first_name, u.last_name, u.phone_number, u.street, u.building, u.flat, u.city, u.postal_code, i.file_path FROM orders o JOIN users u ON u.id = o.user JOIN payment_methods pm ON pm.id = o.payment_method JOIN shipping_methods sm ON sm.id = o.shipping_method JOIN sells s ON s.order_id = o.id JOIN products p ON p.id = s.product_id JOIN images i ON i.id = p.main_image WHERE o.id = ?';
         const values = [orderId];
 
         con.query(query, values, (err, res) => {
@@ -698,7 +698,7 @@ con.connect(err => {
                    }
                }
 
-               sendStatus1Email(res, response);
+               // sendStatus1Email(res, response);
            }
            else {
                response.send({
@@ -727,7 +727,7 @@ con.connect(err => {
 
     const decrementStock = (productId, quantity) => {
         const values = [quantity, productId];
-        const query = 'UPDATE products SET stock = stock - ? WHERE product_id = ?'
+        const query = 'UPDATE products SET stock = stock - ? WHERE id = ?'
         con.query(query, values);
     }
 
@@ -741,7 +741,7 @@ con.connect(err => {
 
             if(paymentMethod === 1 || paymentMethod === 2 || paymentMethod === 3) {
                 /* Jesli za pobraniem - dekrementuj stan magazynowy */
-                decrementStock(productId, size, quantity);
+                decrementStock(productId, quantity);
             }
 
             con.query(query, values, (err, res) => {
@@ -897,10 +897,12 @@ con.connect(err => {
         router.post("/pay-order", (request, response) => {
             const { pay, id } = request.body;
 
+            console.log(pay);
+            console.log(id);
+
             let query;
             const values = [id];
-            console.log(pay);
-            if(pay === 1) {
+            if(parseInt(pay) === 1) {
                 query = `UPDATE orders SET payment_status = 'opłacone' WHERE id = ?`;
             }
             else {

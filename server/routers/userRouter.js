@@ -174,10 +174,12 @@ con.connect((err) => {
 
     /* GET USER ORDERS */
     router.post("/get-user-orders", (request, response) => {
-        const email = request.user;
+        const email = request.body.user;
         const values = [email];
-        const query = 'SELECT * FROM orders o JOIN sells s ON o.id = s.order_id JOIN users u ON o.user = u.id WHERE u.email = ? GROUP BY o.id';
+        console.log(email);
+        const query = 'SELECT o.id as order_id, o.order_price, o.order_status FROM orders o JOIN sells s ON o.id = s.order_id JOIN users u ON o.user = u.id WHERE u.email = ? GROUP BY o.id';
         con.query(query, values, (err, res) => {
+            console.log(err);
             if(res) {
                 response.send({
                     result: res

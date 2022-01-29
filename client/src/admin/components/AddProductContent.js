@@ -114,6 +114,9 @@ const AddProductContent = () => {
             getProductDetails(param)
                 .then(async res => {
                     setProduct(res.data.result[0]);
+                    setAttributeValues(res?.data?.result?.map((item) => {
+                        return item.attribute_value;
+                    }).join(','));
                     setInitialValues(res.data.result[0]);
                 });
         }
@@ -127,6 +130,7 @@ const AddProductContent = () => {
         setHidden(productData.hidden);
         setTop(productData.top);
         setRecommendation(productData.recommendation);
+        setAttribute(productData.attribute_name);
 
         if(productData.main_image) setUpdateImage(productData.main_image);
         if(productData.second_image) setUpdateImage2(productData.second_image);
@@ -134,17 +138,11 @@ const AddProductContent = () => {
         if(productData.fourth_image) setUpdateImage4(productData.fourth_image);
         if(productData.fifth_image) setUpdateImage5(productData.fifth_image);
 
-        console.log(productData.second_description);
-
-        if(productData.description) setShortDescription(EditorState.createWithContent(convertFromRaw(JSON.parse(productData.description))));
-        if(productData.second_description) setDescription2(EditorState.createWithContent(convertFromRaw(JSON.parse(productData.second_description))));
-        if(productData.third_description) setDescription3(EditorState.createWithContent(convertFromRaw(JSON.parse(productData.third_description))));
-        if(productData.fourth_description) setDescription4(EditorState.createWithContent(convertFromRaw(JSON.parse(productData.fourth_description))));
+        if(productData.description && productData.description !== '0') setShortDescription(EditorState.createWithContent(convertFromRaw(JSON.parse(productData.description))));
+        if(productData.second_description && productData.second_description !== '0') setDescription2(EditorState.createWithContent(convertFromRaw(JSON.parse(productData.second_description))));
+        if(productData.third_description && productData.third_description !== '0') setDescription3(EditorState.createWithContent(convertFromRaw(JSON.parse(productData.third_description))));
+        if(productData.fourth_description && productData.fourth_description !== '0') setDescription4(EditorState.createWithContent(convertFromRaw(JSON.parse(productData.fourth_description))));
     }
-
-    useEffect(() => {
-        console.log(choosenCategories);
-    }, [choosenCategories]);
 
     const isInArray = (categoryId) => {
         return choosenCategories.filter(item => {

@@ -10,10 +10,12 @@ import auth from "../admin/helpers/auth";
 
 const Header = ({topSmall, restricted}) => {
     const [isAuth, setIsAuth] = useState(false);
+    const [render, setRender] = useState(false);
 
     useEffect(() => {
         auth()
             .then((res) => {
+                setRender(true);
                 setIsAuth(res?.data?.result === 1);
                 if(!res?.data?.result && restricted) window.location = '/';
             });
@@ -55,13 +57,13 @@ const Header = ({topSmall, restricted}) => {
         <Menu />
         <Cart />
         <header className="siteHeader w flex">
-            <button className="siteHeader__menuBtn trans" onClick={() => { openMenu(); }}>
+            <button className={render ? "siteHeader__menuBtn trans" : "siteHeader__menuBtn trans opacity-0"} onClick={() => { openMenu(); }}>
                 <img className="btn__img" src={menuIcon} alt="menu" />
             </button>
             <a className="siteHeader__logoWrapper" href="/">
                 <img className="btn__img" src={logo} alt="bio-stories" />
             </a>
-            <section className="siteHeader__right flex">
+            <section className={render ? "siteHeader__right flex" : "siteHeader__right opacity-0"}>
                 <a className="siteHeader__right__item" href={isAuth ? "/moje-konto" : "/logowanie"}>
                     <img className="btn__img" src={loginIcon} alt="zaloguj-sie" />
                     {isAuth ? 'Moje konto' : 'Zaloguj się'}

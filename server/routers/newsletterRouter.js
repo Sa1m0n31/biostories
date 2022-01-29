@@ -20,6 +20,7 @@ let transporter = nodemailer.createTransport(smtpTransport ({
 }));
 
 con.connect(err => {
+    console.log('sending ver...');
     const sendVerificationMail = (email, token, response) => {
         let mailOptions = {
             from: process.env.MAIL,

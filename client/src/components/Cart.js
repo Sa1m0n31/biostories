@@ -166,6 +166,9 @@ const Cart = ({deliveryProp, addOrder, codes, code, codeUpdated, setCodeVerified
                         </figure>
                         <h4 className="cart__item__title">
                             {item.title}
+                            {item.attributeName ? <span className="cart__item__attribute">
+                                {item.attributeName}: {item.attributeValue}
+                            </span> : ''}
                         </h4>
                     </div>
                     <div className="cart__item__secondCol flex">

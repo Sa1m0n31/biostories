@@ -51,6 +51,7 @@ import ShippingAndPayment from "./pages/ShippingAndPayment";
 import TyPage from "./pages/TyPage";
 import MyAccount from "./pages/MyAccount";
 import SingleProduct from "./pages/SingleProduct";
+import OrderHistoryPage from "./pages/OrderHistoryPage";
 require('dotenv').config();
 
 axios.defaults.headers.common['Authorization'] = credentials.AUTH_HEADER;
@@ -215,6 +216,9 @@ function App() {
             </Route>
             <Route path="/produkt">
                 <SingleProduct />
+            </Route>
+            <Route path="/historia-zamowien">
+                <OrderHistoryPage />
             </Route>
 
             {/* Admin routes */}

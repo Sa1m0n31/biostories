@@ -56,21 +56,21 @@ con.connect(err => {
 
             let hash, data, gen_hash;
             hash = crypto.createHash('sha384');
-            data = hash.update(`{"sessionId":"${sessionId}","merchantId":${marchantId},"amount":${parseFloat(request.body.amount)*100},"currency":"PLN","crc":"${crc}"}`, 'utf-8');
+            data = hash.update(`{"sessionId":"${sessionId}","merchantId":${marchantId},"amount":${request.body.amount},"currency":"PLN","crc":"${crc}"}`, 'utf-8');
             gen_hash = data.digest('hex');
 
             /* Dane */
             let postData = {
                 sessionId: sessionId,
-                posId: marchantId,
-                merchantId: marchantId,
-                amount: parseFloat(request.body.amount),
+                posId: parseInt(marchantId),
+                merchantId: parseInt(marchantId),
+                amount: request.body.amount,
                 currency: "PLN",
                 description: "Platnosc za zakupy w sklepie HideIsland",
                 email: request.body.email,
                 country: "PL",
                 language: "pl",
-                urlReturn: `${process.env.API_URL}/dziekujemy`,
+                urlReturn: `http://localhost:3000/dziekujemy`,
                 urlStatus: `${process.env.API_URL}/payment/verify`,
                 sign: gen_hash
             };
@@ -110,7 +110,7 @@ con.connect(err => {
         let currency = request.body.currency;
         let orderId = request.body.orderId;
 
-        console.log('verify');
+        console.log('verify!!!!!!!!!!!!!');
 
         /* Get data */
         const query = 'SELECT * FROM przelewy24 WHERE id = 1';

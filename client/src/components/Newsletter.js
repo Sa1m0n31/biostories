@@ -1,5 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import arrow from '../static/assets/arrow-right.svg'
+import axios from "axios";
+import settings from "../admin/helpers/settings";
 
 const Newsletter = () => {
     const [email, setEmail] = useState("");
@@ -21,7 +23,16 @@ const Newsletter = () => {
     const handleSubmit = () => {
         if(isEmail(email)) {
             setError("");
-            setSuccess(true);
+            axios.post(`${settings.API_URL}/newsletter/add`, { email })
+                .then(res => {
+                    if(res.data.result === 1) {
+                        setSuccess(true);
+                        setEmail("");
+                    }
+                    else {
+                        setError("Coś poszło nie tak... Prosimy spróbować później.");
+                    }
+                });
         }
         else {
             setError("Podaj poprawny adres e-mail");

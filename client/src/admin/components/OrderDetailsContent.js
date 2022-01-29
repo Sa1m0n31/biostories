@@ -10,6 +10,7 @@ import Modal from 'react-modal'
 import closeImg from "../static/img/close.png";
 import axios from "axios";
 import settings from "../helpers/settings";
+import Loader from "../../components/Loader";
 
 const OrderDetailsContent = () => {
     const location = useLocation();
@@ -26,6 +27,7 @@ const OrderDetailsContent = () => {
     const [adminComment, setAdminComment] = useState("");
     const [payClicked, setPayClicked] = useState(-1);
     const [orderPrice, setOrderPrice] = useState(null);
+    const [render, setRender] = useState(false);
 
     useEffect(() => {
         /* Get order id from url string */
@@ -37,7 +39,6 @@ const OrderDetailsContent = () => {
         /* Get order info */
         getOrderDetails(id)
             .then(res => {
-                console.log(res?.data?.result);
                if(res?.data?.result?.length) {
                    setCart(res.data.result);
                    setOrderStatus(res.data.result[0].order_status);
@@ -48,6 +49,7 @@ const OrderDetailsContent = () => {
                    setSum(res.data.result.reduce((prev, item) => {
                        return prev + item.price;
                    }, 0));
+                   setRender(true);
                }
                //setSum(calculateCartSum(res.data.result));
                calculateCartSum();
@@ -152,143 +154,147 @@ const OrderDetailsContent = () => {
         </header>
 
         <section className="panelContent__frame">
-            <section className="panelContent__cart">
-                <header className="panelContent__cart__header">
-                    <h2 className="panelContent__header--smaller">
-                        Zawartość koszyka
-                    </h2>
-
-                    <section className="panelContent__buttons panelContent__buttons--orderDetails">
-                        <button className="panelContent__btn btn--neutral">
-                            <a className="button--link" href="/panel/zamowienia">
-                                Wróć do zamówień
-                            </a>
-                        </button>
-                        <button className="panelContent__btn btn--red" onClick={() => { openModal() }}>
-                            Usuń zamówienie
-                        </button>
-                    </section>
-                </header>
-                <main className="panelContent__cart__content">
-                    {cart?.map((item, index) => {
-                        return <section key={index} className="panelContent__cart__item">
-                            <section className="panelContent__cart__column">
-                                <span>{item.name}</span>
-                            </section>
-                            <section className="panelContent__cart__column panelQuantity">
-                                <span>Ilość: {item.quantity}</span>
-                            </section>
-                            <section className="panelContent__cart__column">
-                                <span>{item.option}</span>
-                            </section>
-                            <section className="panelContent__cart__column">
-                                <span>{item.size ? `Rozmiar: ${item.size}` : ""}</span>
-                            </section>
-                            <section className="panelContent__cart__column">
-                                <span>Cena: {item.price} PLN</span>
-                            </section>
-                        </section>
-                    })}
-                </main>
-                <h4 className="panelContent__cart__summary">
-                    <span>Rabat:</span> {cart[0].discount} PLN
-                </h4>
-                <h4 className="panelContent__cart__summary">
-                    <span>Cena zamówienia (po rabacie):</span> {cart[0].order_price} PLN
-                </h4>
-
-            </section>
-
-            <section className="panelContent__orderDetails">
-                <section className="panelContent__clientData">
-                    <h2 className="panelContent__header--smaller">
-                        Dane klienta
-                    </h2>
-                    {cart?.length ?  <main className="panelContent__clientData__content">
-                        <h3 className="panelContent__data w-50">
-                            {cart[0].first_name}
-                        </h3>
-                        <h3 className="panelContent__data w-50">
-                            {cart[0].last_name}
-                        </h3>
-                        <h3 className="panelContent__data w-70">
-                            {cart[0].email}
-                        </h3>
-                        <h3 className="panelContent__data w-30">
-                            {cart[0].phone_number ? cart[0].phone_number : "Brak numeru telefonu"}
-                        </h3>
-                        <h3 className="panelContent__data w-100">
-                            {cart[0].date ? getDate(cart[0].date) + " " + getTime(cart[0].date) : ""}
-                        </h3>
-                        <h3 className="panelContent__data w-100">
-                            {cart[0].order_comment ? cart[0].order_comment : "Brak komentarza do zamówienia"}
-                        </h3>
-                    </main> : ""}
-
-                    {cart?.length ? <section className="panelContent__orderStatus">
-                        <h2 className="panelContent__orderStatus__header flex">
-                            Opłacone:
-                            <img className="panelContent__orderStatus__img" src={(cart[0].payment_status?.toLowerCase() === "opłacone" && payClicked !== 0) || payClicked === 1 ? tick : x} alt="oplacone" />
-                            {(cart[0].payment_status?.toLowerCase() === "opłacone" && payClicked !== 0) || payClicked === 1 ? <button onClick={() => { payOrder(0, cart[0].id); setPayClicked(0); }}>
-                                Oznacz jako nieopłacone
-                            </button> : <button onClick={() => { payOrder(1, cart[0].id); setPayClicked(1); }}>
-                                Oznacz jako opłacone
-                            </button>}
+            {render ? <>
+                <section className="panelContent__cart">
+                    <header className="panelContent__cart__header">
+                        <h2 className="panelContent__header--smaller">
+                            Zawartość koszyka
                         </h2>
-                        {/*<h2 className="panelContent__orderStatus__header">*/}
-                        {/*    Faktura VAT:*/}
-                        {/*    <img className="panelContent__orderStatus__img" src={cart[0].company_name ? tick : x} alt="faktura-vat" />*/}
-                        {/*</h2>*/}
-                    </section> : ""}
+
+                        <section className="panelContent__buttons panelContent__buttons--orderDetails">
+                            <button className="panelContent__btn btn--neutral">
+                                <a className="button--link" href="/panel/zamowienia">
+                                    Wróć do zamówień
+                                </a>
+                            </button>
+                            <button className="panelContent__btn btn--red" onClick={() => { openModal() }}>
+                                Usuń zamówienie
+                            </button>
+                        </section>
+                    </header>
+                    <main className="panelContent__cart__content">
+                        {cart?.map((item, index) => {
+                            return <section key={index} className="panelContent__cart__item">
+                                <section className="panelContent__cart__column">
+                                    <span>{item.name}</span>
+                                </section>
+                                {item.attribute_name && item.attribute_value ?  <section className="panelContent__cart__column">
+                                    <span>{item.attribute_name}: {item.attribute_value}</span>
+                                </section> : ''}
+                                <section className="panelContent__cart__column panelQuantity">
+                                    <span>Ilość: {item.quantity}</span>
+                                </section>
+                                <section className="panelContent__cart__column">
+                                    <span>{item.option}</span>
+                                </section>
+                                <section className="panelContent__cart__column">
+                                    <span>{item.size ? `Rozmiar: ${item.size}` : ""}</span>
+                                </section>
+                                <section className="panelContent__cart__column">
+                                    <span>Cena: {item.price} PLN</span>
+                                </section>
+                            </section>
+                        })}
+                    </main>
+                    <h4 className="panelContent__cart__summary">
+                        <span>Rabat:</span> {cart[0].discount} PLN
+                    </h4>
+                    <h4 className="panelContent__cart__summary">
+                        <span>Cena zamówienia (po rabacie):</span> {cart[0].order_price} PLN
+                    </h4>
+
                 </section>
 
-                {cart?.length ? <section className="panelContent__shipping">
-                    <h2 className="panelContent__header--smaller">
-                        Sposób dostawy: <b>{cart[0].shipping}</b>
-                    </h2>
-                    <h2 className="panelContent__header--smaller mt-4">
-                        Płatność: <b>{cart[0].payment}</b>
-                    </h2>
+                <section className="panelContent__orderDetails">
+                    <section className="panelContent__clientData">
+                        <h2 className="panelContent__header--smaller">
+                            Dane klienta
+                        </h2>
+                        {cart?.length ?  <main className="panelContent__clientData__content">
+                            <h3 className="panelContent__data w-50">
+                                {cart[0].first_name}
+                            </h3>
+                            <h3 className="panelContent__data w-50">
+                                {cart[0].last_name}
+                            </h3>
+                            <h3 className="panelContent__data w-70">
+                                {cart[0].email}
+                            </h3>
+                            <h3 className="panelContent__data w-30">
+                                {cart[0].phone_number ? cart[0].phone_number : "Brak numeru telefonu"}
+                            </h3>
+                            <h3 className="panelContent__data w-100">
+                                {cart[0].date ? getDate(cart[0].date) + " " + getTime(cart[0].date) : ""}
+                            </h3>
+                            <h3 className="panelContent__data w-100">
+                                {cart[0].order_comment ? cart[0].order_comment : "Brak komentarza do zamówienia"}
+                            </h3>
+                        </main> : ""}
 
-                    {cart[0].shipping === "Paczkomaty InPost" ? <section className="inPost__address">
-                        <h4 className="inPost__address__header">
-                            Adres paczkomatu:
-                        </h4>
-                        {cart[0].inpost_address}<br/>
-                        {cart[0].inpost_postal_code} {cart[0].inpost_city}
-                    </section> : <section className="inPost__address">
-                        <h4 className="inPost__address__header">
-                            Adres dostawy:
-                        </h4>
-                        {cart[0].street} {cart[0].building} {cart[0].flat ? `/${cart[0].flat}` : ""}<br/>
-                        {cart[0].postal_code} {cart[0].city}
-                    </section>}
+                        {cart?.length ? <section className="panelContent__orderStatus">
+                            <h2 className="panelContent__orderStatus__header flex">
+                                Opłacone:
+                                <img className="panelContent__orderStatus__img" src={(cart[0].payment_status?.toLowerCase() === "opłacone" && payClicked !== 0) || payClicked === 1 ? tick : x} alt="oplacone" />
+                                {(cart[0].payment_status?.toLowerCase() === "opłacone" && payClicked !== 0) || payClicked === 1 ? <button onClick={() => { payOrder(0, cart[0].id); setPayClicked(0); }}>
+                                    Oznacz jako nieopłacone
+                                </button> : <button onClick={() => { payOrder(1, cart[0].id); setPayClicked(1); }}>
+                                    Oznacz jako opłacone
+                                </button>}
+                            </h2>
+                            {/*<h2 className="panelContent__orderStatus__header">*/}
+                            {/*    Faktura VAT:*/}
+                            {/*    <img className="panelContent__orderStatus__img" src={cart[0].company_name ? tick : x} alt="faktura-vat" />*/}
+                            {/*</h2>*/}
+                        </section> : ""}
+                    </section>
 
-                    {cart[0].company_name ? <address className="inPost__address">
-                        <h4 className="inPost__address__header">
-                            Dane do faktury
-                        </h4>
-                        {cart[0].company_name}<br/>
-                        {cart[0].nip}
-                    </address> : "" }
+                    {cart?.length ? <section className="panelContent__shipping">
+                        <h2 className="panelContent__header--smaller">
+                            Sposób dostawy: <b>{cart[0].shipping}</b>
+                        </h2>
+                        <h2 className="panelContent__header--smaller mt-4">
+                            Płatność: <b>{cart[0].payment}</b>
+                        </h2>
 
-                    <h2 className="panelContent__header--smaller mt-3">
-                        Status zamówienia:
-                        <select className="panelContent__select"
-                                onChange={e => { setOrderStatus(e.target.value); }}
-                                value={orderStatus}>
-                            <option value="złożone">złożone</option>
-                            <option value="przyjęte do realizacji">przyjęte do realizacji</option>
-                            <option value="zrealizowane">zrealizowane</option>
-                        </select>
-                    </h2>
+                        {cart[0].shipping === "Paczkomaty InPost" ? <section className="inPost__address">
+                            <h4 className="inPost__address__header">
+                                Adres paczkomatu:
+                            </h4>
+                            {cart[0].inpost_address}<br/>
+                            {cart[0].inpost_postal_code} {cart[0].inpost_city}
+                        </section> : <section className="inPost__address">
+                            <h4 className="inPost__address__header">
+                                Adres dostawy:
+                            </h4>
+                            {cart[0].street} {cart[0].building} {cart[0].flat ? `/${cart[0].flat}` : ""}<br/>
+                            {cart[0].postal_code} {cart[0].city}
+                        </section>}
 
-                    {orderUpdated === -1 ? <button className="panelContent__editOrderBtn" onClick={() => { changeOrderStatus(); }}>
-                        Zmień parametry zamówienia
-                    </button> : orderUpdated === 1 ? <h4 className="infoHeader">Dane zamówienia zostały zaktualizowane</h4> : <h4 className="infoHeader">Coś poszło nie tak... Prosimy spróbować później</h4> }
-                </section> : ""}
-            </section>
+                        {cart[0].company_name ? <address className="inPost__address">
+                            <h4 className="inPost__address__header">
+                                Dane do faktury
+                            </h4>
+                            {cart[0].company_name}<br/>
+                            {cart[0].nip}
+                        </address> : "" }
 
+                        <h2 className="panelContent__header--smaller mt-3">
+                            Status zamówienia:
+                            <select className="panelContent__select"
+                                    onChange={e => { setOrderStatus(e.target.value); }}
+                                    value={orderStatus}>
+                                <option value="złożone">złożone</option>
+                                <option value="przyjęte do realizacji">przyjęte do realizacji</option>
+                                <option value="zrealizowane">zrealizowane</option>
+                            </select>
+                        </h2>
+
+                        {orderUpdated === -1 ? <button className="panelContent__editOrderBtn" onClick={() => { changeOrderStatus(); }}>
+                            Zmień parametry zamówienia
+                        </button> : orderUpdated === 1 ? <h4 className="infoHeader">Dane zamówienia zostały zaktualizowane</h4> : <h4 className="infoHeader">Coś poszło nie tak... Prosimy spróbować później</h4> }
+                    </section> : ""}
+                </section>
+            </> : <Loader />}
         </section>
     </main>
 }

@@ -35,4 +35,10 @@ const getUserData = () => {
     });
 }
 
-export { logoutUser, loginUser, registerUser, verifyUser, getUserData }
+const getUserOrders = (email) => {
+    return axios.post(`${API_URL}/user/get-user-orders`, {
+        user: email
+    });
+}
+
+export { logoutUser, loginUser, registerUser, verifyUser, getUserData, getUserOrders }

@@ -27,7 +27,7 @@ const MyAccount = () => {
                 Panel klienta
             </h1>
             <main className="myAccount__main flex">
-                <OrderHistory />
+                <OrderHistory user={user} />
                 <ChangePassword />
                 <PersonalData user={user} />
                 <DeliveryData user={user} />

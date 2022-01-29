@@ -2,23 +2,24 @@ import React, {useEffect, useState} from 'react';
 import ProductPreview from "./ProductPreview";
 import img1 from '../static/assets/product-1.png'
 import img2 from '../static/assets/product-2.png'
-import {getPopularProducts} from "../helpers/productFunctions";
+import {getPopularProducts, getSimilarProducts} from "../helpers/productFunctions";
 import settings from "../helpers/settings";
-import convertToURL from "../helpers/convertToURL";
 
-const HomepagePopular = () => {
+const SimilarProducts = ({id}) => {
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
-        getPopularProducts()
-            .then((res) => {
-                setProducts(res?.data?.result);
-            });
-    }, []);
+        if(id) {
+            getSimilarProducts(id)
+                .then(res => {
+                    setProducts(res?.data?.result);
+                });
+        }
+    }, [id]);
 
     return <section className="row row--popular">
         <h2 className="row__header">
-            Najczęściej wybierane
+            Podobne produkty
         </h2>
         <main className="flex">
             {products.map((item, index) => {
@@ -28,7 +29,6 @@ const HomepagePopular = () => {
                     title={item.name}
                     subtitle={item.subtitle}
                     price={item.price}
-                    link={convertToURL(item.name)}
                     img1={`${settings.API_URL}/image?url=/media/products/${item.main_image}`}
                     img2={`${settings.API_URL}/image?url=/media/products/${item.second_image}`} />
             })}
@@ -36,4 +36,4 @@ const HomepagePopular = () => {
     </section>
 };
 
-export default HomepagePopular;
+export default SimilarProducts;

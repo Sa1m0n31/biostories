@@ -3,15 +3,17 @@ import Header from "../components/Header";
 import Menu from "../components/Menu";
 import TopMenu from "../components/TopMenu";
 import Footer from "../components/Footer";
-import {getAllProducts} from "../helpers/productFunctions";
+import {getAllProducts, getProductsByCategory} from "../helpers/productFunctions";
 import ProductPreview from "../components/ProductPreview";
 import convertToURL from "../helpers/convertToURL";
 import settings from "../helpers/settings";
 import {getCategoryBySlug} from "../helpers/categoryFunctions";
+import Loader from "../components/Loader";
 
 const Shop = () => {
     const [products, setProducts] = useState([]);
     const [category, setCategory] = useState(null);
+    const [render, setRender] = useState(false);
 
     useEffect(() => {
         let categoryPermalink, parentCategoryPermalink;
@@ -28,7 +30,6 @@ const Shop = () => {
             categoryPermalink = hrefItems[hrefItems.length-1];
             getCategoryBySlug(categoryPermalink, null)
                 .then((res) => {
-                    console.log(res.data.result);
                     setCategory(res?.data?.result[0]);
                 });
         }
@@ -36,30 +37,49 @@ const Shop = () => {
             getAllProducts()
                 .then((res) => {
                     setProducts(res?.data?.result);
+                    setRender(true);
                 })
         }
     }, []);
+
+    useEffect(() => {
+        if(category) {
+            getProductsByCategory(category.id)
+                .then((res) => {
+                    setProducts(res?.data?.result);
+                    setRender(true);
+                });
+        }
+    }, [category]);
 
     return <div className="container">
         <Header topSmall={true} />
         <TopMenu />
         <main className="page">
-            <h1 className="page__header page__header--left">
+            {render ? <h1 className="page__header page__header--left">
                 {category ? category.name : 'Sklep'}
-            </h1>
-            <main className="products flex">
-                {products?.map((item, index) => {
-                    return <ProductPreview
-                        key={index}
-                        id={item.id}
-                        title={item.name}
-                        subtitle={item.subtitle}
-                        link={convertToURL(item.name)}
-                        price={item.price}
-                        img1={`${settings.API_URL}/image?url=/media/products/${item.main_image}`}
-                        img2={`${settings.API_URL}/image?url=/media/products/${item.second_image}`} />
-                })}
-            </main>
+            </h1> : ''}
+            {render ? <main className="products flex">
+                    {products?.length ? products?.map((item, index) => {
+                        return <ProductPreview
+                            key={index}
+                            id={item.id}
+                            title={item.name}
+                            subtitle={item.subtitle}
+                            link={convertToURL(item.name)}
+                            price={item.price}
+                            img1={`${settings.API_URL}/image?url=/media/products/${item.main_image}`}
+                            img2={`${settings.API_URL}/image?url=/media/products/${item.second_image}`} />
+                    }) : <div className="noProductsWrapper">
+                        <h3 className="noProducts">
+                            Nie znaleziono produktów...
+                        </h3>
+                        <a className="btn btn--back" href="/sklep">
+                            Wróć do sklepu
+                        </a>
+                    </div>
+                    }
+                </main> : <Loader />}
         </main>
         <Footer />
     </div>

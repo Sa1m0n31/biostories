@@ -172,7 +172,7 @@ const ShippingAndPayment = () => {
                                 axios.post(`${settings.API_URL}/order/add-sell`, {
                                     orderId,
                                     productId: item.id,
-                                    attributeName: item.attribute,
+                                    attributeName: item.attributeName,
                                     attributeValue: item.attributeValue,
                                     quantity: item.amount,
                                     paymentMethod: payment
@@ -189,7 +189,6 @@ const ShippingAndPayment = () => {
                                             }
                                             else {
                                                 /* PAYMENT PROCESS */
-                                                alert(toPay.toFixed(2));
                                                 let paymentUri = "https://sandbox.przelewy24.pl/trnRequest/";
 
                                                 axios.post(`${settings.API_URL}/payment/payment`, {

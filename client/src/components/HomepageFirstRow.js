@@ -2,17 +2,18 @@ import React, {useEffect, useState} from 'react';
 import ProductPreview from "./ProductPreview";
 import img1 from '../static/assets/product-1.png'
 import img2 from '../static/assets/product-2.png'
+import {getTopProducts} from "../helpers/productFunctions";
+import settings from "../helpers/settings";
+import convertToURL from "../helpers/convertToURL";
 
 const HomepageFirstRow = () => {
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
-        setProducts([
-            { title: 'Ekologiczna herbatka', subtitle: 'Owocowa herbata ziołowa z wysoką zawartością witaminy C, liofilizowana.', price: 159.99, img1: img1, img2: img2 },
-            { title: 'Ekologiczna herbatka', subtitle: 'Owocowa herbata ziołowa z wysoką zawartością witaminy C, liofilizowana.', price: 159.99, img1: img1, img2: img2 },
-            { title: 'Ekologiczna herbatka', subtitle: 'Owocowa herbata ziołowa z wysoką zawartością witaminy C, liofilizowana.', price: 159.99, img1: img1, img2: img2 },
-            { title: 'Ekologiczna herbatka', subtitle: 'Owocowa herbata ziołowa z wysoką zawartością witaminy C, liofilizowana.', price: 159.99, img1: img1, img2: img2 }
-        ])
+        getTopProducts()
+            .then((res) => {
+                setProducts(res?.data?.result);
+            })
     }, []);
 
     return <section className="row">
@@ -24,11 +25,12 @@ const HomepageFirstRow = () => {
                 return <ProductPreview
                     key={index}
                     id={item.id}
-                    title={item.title}
+                    title={item.name}
                     subtitle={item.subtitle}
                     price={item.price}
-                    img1={item.img1}
-                    img2={item.img2} />
+                    link={convertToURL(item.name)}
+                    img1={`${settings.API_URL}/image?url=/media/products/${item.main_image}`}
+                    img2={`${settings.API_URL}/image?url=/media/products/${item.second_image}`} />
             })}
         </main>
     </section>

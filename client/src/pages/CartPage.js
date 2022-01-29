@@ -113,6 +113,9 @@ const CartPage = () => {
                             </h4>
                             <h4 className="cartCol__value">
                                 {item.title}
+                                    {item.attributeName ? <span className="cart__item__attribute">
+                                    {item.attributeName}: {item.attributeValue}
+                                </span> : ''}
                             </h4>
                         </div>
                         <div className="cartCol">

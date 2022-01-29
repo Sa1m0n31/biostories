@@ -1253,12 +1253,12 @@ input[type=file] {
 
 .inPost__address__header {
     font-size: 17px;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
 }
 
 .inPost__address {
-    color: #fff;
-    margin-top: 40px;
+    color: #000;
+    margin: 20px 0;
 }
 
 .panelContent__filters__btnWrapper:last-child .panelContent__filters__btn {
