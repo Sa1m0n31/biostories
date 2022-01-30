@@ -1703,3 +1703,16 @@ input[type=file] {
     border-radius: 50%;
     overflow: hidden;
 }
+
+.mt-4 {
+    margin-top: 20px;
+}
+
+.center {
+    justify-content: center !important;
+}
+
+.center .admin__label--imgUpload--section {
+    width: auto;
+    margin: 0 20px;
+}

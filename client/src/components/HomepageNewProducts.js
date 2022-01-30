@@ -17,11 +17,12 @@ const HomepageNewProducts = () => {
     }, []);
 
     return <section className="row">
+        <span className="anchor" id="nowosci"></span>
         <h2 className="row__header">
             Nowości
         </h2>
         <main className="flex">
-            {products.map((item, index) => {
+            {products?.map((item, index) => {
                 return <ProductPreview
                     key={index}
                     id={item.id}

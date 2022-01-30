@@ -18,9 +18,9 @@ const SimilarProducts = ({id}) => {
     }, [id]);
 
     return <section className="row row--popular">
-        <h2 className="row__header">
+        {products?.length ?  <h2 className="row__header">
             Podobne produkty
-        </h2>
+        </h2> : ''}
         <main className="flex">
             {products.map((item, index) => {
                 return <ProductPreview

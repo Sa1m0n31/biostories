@@ -7,6 +7,8 @@ import Cart from "./Cart";
 import {openCart, openMenu} from "../helpers/others";
 import Menu from "./Menu";
 import auth from "../admin/helpers/auth";
+import hamburger from '../static/assets/hamburger.svg'
+import search from '../static/assets/search.svg'
 
 const Header = ({topSmall, restricted}) => {
     const [isAuth, setIsAuth] = useState(false);
@@ -24,13 +26,13 @@ const Header = ({topSmall, restricted}) => {
     const changeTopStyle = () => {
         const y = window.pageYOffset;
         if(y > 5) {
-            document.querySelector('.siteHeader__logoWrapper').style.transform = 'scale(.4)';
+            document.querySelector('.siteHeader__logoWrapper').style.transform = 'scale(.4) translateX(-50%)';
             document.querySelector('.siteHeader').style.height = '90px';
             document.querySelector('.siteHeader').style.paddingTop = '15px';
             document.querySelector('.siteHeader').style.alignItems = 'center';
         }
         else if(y < 5) {
-            document.querySelector('.siteHeader__logoWrapper').style.transform = 'scale(1)';
+            document.querySelector('.siteHeader__logoWrapper').style.transform = 'scale(1) translateX(-50%)';
             document.querySelector('.siteHeader').style.height = 'auto';
             document.querySelector('.siteHeader').style.paddingTop = '30px';
             document.querySelector('.siteHeader').style.alignItems = 'flex-start';
@@ -45,7 +47,7 @@ const Header = ({topSmall, restricted}) => {
             });
         }
         else {
-            document.querySelector('.siteHeader__logoWrapper').style.transform = 'scale(.4)';
+            document.querySelector('.siteHeader__logoWrapper').style.transform = 'scale(.4) translateX(-50%)';
             document.querySelector('.siteHeader').style.height = '90px';
             document.querySelector('.siteHeader').style.paddingTop = '15px';
             document.querySelector('.siteHeader').style.alignItems = 'center';
@@ -57,13 +59,13 @@ const Header = ({topSmall, restricted}) => {
         <Menu />
         <Cart />
         <header className="siteHeader w flex">
-            <button className={render ? "siteHeader__menuBtn trans" : "siteHeader__menuBtn trans opacity-0"} onClick={() => { openMenu(); }}>
+            <button className={render ? "siteHeader__menuBtn trans d-desktop" : "siteHeader__menuBtn trans opacity-0"} onClick={() => { openMenu(); }}>
                 <img className="btn__img" src={menuIcon} alt="menu" />
             </button>
             <a className="siteHeader__logoWrapper" href="/">
                 <img className="btn__img" src={logo} alt="bio-stories" />
             </a>
-            <section className={render ? "siteHeader__right flex" : "siteHeader__right opacity-0"}>
+            <section className={render ? "siteHeader__right flex d-desktop" : "siteHeader__right opacity-0"}>
                 <a className="siteHeader__right__item" href={isAuth ? "/moje-konto" : "/logowanie"}>
                     <img className="btn__img" src={loginIcon} alt="zaloguj-sie" />
                     {isAuth ? 'Moje konto' : 'Zaloguj się'}
@@ -73,7 +75,21 @@ const Header = ({topSmall, restricted}) => {
                     Twoje zakupy
                 </button>
             </section>
+            <button className="siteHeader__hamburgerMenu d-mobile" onClick={() => { openMenu(); }}>
+                <img className="btn__img" src={hamburger} alt="menu" />
+            </button>
         </header>
+        <menu className="mobileBar d-mobile">
+            <button className="mobileBar__btn">
+                <img className="btn__img" src={search} alt="szukaj" />
+            </button>
+            <a className="mobileBar__btn" href={isAuth ? "/moje-konto" : "/logowanie"}>
+                <img className="btn__img" src={loginIcon} alt="szukaj" />
+            </a>
+            <button className="mobileBar__btn" onClick={() => { openCart(); }}>
+                <img className="btn__img" src={cartIcon} alt="szukaj" />
+            </button>
+        </menu>
     </>
 };
 

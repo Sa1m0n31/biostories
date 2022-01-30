@@ -17,6 +17,7 @@ const HomepagePopular = () => {
     }, []);
 
     return <section className="row row--popular">
+        <span className="anchor" id="popularne"></span>
         <h2 className="row__header">
             Najczęściej wybierane
         </h2>

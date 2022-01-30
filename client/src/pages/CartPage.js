@@ -90,7 +90,7 @@ const CartPage = () => {
             });
     }
 
-    return <div className="page page--login page--beforeCheckout">
+    return <div className="page page--login page--beforeCheckout page--cart">
         <a className="page--beforeCheckout__back" href="/">
             <img className="icon" src={arrowBack} alt="wroc" />
             Powrót na stronę główną
@@ -136,7 +136,7 @@ const CartPage = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="cartCol">
+                        <div className="cartCol d-900">
                             <h4 className="cartCol__key">
                                 Cena jednostkowa
                             </h4>

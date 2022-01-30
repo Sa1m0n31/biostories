@@ -1,4 +1,6 @@
 import React from 'react';
+import instaIcon from '../static/assets/instagram.svg'
+import fbIcon from '../static/assets/facebook.svg'
 
 const TopMenu = () => {
     const menu = [
@@ -12,20 +14,19 @@ const TopMenu = () => {
         },
         {
             name: 'Nowości',
-            link: '/nowosci'
+            link: '/#nowosci'
         },
         {
             name: 'Najczęściej wybierane',
-            link: '/najczesciej-wybierane'
+            link: '/#popularne'
         },
         {
             name: 'O nas',
-            link: '/o-nas'
-        },
-
+            link: '/#o-nas'
+        }
     ]
 
-    return <menu className="topMenu center">
+    return <menu className="topMenu d-desktop center">
         <ul className="topMenu__list flex">
             {menu.map((item, index) => {
                 return <li className="topMenu__list__item" key={index}>
@@ -34,6 +35,16 @@ const TopMenu = () => {
                     </a>
                 </li>
             })}
+            <li className="topMenu__list__item">
+                <a className="topMenu__list__link" href="" target="_blank">
+                    <img className="topMenu__icon" src={instaIcon} alt="instagram" />
+                </a>
+            </li>
+            <li className="topMenu__list__item">
+                <a className="topMenu__list__link" href='https://www.facebook.com/biostories' target="_blank">
+                    <img className="topMenu__icon" src={fbIcon} alt="facebook" />
+                </a>
+            </li>
         </ul>
     </menu>
 };

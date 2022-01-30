@@ -8,17 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 const multer  = require('multer')
 const upload = multer({ dest: 'media/products' })
 
-const util = require('util')
-
 con.connect(err => {
-   /* ADD CROSS-SELLS */
-   const addCrossSells = (product1, product2) => {
-      const values = [product1, product2];
-      const query = 'INSERT INTO cross-sells VALUES (NULL, product1, product2)';
-      con.query(query, values);
-   }
-
-   /* GET NEW ID */
    router.get("/last-product", (request, response) => {
       const query = 'SELECT id FROM products ORDER BY date DESC LIMIT 1';
       con.query(query, (err, res) => {
@@ -82,6 +72,28 @@ con.connect(err => {
          con.query(query, values);
       });
    }
+
+   router.post('/upload-image', upload.single('image'), (request, response) => {
+      const files = request.files;
+      const key = request.body.key;
+      const id = files.image.filename;
+
+      const query = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = ?';
+      const values = [id, key];
+
+      con.query(query, values, (err, res) => {
+         if(res) {
+            response.send({
+               result: 1
+            });
+         }
+         else {
+            response.send({
+               result: 0
+            });
+         }
+      });
+   });
 
    /* ADD PRODUCT */
    router.post("/add-product", upload.fields([

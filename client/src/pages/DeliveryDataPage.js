@@ -10,7 +10,7 @@ import arrowBack from "../static/assets/arrow-back.svg";
 
 const DeliveryDataPage = () => {
     useEffect(() => {
-        openCart();
+        if(window.innerWidth > 768) openCart();
 
         getUserData()
             .then((res) => {

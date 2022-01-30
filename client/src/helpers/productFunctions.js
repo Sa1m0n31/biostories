@@ -41,8 +41,6 @@ const updateProduct = (formData, id, title, subtitle, price, stock, attribute, a
                     img, img2, img3, img4, img5,
                     categories, recommendation, top, hidden) => {
     const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-    console.log(categories);
-    console.log(categories.filter((item) => { return item.selected; }));
     formData.append('title', title);
     formData.append('id', id);
     formData.append('subtitle', subtitle);

@@ -34,7 +34,7 @@ const ShippingAndPayment = () => {
     const [fullDiscount, setFullDiscount] = useState(0);
 
     useEffect(() => {
-        openCart();
+        if(window.innerWidth > 768) openCart();
         document.querySelector('.cart .cart__header').textContent = 'Podsumowanie';
     }, []);
 
@@ -239,7 +239,7 @@ const ShippingAndPayment = () => {
 
         <main className="deliveryData">
             <div className="sAndP__header flex">
-                <h1 className="deliveryData__header">
+                <h1 className="deliveryData__header deliveryData__header--shippingAndPayment">
                     Dostawa i płatność
                 </h1>
                 <div className="deliveryData__bottom">
@@ -247,7 +247,7 @@ const ShippingAndPayment = () => {
                         <img className="icon" src={arrowBack} alt="wroc" />
                         Wróć
                     </a>
-                    <a className="page--beforeCheckout__back" href="/">
+                    <a className="page--beforeCheckout__back d-desktop" href="/">
                         <img className="icon" src={arrowBack} alt="wroc" />
                         Powrót na stronę główną
                     </a>

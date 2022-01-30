@@ -52,6 +52,7 @@ import TyPage from "./pages/TyPage";
 import MyAccount from "./pages/MyAccount";
 import SingleProduct from "./pages/SingleProduct";
 import OrderHistoryPage from "./pages/OrderHistoryPage";
+import PanelCustomFields from "./admin/pages/PanelCustomFields";
 require('dotenv').config();
 
 axios.defaults.headers.common['Authorization'] = credentials.AUTH_HEADER;
@@ -263,6 +264,9 @@ function App() {
             </Route>
             <Route path="/panel/stany-magazynowe">
                 <PanelStocks />
+            </Route>
+            <Route path="/panel/edycja-tresci">
+                <PanelCustomFields />
             </Route>
             <Route path="/panel/dodaj-stan-magazynowy">
                 <AddStockPage />

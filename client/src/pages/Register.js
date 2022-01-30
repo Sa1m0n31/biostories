@@ -169,7 +169,7 @@ const Register = () => {
                 <label className="label--check">
                     <button className={formik.values.check ? "checkBtn checkBtn--checked" : "checkBtn" }
                             type="button"
-                            onClick={() => { formik.setFieldValue('check', !formik.values.check) }}>
+                            onClick={(e) => { e.preventDefault(); formik.setFieldValue('check', !formik.values.check) }}>
                             <img src={checkIcon} alt="tak" />
                     </button>
                     Zapoznałem się i akceptuję Regulamin i Politykę prywatności

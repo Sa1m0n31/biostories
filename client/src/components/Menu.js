@@ -40,7 +40,7 @@ const Menu = () => {
             <button className="cart__close cart__close--menu" onClick={() => { closeMenu(); }}>
                 <img className="btn__img" src={closeIcon} alt="close"/>
             </button>
-            <label>
+            <label className="d-desktop">
                 <input className="searchInput"
                        name="search"
                        value={search}
