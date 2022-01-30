@@ -1,6 +1,6 @@
 import React from 'react';
 import icon1 from '../static/assets/search.svg'
-import icon2 from '../static/assets/search.svg'
+import icon2 from '../static/assets/planet.svg'
 import icon3 from '../static/assets/fast-delivery.svg'
 import icon4 from '../static/assets/safe.svg'
 import icon5 from '../static/assets/communicate.svg'

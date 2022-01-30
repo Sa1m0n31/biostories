@@ -54,7 +54,7 @@ const OrderHistory = ({user}) => {
                             <h4 className="singleOrder__key">
                                 Działania
                             </h4>
-                            <a className="singleOrder__btn" href="/zamowienie">
+                            <a className="singleOrder__btn" href={`/zamowienie?id=${item.order_id}`}>
                                 <img className="btn__img" src={exitIcon} alt="zobacz" />
                             </a>
                         </div>

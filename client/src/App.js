@@ -53,6 +53,8 @@ import MyAccount from "./pages/MyAccount";
 import SingleProduct from "./pages/SingleProduct";
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 import PanelCustomFields from "./admin/pages/PanelCustomFields";
+import Page from "./pages/Page";
+import SingleOrder from "./pages/SingleOrder";
 require('dotenv').config();
 
 axios.defaults.headers.common['Authorization'] = credentials.AUTH_HEADER;
@@ -161,14 +163,6 @@ function App() {
                     setShippingAndPayment(result[0].shipping_and_payment);
                 }
             });
-
-        /* Auth */
-        auth(localStorage.getItem('sec-sessionKey'))
-            .then(res => {
-               if(!res.data.result) {
-                   localStorage.removeItem('sec-user-id');
-               }
-            });
     }, []);
 
   return (<CartContext.Provider value={{cartContent, addToCart, editCart, removeFromCart}}>
@@ -220,6 +214,30 @@ function App() {
             </Route>
             <Route path="/historia-zamowien">
                 <OrderHistoryPage />
+            </Route>
+            <Route path="/zamowienie">
+                <SingleOrder />
+            </Route>
+
+            <Route path="/regulamin">
+                <Page
+                    title="Regulamin"
+                    content={terms} />
+            </Route>
+            <Route path="/polityka-prywatnosci">
+                <Page
+                    title="Polityka prywatności"
+                    content={policy} />
+            </Route>
+            <Route path="/zwroty-i-platnosci">
+                <Page
+                    title="Zwroty"
+                    content={returns} />
+            </Route>
+            <Route path="/dostawa">
+                <Page
+                    title="Reklamacje"
+                    content={shippingAndPayment} />
             </Route>
 
             {/* Admin routes */}

@@ -94,9 +94,7 @@ const OrderDetailsContent = () => {
     const changeOrderStatus = () => {
         axios.post(`${settings.API_URL}/order/change-order-status`, {
             id,
-            orderStatus,
-            letterNumber,
-            adminComment
+            orderStatus
         })
             .then(res => {
                 if(res.data.result) {
@@ -115,6 +113,10 @@ const OrderDetailsContent = () => {
             }, 2000);
         }
     }, [orderUpdated]);
+
+    useEffect(() => {
+        console.log(cart);
+    }, [cart]);
 
     return <main className="panelContent">
 
@@ -172,30 +174,64 @@ const OrderDetailsContent = () => {
                             </button>
                         </section>
                     </header>
-                    <main className="panelContent__cart__content">
-                        {cart?.map((item, index) => {
-                            return <section key={index} className="panelContent__cart__item">
-                                <section className="panelContent__cart__column">
-                                    <span>{item.name}</span>
-                                </section>
-                                {item.attribute_name && item.attribute_value ?  <section className="panelContent__cart__column">
-                                    <span>{item.attribute_name}: {item.attribute_value}</span>
-                                </section> : ''}
-                                <section className="panelContent__cart__column panelQuantity">
-                                    <span>Ilość: {item.quantity}</span>
-                                </section>
-                                <section className="panelContent__cart__column">
-                                    <span>{item.option}</span>
-                                </section>
-                                <section className="panelContent__cart__column">
-                                    <span>{item.size ? `Rozmiar: ${item.size}` : ""}</span>
-                                </section>
-                                <section className="panelContent__cart__column">
-                                    <span>Cena: {item.price} PLN</span>
-                                </section>
-                            </section>
-                        })}
-                    </main>
+
+                    {cart?.length ? cart.map((item, index) => {
+                        return <>
+                            <div className="cart__item flex" key={index}>
+                                <div className="cart__item__firstCol flex">
+                                    <figure className="cart__item__imgWrapper">
+                                        <img className="cart__item__img" src={`${settings.API_URL}/image?url=/media/products/${item.main_image}`} alt={item.title} />
+                                    </figure>
+                                </div>
+                                <div className="cartCol">
+                                    <h4 className="cartCol__key">
+                                        Nazwa
+                                    </h4>
+                                    <h4 className="cartCol__value">
+                                        {item.name}
+                                        {item.attribute_name ? <span className="cart__item__attribute">
+                                    {item.attribute_name}: {item.attribute_value}
+                                </span> : ''}
+                                    </h4>
+                                </div>
+                                <div className="cartCol">
+                                    <h4 className="cartCol__key">
+                                        Ilość
+                                    </h4>
+                                    <div className="cartCol__value">
+                                        <div className="cart__item__secondCol flex">
+                                            <h4 className="cart__item__count">
+                                                {item.quantity}
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="cartCol d-900">
+                                    <h4 className="cartCol__key">
+                                        Cena jednostkowa
+                                    </h4>
+                                    <h4 className="cartCol__value">
+                                        {item.price} zł
+                                    </h4>
+                                </div>
+                                <div className="cartCol">
+                                    <h4 className="cartCol__key">
+                                        Wartość zamówienia
+                                    </h4>
+                                    <h4 className="cartCol__value">
+                                        {item.price * item.quantity} zł
+                                    </h4>
+                                </div>
+                            </div>
+                        </>
+                    }) : <div className="emptyCart">
+                        <h3 className="emptyCart__header">
+                            Twój koszyk jest pusty
+                        </h3>
+                        <a className="btn btn--back" href="/">
+                            Wróć na stronę główną
+                        </a>
+                    </div>}
                     <h4 className="panelContent__cart__summary">
                         <span>Rabat:</span> {cart[0].discount} PLN
                     </h4>
@@ -290,7 +326,7 @@ const OrderDetailsContent = () => {
                         </h2>
 
                         {orderUpdated === -1 ? <button className="panelContent__editOrderBtn" onClick={() => { changeOrderStatus(); }}>
-                            Zmień parametry zamówienia
+                            Zmień status zamówienia
                         </button> : orderUpdated === 1 ? <h4 className="infoHeader">Dane zamówienia zostały zaktualizowane</h4> : <h4 className="infoHeader">Coś poszło nie tak... Prosimy spróbować później</h4> }
                     </section> : ""}
                 </section>

@@ -28,7 +28,7 @@ const MyAccount = () => {
             </h1>
             <main className="myAccount__main flex">
                 <OrderHistory user={user} />
-                <ChangePassword />
+                <ChangePassword user={user} />
                 <PersonalData user={user} />
                 <DeliveryData user={user} />
             </main>

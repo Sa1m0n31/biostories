@@ -325,7 +325,7 @@ con.connect(err => {
 
     /* Get all emails */
     router.get("/get-all", (request, response) => {
-        const query = 'SELECT * FROM newsletter WHERE token IS NULL AND resign_token IS NOT NULL ORDER BY id DESC';
+        const query = 'SELECT * FROM newsletter WHERE resign_token IS NOT NULL ORDER BY id DESC';
         con.query(query, (err, res) => {
            if(res) {
                response.send({

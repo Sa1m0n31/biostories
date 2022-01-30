@@ -19,6 +19,9 @@ const Login = () => {
                 else {
                     setError('Niepoprawna nazwa użytkownika, niepoprawne hasło lub nieaktywowane konto');
                 }
+            })
+            .catch((err) => {
+                setError('Niepoprawna nazwa użytkownika, niepoprawne hasło lub nieaktywowane konto');
             });
     }
 

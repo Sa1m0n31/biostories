@@ -47,10 +47,11 @@ con.connect((err) => {
     });
 
     /* UPDATE USER DATA */
-    router.post("/update-user", (request, response) => {
-       const { id, firstName, lastName, phoneNumber, postalCode, city, street, building, flat } = request.body;
-       const values = [firstName, lastName, phoneNumber, postalCode, city, street, building, flat, id];
-       const query = 'UPDATE users SET first_name = ?, last_name = ?, phone_number = ?, postal_code = ?, city = ?, street = ?, building = ?, flat = ? WHERE id = ?';
+    router.post("/update-user-data", (request, response) => {
+       const { firstName, lastName, phoneNumber } = request.body;
+       const email = request.user;
+       const values = [firstName, lastName, phoneNumber, email];
+       const query = 'UPDATE users SET first_name = ?, last_name = ?, phone_number = ? WHERE email = ?';
        con.query(query, values, (err, res) => {
            if(res) {
                response.send({
@@ -63,6 +64,25 @@ con.connect((err) => {
                });
            }
        });
+    });
+
+    router.post("/update-user-address", (request, response) => {
+        const { postalCode, city, street, building, flat } = request.body;
+        const email = request.user;
+        const values = [postalCode, city, street, building, flat, email];
+        const query = 'UPDATE users SET postal_code = ?, city = ?, street = ?, building = ?, flat = ? WHERE email = ?';
+        con.query(query, values, (err, res) => {
+            if(res) {
+                response.send({
+                    result: 1
+                });
+            }
+            else {
+                response.send({
+                    result: 0
+                });
+            }
+        });
     });
 
     /* DELETE ADMIN */
@@ -117,12 +137,14 @@ con.connect((err) => {
 
     /* CHANGE ADMIN PASSWORD */
     router.post("/change-user-password", (request, response) => {
-        const { id, oldPassword, newPassword } = request.body;
+        const { email, oldPassword, newPassword } = request.body;
 
+        console.log(oldPassword);
+        console.log(email);
         /* Check if old password is correct */
         const hash = crypto.createHash('md5').update(oldPassword).digest('hex');
-        const query = 'SELECT id FROM users WHERE id = ? AND password = ?';
-        const values = [id, hash];
+        const query = 'SELECT id FROM users WHERE email = ? AND password = ?';
+        const values = [email, hash];
         con.query(query, values, (err, res) => {
             if(err) {
                 response.send({

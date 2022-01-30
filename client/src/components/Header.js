@@ -8,11 +8,16 @@ import {openCart, openMenu} from "../helpers/others";
 import Menu from "./Menu";
 import auth from "../admin/helpers/auth";
 import hamburger from '../static/assets/hamburger.svg'
-import search from '../static/assets/search.svg'
+import searchIcon from '../static/assets/search-icon.svg'
+import convertToURL from "../helpers/convertToURL";
+import settings from "../helpers/settings";
+import {searchProducts} from "../helpers/productFunctions";
 
 const Header = ({topSmall, restricted}) => {
     const [isAuth, setIsAuth] = useState(false);
     const [render, setRender] = useState(false);
+    const [search, setSearch] = useState('');
+    const [searchResult, setSearchResult] = useState([]);
 
     useEffect(() => {
         auth()
@@ -21,7 +26,26 @@ const Header = ({topSmall, restricted}) => {
                 setIsAuth(res?.data?.result === 1);
                 if(!res?.data?.result && restricted) window.location = '/';
             });
-    }, [])
+    }, []);
+
+    const showSearch = () => {
+        const searchMobile = document.querySelector('.searchMobile');
+        const searchResultsElement = document.querySelector('.menu__search--mobile')
+        searchMobile.style.opacity = '1';
+        searchMobile.style.zIndex = '2';
+        searchResultsElement.style.zIndex = '3';
+        searchResultsElement.style.visibility = 'visible';
+        searchMobile.focus();
+    }
+
+    const hideSearch = () => {
+        const searchMobile = document.querySelector('.searchMobile');
+        const searchResultsElement = document.querySelector('.menu__search--mobile');
+        searchMobile.style.opacity = '0';
+        searchMobile.style.zIndex = '-1';
+        searchResultsElement.style.zIndex = '-2';
+        searchResultsElement.style.visibility = 'hidden';
+    }
 
     const changeTopStyle = () => {
         const y = window.pageYOffset;
@@ -55,6 +79,30 @@ const Header = ({topSmall, restricted}) => {
         }
     }, [topSmall]);
 
+    useEffect(() => {
+        if(search) {
+            searchProducts(search)
+                .then((res) => {
+                    setSearchResult(res?.data?.result);
+                });
+        }
+    }, [search]);
+
+    useEffect(() => {
+        if(searchResult !== null && search !== '') {
+            const searchWrapper = document.querySelector('.menu__search--mobile');
+            searchWrapper.style.opacity = '1';
+            searchWrapper.style.height = '150px';
+            searchWrapper.style.zIndex = '10';
+        }
+        else if(search === '') {
+            const searchWrapper = document.querySelector('.menu__search--mobile');
+            searchWrapper.style.opacity = '0';
+            searchWrapper.style.height = '0';
+            searchWrapper.style.zIndex = '-2';
+        }
+    }, [search, searchResult]);
+
     return <>
         <Menu />
         <Cart />
@@ -80,8 +128,8 @@ const Header = ({topSmall, restricted}) => {
             </button>
         </header>
         <menu className="mobileBar d-mobile">
-            <button className="mobileBar__btn">
-                <img className="btn__img" src={search} alt="szukaj" />
+            <button className="mobileBar__btn" onClick={() => { showSearch(); }}>
+                <img className="btn__img" src={searchIcon} alt="szukaj" />
             </button>
             <a className="mobileBar__btn" href={isAuth ? "/moje-konto" : "/logowanie"}>
                 <img className="btn__img" src={loginIcon} alt="szukaj" />
@@ -89,7 +137,34 @@ const Header = ({topSmall, restricted}) => {
             <button className="mobileBar__btn" onClick={() => { openCart(); }}>
                 <img className="btn__img" src={cartIcon} alt="szukaj" />
             </button>
+            <label className="searchMobile">
+                <input className="searchInput"
+                       name="search"
+                       value={search}
+                       onBlur={() => { hideSearch(); }}
+                       onChange={(e) => { setSearch(e.target.value); }}
+                       placeholder="Wyszukaj produkt..." />
+            </label>
         </menu>
+        <section className="menu__search d-mobile menu__search--mobile">
+            {searchResult?.length ? searchResult.map((item, index) => {
+                return <a className="searchResult" href={`/produkt/${convertToURL(item.name)}`}>
+                    <div className="cart__item__firstCol flex">
+                        <figure className="cart__item__imgWrapper">
+                            <img className="cart__item__img" src={`${settings.API_URL}/image?url=/media/products/${item.main_image}`} alt={item.title} />
+                        </figure>
+                        <h4 className="cart__item__title">
+                            {item.name}
+                        </h4>
+                        <h5 className="search__price">
+                            {item.price} zł
+                        </h5>
+                    </div>
+                </a>
+            }) : <h4 className="noProducts">
+                Brak produktów spełniających kryteria wyszukiwania
+            </h4>}
+        </section>
     </>
 };
 

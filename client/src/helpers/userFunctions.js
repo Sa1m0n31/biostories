@@ -6,7 +6,10 @@ const { API_URL } = settings;
 const logoutUser = () => {
     return axios.get(`${API_URL}/auth/logout`, {
         withCredentials: true
-    });
+    })
+        .then((res) => {
+            window.location = '/';
+        });
 }
 
 const loginUser = (username, password) => {
@@ -41,4 +44,26 @@ const getUserOrders = (email) => {
     });
 }
 
-export { logoutUser, loginUser, registerUser, verifyUser, getUserData, getUserOrders }
+const changeUserPassword = (email, oldPassword, newPassword) => {
+    return axios.post(`${API_URL}/user/change-user-password`, {
+        email, oldPassword, newPassword
+    });
+}
+
+const updateUserData = (firstName, lastName, phoneNumber) => {
+    return axios.post(`${API_URL}/user/update-user-data`, {
+        firstName, lastName, phoneNumber
+    }, {
+        withCredentials: true
+    });
+}
+
+const updateUserAddress = (street, building, flat, postalCode, city) => {
+    return axios.post(`${API_URL}/user/update-user-address`, {
+        street, building, flat, postalCode, city
+    }, {
+        withCredentials: true
+    });
+}
+
+export { logoutUser, loginUser, registerUser, verifyUser, getUserData, getUserOrders, changeUserPassword, updateUserData, updateUserAddress }

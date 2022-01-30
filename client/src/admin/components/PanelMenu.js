@@ -108,9 +108,9 @@ const PanelMenu = ({active, submenu}) => {
                         </a>
                     </li>
                     <li className="panelMenu__list__item">
-                        <a className="panelMenu__list__item__link" id={active === 9 ? "menuItem--active" : ""} href="/panel/zdjecia">
+                        <a className="panelMenu__list__item__link" id={active === 9 ? "menuItem--active" : ""} href="/panel/edycja-tresci">
                             <img className="panelMenu__list__item__img" src={banner} alt="zdjecia" />
-                            Zdjęcia
+                             Treści
                         </a>
                     </li>
                     <li className="panelMenu__list__item">

@@ -32,6 +32,7 @@ const OrderHistoryPage = () => {
                 Historia zamówień ({orders?.length})
             </h1>
             {orders?.length ? orders.map((item, index) => {
+                console.log(item);
                 return <section className="singleOrder flex">
                     <div className="singleOrder__col">
                         <h4 className="singleOrder__key">
@@ -61,7 +62,7 @@ const OrderHistoryPage = () => {
                         <h4 className="singleOrder__key">
                             Działania
                         </h4>
-                        <a className="singleOrder__btn" href="/zamowienie">
+                        <a className="singleOrder__btn" href={`/zamowienie?id=${item?.order_id}`}>
                             <img className="btn__img" src={exitIcon} alt="zobacz" />
                         </a>
                     </div>

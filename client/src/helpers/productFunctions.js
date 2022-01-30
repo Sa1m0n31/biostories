@@ -133,7 +133,15 @@ const getSimilarProducts = (product) => {
     })
 }
 
+const searchProducts = (search) => {
+    return axios.get(`${API_URL}/product/search`, {
+        params: {
+            search
+        }
+    });
+}
+
 export { getAllProducts, getSingleProduct, getProductByName,
     getProductsByCategory, getImageById, getProductById, addProduct,
     getNewProducts, getTopProducts, getPopularProducts, getDefaultAttribute,
-    getProductGallery, getProductIcons, updateProduct, getSimilarProducts };
+    getProductGallery, getProductIcons, updateProduct, getSimilarProducts, searchProducts };

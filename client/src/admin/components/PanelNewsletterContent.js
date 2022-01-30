@@ -8,6 +8,7 @@ const PanelNewsletterContent = () => {
     useEffect(() => {
         axios.get(`${settings.API_URL}/newsletter/get-all`)
             .then(res => {
+                console.log(res.data.result);
                const result = res.data?.result;
                if(result) setSubscribers(result);
             });
@@ -19,7 +20,7 @@ const PanelNewsletterContent = () => {
                 Lista subskrybentów newslettera
             </h1>
 
-            <main className="panelContent__content">
+            <main className="panelContent__content panelContent__frame">
                 {subscribers?.map((item, index) => (
                     <section className="panelContent__item productItem">
                         <section className="panelContent__column">

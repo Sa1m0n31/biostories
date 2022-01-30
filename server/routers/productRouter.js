@@ -219,6 +219,28 @@ con.connect(err => {
       });
    });
 
+   router.get('/search', (request, response) => {
+      const s = request.query.search;
+
+      const query = `SELECT * FROM products WHERE name LIKE '%` + s + `%'`;
+      const values = [s];
+      con.query(query, (err, res) => {
+         console.log(err);
+         console.log(res);
+         if(res) {
+            response.send({
+               result: res
+            });
+         }
+         else {
+            response.send({
+               result: 0
+            });
+         }
+      })
+
+   })
+
    /* GET RECCOMMENDATIONS */
    router.get('/get-recommendations', (request, response) => {
       const query = 'SELECT * FROM products p JOIN images i ON p.main_image = i.id WHERE recommendation = 1 LIMIT 3';

@@ -20,7 +20,7 @@ const basicAuth = new auth().basicAuth;
 app.use(cors({
     credentials: true,
     // origin: "*"
-    origin: ['http://localhost:3000', 'http://localhost:5000', 'https://drafcik.skylo-test1.pl', 'https://drafcik-test.skylo-test1.pl', `${process.env.API_URL}:3000`, `${process.env.API_URL}:5000`]
+    origin: ['http://localhost:3000', 'http://localhost:5000', 'https://biostories.skylo-test3.pl', 'http://biostories.skylo-test3.pl', `${process.env.API_URL}:3000`, `${process.env.API_URL}:5000`]
 }));
 app.use(bodyParser({
     limit: "50mb"
@@ -116,6 +116,52 @@ app.get("/rezygnacja-z-subskrypcji", (req, res) => {
     res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
 app.get("/konkurs", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+
+app.get("/weryfikacja", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+app.get("/zwroty-i-platnosci", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+app.get("/dostawa", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+app.get("/po-rejestracji", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+app.get("/logowanie", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+app.get("/sklep/*", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+app.get("/zakupy", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+app.get("/zamowienie", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+app.get("/historia-zamowien", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+app.get("/dane-dostawy", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+app.get("/dostawa-i-platnosc", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+app.get("/zakupy", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+app.get("/zakupy", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+app.get("/zakupy", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+app.get("/zakupy", (req, res) => {
     res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
 

@@ -181,12 +181,35 @@
     .form--deliveryData {
         width: 40vw;
     }
+
+    .singleBottom__section,
+    .singleMiddle,
+    .single__top {
+        flex-direction: column;
+        align-items: center !important;
+    }
+
+    .singleMiddle > *,
+    .single__top > * {
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .singleMiddle__imgWrapper,
+    .single__gallery {
+        margin-bottom: 30px;
+        margin-right: 0;
+    }
 }
 
 @media(max-width: 996px) {
     .products, .row > main.flex {
         grid-template-columns: repeat(2, 48%);
         grid-row-gap: 30px;
+    }
+
+    .order__bottom__right {
+        width: 60%;
     }
 
     .deliveryData__header {
@@ -296,6 +319,41 @@
     .d-900 {
         display: none;
     }
+
+    .single__gallery__bottom__item {
+        height: 80px;
+    }
+
+    .single__price,
+    .single__title {
+        font-size: 21px;
+    }
+
+    .single__price {
+        margin-left: 30px;
+        white-space: nowrap;
+    }
+
+    .singleBottom__section .single__desc {
+        width: 100%;
+        max-width: 800px;
+    }
+
+    .page__text p {
+        font-size: 13px;
+    }
+
+    .myAccount__main {
+        justify-content: space-between;
+    }
+
+    .page--myAccount {
+        max-width: 100%;
+    }
+
+    .myAccount__section {
+        width: 48%;
+    }
 }
 
 @media(max-width: 850px) {
@@ -308,6 +366,38 @@
    .page__header {
        font-size: 24px;
    }
+
+    .btn--payment {
+        margin-bottom: 40px;
+    }
+
+    .order__bottom > * {
+        width: 100%;
+        margin-top: 25px;
+        text-align: center;
+    }
+
+    .circle{
+        height: 100px;
+        width: 100px;
+    }
+
+    .order__bottom {
+        justify-content: center;
+    }
+
+    .order__bottom,
+    .myAccount__main {
+        flex-wrap: wrap;
+    }
+
+    .myAccount__main > * {
+        width: 100%;
+    }
+
+    .codeForm label {
+        margin-right: 7px;
+    }
 
     .deliveryData__header--shippingAndPayment {
         margin-top: 20px;
@@ -474,6 +564,36 @@
     .form .btn--submit,
     .form {
         margin-bottom: 10px;
+    }
+
+    .singleOrder__value, .singleOrder__key,
+    .btn--myAccount {
+        font-size: 12px;
+    }
+
+    .btn--myAccount {
+        height: 40px;
+    }
+
+    .menu__search--mobile .noProducts {
+        font-size: 13px;
+    }
+
+    .sortBtn {
+        margin-top: -20px;
+        white-space: nowrap;
+        margin-left: 20px;
+    }
+
+    .shop__filters {
+        display: flex;
+        flex-direction: column;
+        bottom: -50px;
+        background: #fff;
+    }
+
+    .shop__filters .shop__header__btn {
+        margin-bottom: 5px;
     }
 }
 

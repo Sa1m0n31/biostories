@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react'
 import settings from "../helpers/settings";
 import JoditEditor from "jodit-react";
 import { useLocation } from "react-router";
-import {getPagesContent} from "../../helpers/pagesFunctions";
+import {getPagesContent, updatePages} from "../../helpers/pagesFunctions";
+import {Editor} from "react-draft-wysiwyg";
+import {convertFromRaw, EditorState} from "draft-js";
 
 const PanelOthersContent = () => {
     const [terms, setTerms] = useState("");
@@ -11,34 +13,24 @@ const PanelOthersContent = () => {
     const [returns, setReturns] = useState("");
     const [shippingAndPayment, setShippingAndPayment] = useState("");
     const [aboutUs, setAboutUs] = useState("");
+    const [response, setResponse] = useState('');
+    const [status, setStatus] = useState(-1);
 
     const [addMsg, setAddMsg] = useState("");
 
     const location = useLocation();
 
     useEffect(() => {
-            /* Check if post added */
-            const added = parseInt(new URLSearchParams(location.search).get("add"));
-            if (added) {
-                if (added === 1) {
-                    setAddMsg("Treści zostały zaktualizowane");
-                } else {
-                    setAddMsg("Coś poszło nie tak... Prosimy spróbować później");
-                }
-            }
-
             /* Get pages content */
             getPagesContent()
                 .then(res => {
                     if(res.data.result) {
                         const result = res.data.result[0];
                         if(result) {
-                            setTerms(result.terms_of_service);
-                            setPolicy(result.privacy_policy);
-                            setComplaints(result.complaints);
-                            setReturns(result.returns);
-                            setShippingAndPayment(result.shipping_and_payment);
-                            setAboutUs(result.about_us);
+                            if(result.terms_of_service) setTerms(EditorState.createWithContent(convertFromRaw(JSON.parse(result.terms_of_service))));
+                            if(result.privacy_policy) setPolicy(EditorState.createWithContent(convertFromRaw(JSON.parse(result.privacy_policy))));
+                            if(result.returns) setReturns(EditorState.createWithContent(convertFromRaw(JSON.parse(result.returns))));
+                            if(result.shipping_and_payment) setShippingAndPayment(EditorState.createWithContent(convertFromRaw(JSON.parse(result.shipping_and_payment))));
                         }
                     }
                 })
@@ -52,6 +44,24 @@ const PanelOthersContent = () => {
         }
     }, [addMsg]);
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        updatePages(terms, policy, returns, shippingAndPayment)
+            .then((res) => {
+                if(res?.data?.result) {
+                    setResponse("Treści zostały zaktualizowane");
+                    setStatus(1);
+                }
+                else {
+                    setResponse("Wystąpił błąd. Prosimy spróbować później");
+                    setStatus(0);
+                }
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+    }
 
     return <main className="panelContent">
         <header className="panelContent__header">
@@ -62,89 +72,57 @@ const PanelOthersContent = () => {
         <section className="panelContent__frame">
             <h1 className="panelContent__frame__header">
                 Edycja podstron
+                {response ? <span className={status ? "response response--positive" : "response response--negative"}>
+                        {response}
+                    </span> : ""}
             </h1>
 
             {addMsg === "" ? <form className="panelContent__frame__form panelContent--others"
-                                   method="POST"
-                                   action={`${settings.API_URL}/pages/update`}
+                                   onSubmit={(e) => { handleSubmit(e); }}
             >
-                <section className="panelContent__othersSection">
-                    <label className="jodit--label">
-                        <span>Regulamin</span>
-                        <JoditEditor
-                            name="termsOfService"
-                            value={terms}
-                            tabIndex={1} // tabIndex of textarea
-                            onBlur={newContent => {}} // preferred to use only this option to update the content for performance reasons
-                            onChange={newContent => { setTerms(newContent) }}
-                        />
-                    </label>
-                </section>
+                <main className="admin__editorWrapper">
+                    Regulamin
+                    <Editor
+                        editorState={terms}
+                        toolbarClassName="toolbarClassName"
+                        wrapperClassName="wrapperClassName"
+                        editorClassName="editor"
+                        onEditorStateChange={(text) => { setTerms(text); }}
+                    />
+                </main>
 
-                <section className="panelContent__othersSection">
-                    <label className="jodit--label">
-                        <span>Polityka prywatności</span>
-                        <JoditEditor
-                            name="privacyPolicy"
-                            value={policy}
-                            tabIndex={1} // tabIndex of textarea
-                            onBlur={newContent => {}} // preferred to use only this option to update the content for performance reasons
-                            onChange={newContent => { setPolicy(newContent) }}
-                        />
-                    </label>
-                </section>
+                <main className="admin__editorWrapper">
+                    Polityka prywatności
+                    <Editor
+                        editorState={policy}
+                        toolbarClassName="toolbarClassName"
+                        wrapperClassName="wrapperClassName"
+                        editorClassName="editor"
+                        onEditorStateChange={(text) => { setPolicy(text); }}
+                    />
+                </main>
 
-                <section className="panelContent__othersSection">
-                    <label className="jodit--label">
-                        <span>Zwroty</span>
-                        <JoditEditor
-                            name="complaints"
-                            value={complaints}
-                            tabIndex={1} // tabIndex of textarea
-                            onBlur={newContent => {}} // preferred to use only this option to update the content for performance reasons
-                            onChange={newContent => { setComplaints(newContent) }}
-                        />
-                    </label>
-                </section>
+                <main className="admin__editorWrapper">
+                    Zwroty i płatności
+                    <Editor
+                        editorState={returns}
+                        toolbarClassName="toolbarClassName"
+                        wrapperClassName="wrapperClassName"
+                        editorClassName="editor"
+                        onEditorStateChange={(text) => { setReturns(text); }}
+                    />
+                </main>
 
-                <section className="panelContent__othersSection">
-                    <label className="jodit--label">
-                        <span>Reklamacje</span>
-                        <JoditEditor
-                            name="returns"
-                            value={returns}
-                            tabIndex={1} // tabIndex of textarea
-                            onBlur={newContent => {}} // preferred to use only this option to update the content for performance reasons
-                            onChange={newContent => { setReturns(newContent) }}
-                        />
-                    </label>
-                </section>
-
-                <section className="panelContent__othersSection">
-                    <label className="jodit--label">
-                        <span>Dostawa i płatności</span>
-                        <JoditEditor
-                            name="shippingAndPayment"
-                            value={shippingAndPayment}
-                            tabIndex={1} // tabIndex of textarea
-                            onBlur={newContent => {}} // preferred to use only this option to update the content for performance reasons
-                            onChange={newContent => { setShippingAndPayment(newContent) }}
-                        />
-                    </label>
-                </section>
-
-                <section className="panelContent__othersSection">
-                    <label className="jodit--label">
-                        <span>Kilka słów o nas</span>
-                        <JoditEditor
-                            name="aboutUs"
-                            value={aboutUs}
-                            tabIndex={1} // tabIndex of textarea
-                            onBlur={newContent => {}} // preferred to use only this option to update the content for performance reasons
-                            onChange={newContent => { setAboutUs(newContent) }}
-                        />
-                    </label>
-                </section>
+                <main className="admin__editorWrapper">
+                    Dostawa
+                    <Editor
+                        editorState={shippingAndPayment}
+                        toolbarClassName="toolbarClassName"
+                        wrapperClassName="wrapperClassName"
+                        editorClassName="editor"
+                        onEditorStateChange={(text) => { setShippingAndPayment(text); }}
+                    />
+                </main>
 
                 <button className="addProduct__btn marginTop10" type="submit">
                     Aktualizuj treści podstron

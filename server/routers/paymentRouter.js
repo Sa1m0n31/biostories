@@ -70,7 +70,7 @@ con.connect(err => {
                 email: request.body.email,
                 country: "PL",
                 language: "pl",
-                urlReturn: `http://localhost:3000/dziekujemy`,
+                urlReturn: `${process.env.API_URL}/dziekujemy`,
                 urlStatus: `${process.env.API_URL}/payment/verify`,
                 sign: gen_hash
             };

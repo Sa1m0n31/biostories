@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import arrowIcon from "../static/assets/arrow-right.svg";
 import * as Yup from "yup";
 import {useFormik} from "formik";
-import {registerUser} from "../helpers/userFunctions";
+import {changeUserPassword, registerUser} from "../helpers/userFunctions";
 
-const ChangePassword = () => {
+const ChangePassword = ({user}) => {
     const [error, setError] = useState("");
     const [status, setStatus] = useState(0);
 
@@ -24,24 +24,43 @@ const ChangePassword = () => {
             repeatPassword: ""
         },
         validationSchema,
-        onSubmit: ({email, password, firstName, lastName, phoneNumber, postalCode, city, street, building, flat}) => {
-            registerUser(email, password, firstName, lastName, phoneNumber, postalCode, city, street, building, flat)
+        onSubmit: ({oldPassword, password}) => {
+            changeUserPassword(user.email, oldPassword, password)
                 .then((res) => {
                     const result = res?.data?.result;
                     if(result === 1) {
                         setStatus(1);
+                        formik.setFieldValue('oldPassword', '');
+                        formik.setFieldValue('password', '');
+                        formik.setFieldValue('repeatPassword', '');
                     }
                     else if(result === -1) {
                         setError('Coś poszło nie tak... Prosimy spróbować później');
                     }
                     else {
-                        setError('Konto o podanym adresie e-mail już istnieje');
+                        setError('Niepoprawne hasło');
                     }
                 });
         }
-    })
+    });
 
-    return <section className="myAccount__section">
+    useEffect(() => {
+        if(status !== 0) {
+            setTimeout(() => {
+                setStatus(0);
+            }, 3000);
+        }
+    }, [status]);
+
+    useEffect(() => {
+        if(error) {
+            setTimeout(() => {
+                setError('');
+            }, 3000);
+        }
+    }, [error]);
+
+    return <form className="myAccount__section" onSubmit={formik.handleSubmit}>
         <h2 className="myAccount__header">
             Zmień hasło
         </h2>
@@ -71,11 +90,17 @@ const ChangePassword = () => {
                        placeholder="Powtórz nowe hasło" />
             </label>
         </main>
-        <button className="btn btn--cart btn--myAccount">
-            Zmień hasło
-            <img className="icon" src={arrowIcon} alt="dalej" />
-        </button>
-    </section>
+        {status || error ? (status ? <h4 className="response">
+                Hasło zostało zmienione
+            </h4> :
+            <h4 className="error">
+                {error}
+            </h4>) :
+            <button className="btn btn--cart btn--myAccount" type="submit">
+                Zmień hasło
+                <img className="icon" src={arrowIcon} alt="dalej" />
+            </button>}
+    </form>
 };
 
 export default ChangePassword;

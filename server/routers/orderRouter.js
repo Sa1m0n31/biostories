@@ -811,11 +811,13 @@ con.connect(err => {
 
         /* CHANGE ORDER STATUS */
         router.post("/change-order-status", (request, response) => {
-            const {id, orderStatus, letterNumber, adminComment} = request.body;
+            const {id, orderStatus } = request.body;
+
+            console.log(id);
 
             /* Change order status in database */
-            const query = 'UPDATE orders SET order_status = ?, letter_number = ?, admin_comment = ? WHERE id = ?';
-            const values = [orderStatus, letterNumber, adminComment, id];
+            const query = 'UPDATE orders SET order_status = ? WHERE id = ?';
+            const values = [orderStatus, id];
             con.query(query, values, (err, res) => {
                 if(res) {
                     /* Get order info */
@@ -874,13 +876,15 @@ con.connect(err => {
         router.post("/get-order", (request, response) => {
             const {id} = request.body;
             const values = [id];
-            const query = 'SELECT o.id, o.order_price, o.discount, o.payment_status, o.order_status, o.first_name, o.last_name, o.email, o.phone_number, o.city, o.street, o.building, o.postal_code, o.city, o.date, o.order_status, pm.name as payment, sm.name as shipping, o.company_name, o.nip, s.attribute_name, s.attribute_value, s.quantity, p.price, p.name, o.inpost_id, o.inpost_address, o.inpost_postal_code, inpost_city FROM orders o ' +
+            console.log(id + '!!!!!!!!!!!!!!!!!!!!!!!!!!');
+            const query = 'SELECT o.id, o.order_price, o.discount, o.payment_status, o.order_status, o.first_name, o.last_name, o.email, o.phone_number, o.city, o.street, o.building, o.flat, o.postal_code, o.city, o.date, o.order_status, pm.name as payment, sm.name as shipping, o.company_name, o.nip, s.attribute_name, s.attribute_value, s.quantity, p.price, p.name, p.main_image, o.inpost_id, o.inpost_address, o.inpost_postal_code, inpost_city FROM orders o ' +
                 'JOIN sells s ON o.id = s.order_id ' +
                 'LEFT OUTER JOIN products p ON p.id = s.product_id ' +
                 'JOIN shipping_methods sm ON o.shipping_method = sm.id ' +
                 'JOIN payment_methods pm ON o.payment_method = pm.id ' +
                 'WHERE o.id = ?;';
             con.query(query, values, (err, res) => {
+                console.log(res);
                 console.log(err);
                 if(res) {
                     response.send({

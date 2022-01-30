@@ -2,11 +2,11 @@ import React, {useEffect, useState} from 'react';
 import arrowIcon from "../static/assets/arrow-right.svg";
 import * as Yup from "yup";
 import {useFormik} from "formik";
-import {registerUser} from "../helpers/userFunctions";
+import {registerUser, updateUserAddress} from "../helpers/userFunctions";
 
 const DeliveryData = ({user}) => {
     const [error, setError] = useState("");
-    const [success, setSuccess] = useState(0);
+    const [status, setStatus] = useState(0);
 
     useEffect(() => {
         if(user) {
@@ -32,24 +32,37 @@ const DeliveryData = ({user}) => {
             flat: ""
         },
         validationSchema,
-        onSubmit: ({email, password, firstName, lastName, phoneNumber, postalCode, city, street, building, flat}) => {
-            registerUser(email, password, firstName, lastName, phoneNumber, postalCode, city, street, building, flat)
+        onSubmit: ({postalCode, city, street, building, flat}) => {
+           updateUserAddress(street, building, flat, postalCode, city)
                 .then((res) => {
                     const result = res?.data?.result;
                     if(result === 1) {
-                        setSuccess(1);
-                    }
-                    else if(result === -1) {
-                        setError('Coś poszło nie tak... Prosimy spróbować później');
+                        setStatus(1);
                     }
                     else {
-                        setError('Konto o podanym adresie e-mail już istnieje');
+                        setError('Coś poszło nie tak... Prosimy spróbować później');
                     }
                 });
         }
-    })
+    });
 
-    return <section className="myAccount__section">
+    useEffect(() => {
+        if(status !== 0) {
+            setTimeout(() => {
+                setStatus(0);
+            }, 3000);
+        }
+    }, [status]);
+
+    useEffect(() => {
+        if(error) {
+            setTimeout(() => {
+                setError('');
+            }, 3000);
+        }
+    }, [error]);
+
+    return <form className="myAccount__section" onSubmit={formik.handleSubmit}>
         <h2 className="myAccount__header">
             Domyślny adres
         </h2>
@@ -94,11 +107,17 @@ const DeliveryData = ({user}) => {
                 </label>
             </div>
         </main>
-        <button className="btn btn--cart btn--myAccount">
-             Zmień dane
-            <img className="icon" src={arrowIcon} alt="dalej" />
-        </button>
-    </section>
+        {status || error ? (status ? <h4 className="response">
+                Dane zostały zaktualizowane
+            </h4> :
+            <h4 className="error">
+                {error}
+            </h4>) :
+            <button className="btn btn--cart btn--myAccount" type="submit">
+                Zmień dane
+                <img className="icon" src={arrowIcon} alt="dalej" />
+            </button>}
+    </form>
 };
 
 export default DeliveryData;

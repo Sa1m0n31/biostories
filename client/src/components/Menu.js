@@ -2,11 +2,17 @@ import React, {useEffect, useState} from 'react';
 import {closeCart, closeMenu} from "../helpers/others";
 import closeIcon from "../static/img/close.png";
 import {getAllCategories} from "../helpers/categoryFunctions";
+import searchIcon from '../static/assets/search-icon.svg'
+import {searchProducts} from "../helpers/productFunctions";
+import convertToURL from "../helpers/convertToURL";
+import settings from "../helpers/settings";
 
 const Menu = () => {
     const [search, setSearch] = useState('');
     const [categories, setCategories] = useState([]);
     const [categoryList, setCategoryList] = useState([]);
+    const [searchResult, setSearchResult] = useState(null);
+    const [start, setStart] = useState(true);
 
     useEffect(() => {
         getAllCategories()
@@ -35,12 +41,41 @@ const Menu = () => {
         }
     }, [categories]);
 
+    useEffect(() => {
+        if(search) {
+            searchProducts(search)
+                .then((res) => {
+                    setSearchResult(res?.data?.result);
+                });
+        }
+    }, [search]);
+
+    useEffect(() => {
+        if(searchResult !== null && search !== '') {
+            const searchWrapper = document.querySelector('.menu__search');
+            const menuWrapper = document.querySelector('.menu__main');
+            searchWrapper.style.opacity = '1';
+            searchWrapper.style.height = 'auto';
+            menuWrapper.style.opacity = '0';
+        }
+        else if(search === '') {
+            const searchWrapper = document.querySelector('.menu__search');
+            const menuWrapper = document.querySelector('.menu__main');
+            searchWrapper.style.opacity = '0';
+            searchWrapper.style.height = '0';
+            if(!start) {
+                menuWrapper.style.opacity = '1';
+            }
+            setStart(false);
+        }
+    }, [search, searchResult]);
+
     return <div className="menu">
         <div className="menu__top flex">
-            <button className="cart__close cart__close--menu" onClick={() => { closeMenu(); }}>
+            <button className="cart__close cart__close--menu" onClick={() => { setSearch(''); setSearchResult(null); closeMenu(); }}>
                 <img className="btn__img" src={closeIcon} alt="close"/>
             </button>
-            <label className="d-desktop">
+            <label className="d-desktop label--search">
                 <input className="searchInput"
                        name="search"
                        value={search}
@@ -69,6 +104,23 @@ const Menu = () => {
                 </div>
             })}
         </main>
+        <section className="menu__search d-desktop">
+            {searchResult ? searchResult.map((item, index) => {
+                return <a className="searchResult" href={`/produkt/${convertToURL(item.name)}`}>
+                    <div className="cart__item__firstCol flex">
+                        <figure className="cart__item__imgWrapper">
+                            <img className="cart__item__img" src={`${settings.API_URL}/image?url=/media/products/${item.main_image}`} alt={item.title} />
+                        </figure>
+                        <h4 className="cart__item__title">
+                            {item.name}
+                        </h4>
+                        <h5 className="search__price">
+                            {item.price} zł
+                        </h5>
+                    </div>
+                </a>
+            }) : ''}
+        </section>
     </div>
 };
 

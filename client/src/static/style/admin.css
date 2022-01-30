@@ -310,7 +310,16 @@ ul {
 }
 
 .panelContent__column__status {
-    padding: 4px 8px;
+    padding: 4px 14px;
+    background: var(--main) !important;
+    height: 30px;
+    border-radius: 30px;
+    color: #fff !important;
+}
+
+.panelMenu__list {
+    height: calc(100vh - 170px);
+    overflow: scroll;
 }
 
 .status--positive {
@@ -1715,4 +1724,18 @@ input[type=file] {
 .center .admin__label--imgUpload--section {
     width: auto;
     margin: 0 20px;
+}
+
+.panelContent__editOrderBtn {
+    background: #2B113E;
+    color: #fff;
+    height: 40px;
+    border-radius: 40px;
+    cursor: pointer;
+}
+
+.infoHeader {
+    margin-top: 12px;
+    font-weight: 400;
+    font-size: 15px;
 }
