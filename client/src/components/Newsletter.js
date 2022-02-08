@@ -54,7 +54,7 @@ const Newsletter = () => {
         if(error) {
             setTimeout(() => {
                 setError("");
-            }, 3000);
+            }, 31221000);
         }
     }, [error]);
 
@@ -86,7 +86,7 @@ const Newsletter = () => {
            </button>
            <p className="newsletter__success" ref={newsletterSuccess}>
                 <span className="d-block">Dziękujemy za zapis do naszego newslettera!</span>
-                <span className="d-block">Na mailu czeka na Ciebie kod rabatowy z pięcioprocentową zniżką na pierwsze zakupy w Biostories!</span>
+                <span className="d-block">Potwierdź swoją subskrypcję, a my wyślemy do Ciebie kod rabatowy z pięcioprocentową zniżką na pierwsze zakupy w Biostories!</span>
            </p>
         </section>
     </section>

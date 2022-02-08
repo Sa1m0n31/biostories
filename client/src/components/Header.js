@@ -33,6 +33,7 @@ const Header = ({topSmall, restricted}) => {
         const searchResultsElement = document.querySelector('.menu__search--mobile')
         searchMobile.style.opacity = '1';
         searchMobile.style.zIndex = '2';
+        searchMobile.style.width = '100%';
         searchResultsElement.style.zIndex = '3';
         searchResultsElement.style.visibility = 'visible';
         searchMobile.focus();
@@ -43,6 +44,7 @@ const Header = ({topSmall, restricted}) => {
         const searchResultsElement = document.querySelector('.menu__search--mobile');
         searchMobile.style.opacity = '0';
         searchMobile.style.zIndex = '-1';
+        searchMobile.style.width = '0';
         searchResultsElement.style.zIndex = '-2';
         searchResultsElement.style.visibility = 'hidden';
     }

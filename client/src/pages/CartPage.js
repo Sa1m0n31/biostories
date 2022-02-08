@@ -91,10 +91,13 @@ const CartPage = () => {
     }
 
     return <div className="page page--login page--beforeCheckout page--cart">
-        <a className="page--beforeCheckout__back" href="/">
-            <img className="icon" src={arrowBack} alt="wroc" />
-            Powrót na stronę główną
-        </a>
+        <div className="page--beforeCheckout__backWrapper">
+            <a className="page--beforeCheckout__back" href="/sklep">
+                <img className="icon" src={arrowBack} alt="wroc" />
+                Powrót na stronę główną
+            </a>
+        </div>
+
         <h1 className="page__header">
             Twoje zakupy
         </h1>
@@ -178,7 +181,7 @@ const CartPage = () => {
                         Łączna wartość zamówienia
                     </h4>
                     <h5>
-                        {sum} PLN
+                        {sum.toFixed(2)} PLN
                     </h5>
                 </div>
                 <a className="btn btn--cart w" href="/dane-dostawy">

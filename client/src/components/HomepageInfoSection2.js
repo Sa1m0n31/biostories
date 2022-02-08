@@ -14,12 +14,12 @@ const HomepageInfoSection2 = ({img, article}) => {
 
     return <>
         <section className="infoSection infoSection--2 flex">
-            <article className="infoSection__content">
+            <article className="infoSection__content" data-aos="fade-right" data-aos-offset="1600">
                 <main className="infoSection__content__main" dangerouslySetInnerHTML={{__html: desc}}>
 
                 </main>
             </article>
-            <figure className="infoSection__imgWrapper infoSection__imgWrapper--2">
+            <figure className="infoSection__imgWrapper infoSection__imgWrapper--2" data-aos="fade-left" data-aos-offset="1600">
                 <img className="btn__img" src={`${settings.API_URL}/image?url=/media/fields/${img}`} alt="info" />
             </figure>
         </section>

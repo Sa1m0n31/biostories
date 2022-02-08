@@ -48,7 +48,7 @@ const ShippingAndPayment = () => {
     const [discountInPLN, setDiscountInPLN] = useState(0);
 
     useEffect(() => {
-        if(window.innerWidth > 768) openCart();
+        if(window.innerWidth > 768) openCart(false);
         document.querySelector('.cart .cart__header').textContent = 'Podsumowanie';
     }, []);
 
@@ -95,35 +95,37 @@ const ShippingAndPayment = () => {
     }, []);
 
     useEffect(() => {
-        window.easyPackAsyncInit = function () {
-            window.easyPack.init({
-                mapType: 'google',
-                searchType: 'osm',
-                map: {
-                    googleKey: 'AIzaSyAS0nA7DChYpHzv5CVpXM1K4vqYaGNCElw'
-                }
-            });
-            if(document.querySelector(".cart")) {
-                const map = window.easyPack.mapWidget('paczkomatyMapa', function(point) {
-                    /* Paczkomat zostal wybrany */
-                    sessionStorage.setItem('paczkomat-id', point.name);
-                    sessionStorage.setItem('paczkomat-miasto', point.address_details.city);
-                    sessionStorage.setItem('paczkomat-kod', point.address_details.post_code);
-                    sessionStorage.setItem('paczkomat-adres', point.address_details.street + " " + point.address_details.building_number);
-
-                    const storage = new Event('storage');
-                    document.dispatchEvent(storage);
-
-                    const modal = document.querySelector(".bigModal");
-                    if(modal) {
-                        modal.style.opacity = "0";
-                        setTimeout(() => {
-                            modal.style.display = "none";
-                        }, 500);
+        if(inPostModal) {
+            window.easyPackAsyncInit = function () {
+                window.easyPack.init({
+                    mapType: 'google',
+                    searchType: 'osm',
+                    map: {
+                        googleKey: 'AIzaSyAS0nA7DChYpHzv5CVpXM1K4vqYaGNCElw'
                     }
                 });
-            }
-        };
+                if(document.querySelector(".cart")) {
+                    const map = window.easyPack.mapWidget('paczkomatyMapa', function(point) {
+                        /* Paczkomat zostal wybrany */
+                        sessionStorage.setItem('paczkomat-id', point.name);
+                        sessionStorage.setItem('paczkomat-miasto', point.address_details.city);
+                        sessionStorage.setItem('paczkomat-kod', point.address_details.post_code);
+                        sessionStorage.setItem('paczkomat-adres', point.address_details.street + " " + point.address_details.building_number);
+
+                        const storage = new Event('storage');
+                        document.dispatchEvent(storage);
+
+                        const modal = document.querySelector(".bigModal");
+                        if(modal) {
+                            modal.style.opacity = "0";
+                            setTimeout(() => {
+                                modal.style.display = "none";
+                            }, 500);
+                        }
+                    });
+                }
+            };
+        }
     }, [inPostModal]);
 
     useEffect(() => {
@@ -295,7 +297,7 @@ const ShippingAndPayment = () => {
 
         <Modal
             isOpen={inPostModal}
-            portalClassName="smallModal bigModal"
+            portalClassName="smallModal bigModal modal--inPost"
             onRequestClose={() => { setInPostModal(false) }}
         >
 
@@ -462,7 +464,7 @@ const ShippingAndPayment = () => {
                                 Łączna wartość zamówienia
                             </h4>
                             <h5>
-                                {sum + (shipping || shipping === 0 ? shippingMethods[shippingIndex].price : 0) - discountInPLN} PLN
+                                {(sum + (shipping || shipping === 0 ? shippingMethods[shippingIndex].price : 0) - discountInPLN).toFixed(2)} PLN
                             </h5>
                         </div>
                         <button className="btn btn--cart btn--payment" onClick={() => { addOrder(); }} >

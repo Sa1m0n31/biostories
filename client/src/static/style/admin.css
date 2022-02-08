@@ -11,7 +11,7 @@ h1, h2, h3, h4, h5, h6, p, li, input, button, a, label, span {
     font-family: 'Poppins', sans-serif;
 }
 
-.panelMenu img, .panelContent--start img
+.panelMenu img
 {
     filter: brightness(0) invert(1) !important;
 }
@@ -226,7 +226,8 @@ ul {
 .panelContent {
     background: #F2F2F2;
     width: 80%;
-    min-height: 135vh;
+    min-height: 100vh;
+    overflow: scroll;
     margin-left: 20%;
     padding: 60px 40px;
 }
@@ -1738,4 +1739,98 @@ input[type=file] {
     margin-top: 12px;
     font-weight: 400;
     font-size: 15px;
+}
+
+.panelStart__btn {
+    background: #F2F2F2;
+    width: 175px;
+    height: 35px;
+    border-radius: 35px;
+    font-size: 13px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.panelContent__frame--orders {
+    width: 60%;
+}
+
+.panelContent__frame--stats {
+    width: 37%;
+}
+
+.panelContent__startContent {
+    align-items: flex-start;
+    margin-top: 0;
+}
+
+.panelContent__startContent .panelContent__column__key,
+.panelContent__startContent .panelContent__column__value {
+    font-size: 12px;
+    margin: 0 !important;
+}
+
+.panelContent__startContent .orderItem {
+    padding: 5px 0;
+}
+
+.panelContent__startContent .panelContent__column__status {
+    font-size: 10px;
+    height: 25px;
+    margin-top: 5px;
+}
+
+.panelContent__startContent .panelContent__column__label {
+    margin-bottom: 5px;
+}
+
+.panelStart__subheader {
+    margin: 10px 0;
+}
+
+.panelStart__stats {
+    max-width: 300px;
+}
+
+.panelStart__stats > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.panelStart__header--big {
+    font-size: 28px;
+}
+
+.panelContent__frame--quick {
+    margin-top: 20px;
+    height: 140px;
+    margin-bottom: 140px;
+}
+
+.quickBtn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.quickBtn .icon {
+    width: 25px;
+    margin: 0 0 10px 0;
+    filter: brightness(0);
+}
+
+.mt {
+    margin-top: 20px !important;
+}
+
+.panelContent--customFields .addProduct__input {
+    margin-bottom: 30px;
+}
+
+.twoImages {
+    justify-content: space-evenly !important;
 }

@@ -166,11 +166,23 @@ con.connect(err => {
 
     /* Get stock of given product */
     router.post("/get-product-stock", (request, response) => {
-       const { id } = request.body;
+       const { id, attributeValue } = request.body;
 
-       const values = [id];
-       const query = 'SELECT stock FROM products WHERE id = ?';
+       console.log(attributeValue);
+       console.log(id);
+
+       let values = [];
+       let query = '';
+       if(!attributeValue) {
+           query = 'SELECT stock FROM products WHERE id = ?';
+           values = [id];
+       }
+       else {
+           query = 'SELECT av.stock FROM attributes_values av JOIN products_attributes pa ON av.attribute = pa.id JOIN products p ON p.id = pa.product WHERE p.id = ? AND av.value = ?';
+           values = [id, attributeValue];
+       }
        con.query(query, values, (err, res) => {
+           console.log(err);
           if(res) {
               response.send({
                   result: res

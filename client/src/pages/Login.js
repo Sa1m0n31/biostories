@@ -56,9 +56,9 @@ const Login = () => {
             {error ? <h4 className="error">
                 {error}
             </h4> : ""}
-            <button className="afterLogin">
-                Nie pamiętasz hasła?
-            </button>
+            {/*<button className="afterLogin">*/}
+            {/*    Nie pamiętasz hasła?*/}
+            {/*</button>*/}
             <h4 className="afterLogin">
                 Nie masz konta? <a href="/rejestracja">Zarejestruj się</a>
             </h4>

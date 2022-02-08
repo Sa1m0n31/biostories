@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table
+        style="display: block; padding: 20px; max-width: 100%; width: 800px; background: #250C37; margin-top: -5px; color: #fff; font-weight: 300; font-family: 'Open Sans', sans-serif;">
+    <thead style="display: block;">
+    <tr style="display: block;">
+        <th style="font-weight: 300; font-size: 21px; display: block; margin-top: 20px; text-align: center;">
+            Dziękujemy za zamówienie w sklepie BIO STORIES
+        </th>
+    </tr>
+    <tr style="display: block;">
+        <th style="font-weight: 300; display: block; font-size: 21px; text-align: center;">
+            Poniżej znajdują się szczegóły Twojego zamówienia.
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="display: block; margin-top: 25px; font-weight: 700;">
+            Kupione przedmioty:
+        </td>
+    </tr>
+    <tr></tr>
+    <tr></tr>
+    ${sells}
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr style="display: block; margin-top: 15px;">
+        <td style="font-size: 14px; width: 150px; white-space: nowrap;">
+            Wartość produktów:
+        </td>
+        <td style="font-size: 14px; white-space: nowrap;">
+            ${sum} PLN
+        </td>
+    </tr>
+    <tr style="display: block; margin-top: 5px;">
+        <td style="font-size: 14px; width: 150px; white-space: nowrap;">
+            Rabat - kod rabatowy:
+        </td>
+        <td style="font-size: 14px; white-space: nowrap;">
+            ${discount * -1} PLN
+        </td>
+    </tr>
+    <tr style="display: block; margin-top: 5px;">
+        <td style="font-size: 14px; width: 150px; white-space: nowrap;">
+            Koszt dostawy:
+        </td>
+        <td style="font-size: 14px; white-space: nowrap;">
+            ${orderInfo[0].shipping_method_price} PLN
+        </td>
+    </tr>
+    <tr style="display: block; margin-top: 5px; border-bottom: 3px solid #fff; padding-bottom: 15px;">
+        <td style="font-weight: 700; font-size: 15px; width: 150px; white-space: nowrap;">
+            Razem
+        </td>
+        <td style="font-weight: 700; font-size: 15px; white-space: nowrap;">
+            ${orderInfo[0].order_price} PLN
+        </td>
+    </tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr style="">
+        <td colSpan="1" style="text-align: center; font-size: 14px; font-weight: 700;">Sposób dostawy</td>
+        <td colSpan="2.5" style="text-align: center; font-size: 14px; font-weight: 700;">Szacowany czas dostawy</td>
+        <td colSpan="2.5" style="text-align: center; font-size: 14px; font-weight: 700;">Metoda płatności</td>
+    </tr>
+    <tr style="">
+        <td colSpan="1" style="text-align: center; font-size: 14px; font-weight: 400;">${orderInfo[0].shipping_method}</td>
+        <td colSpan="2.5" style="text-align: center; font-size: 14px; font-weight: 400;">1-2 dni robocze</td>
+        <td colSpan="2.5" style="text-align: center; font-size: 14px; font-weight: 400;">${orderInfo[0].payment_method}</td>
+    </tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr style="margin-top: 50px;">
+        <td colSpan="1" style="text-align: center; font-size: 14px; font-weight: 700;">Dane odbiorcy przesyłki</td>
+        <td colSpan="2.5" style="text-align: center; font-size: 14px; font-weight: 700;">Adres paczkomatu</td>
+    </tr>
+    <tr style="">
+        <td colSpan="1" style="text-align: center; font-size: 14px; font-weight: 400;">
+            ${orderInfo[0].first_name} ${orderInfo[0].last_name}<br/>
+            ${orderInfo[0].street} ${address}<br/>
+            ${orderInfo[0].postal_code} ${orderInfo[0].city}
+        </td>
+        <td colSpan="2.5" style="text-align: center; font-size: 14px; font-weight: 400;">
+            ${inPost}
+        </td>
+    </tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr>
+        <td colSpan="5" style="font-size: 14px;">
+            Drogi kliencie, realizacja Twojego zamówienia nr: ${orderInfo[0].id.substring(0,6)} rozpocznie się po zaksięgowaniu płatności na
+            naszym koncie. W następnych mailach będziemy Cię informować o kolejnych etapach zamówienia.
+        </td>
+    </tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr>
+        <td style="font-size: 14px; font-weight: 700;">
+            Odstąpienie od umowy
+        </td>
+    </tr>
+    <tr>
+        <td colSpan="5" style="font-size: 14px;">
+            Czas odstąpienia od umowy to 14 dni. Nie musisz podawać przyczyny i ponosić kosztów za odstąpienie od
+            umowy poza kosztem przesyłki. Wystarczy, że w w/w terminie wyślesz stosowne oświadczenie o odstąpieniu
+            np. wypełniając formularz, który znajduje się w treści tego maila jako załącznik oraz, który jest
+            dostępny na naszej stronie internetowej w zakładce "Reklamacje i zwroty", a następnie odeślesz go nam
+            wraz z produktem. Pragniemy zaznaczyć, iż bezpośredni koszt zwrotu produktu leży po Twojej stronie.
+        </td>
+    </tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr>
+        <td colSpan="5" style="text-align: center; font-size: 14px; font-weight: 700;">
+            Zwroty i reklamacje prosimy wysyłać na adres:
+        </td>
+    </tr>
+    <tr>
+        <td colSpan="5" style="text-align: center; font-size: 14px;">
+            ul. Pocztowa 4
+        </td>
+    </tr>
+    <tr>
+        <td colSpan="5" style="text-align: center; font-size: 14px;">
+            59-100 Polkowice
+        </td>
+    </tr>
+    </tbody>
+    <tfoot style="display: block; border-top: 2px solid #fff; margin: 20px auto;">
+    <tr>
+        <td style="display: block; margin-top: 20px;">
+            Pozdrawiamy
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Zespół BIO STORIES
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a style="color: #fff; display: block; margin-top: 20px; text-decoration: none;"
+               href="https://biostories.pl">
+                biostories.pl
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a style="color: #fff; text-decoration: none;" href="mailto:biuro@biostories.pl">
+                biuro@biostories.pl
+            </a>
+        </td>
+    </tr>
+    </tfoot>
+</table>
+</body>
+</html>

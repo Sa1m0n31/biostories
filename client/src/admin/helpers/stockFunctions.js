@@ -27,8 +27,9 @@ const getProductsWithStock = (id) => {
     return axios.post(`${API_URL}/stock/get-products-with-stock`, { id });
 }
 
-const getProductStock = (id) => {
-    return axios.post(`${API_URL}/stock/get-product-stock`, { id });
+const getProductStock = (id, attributeValue) => {
+    console.log(attributeValue);
+    return axios.post(`${API_URL}/stock/get-product-stock`, { id, attributeValue });
 }
 
 export { getAllStocks, getSingleStock, deleteStock, addStock, updateStock, getProductStock, getProductsWithStock };

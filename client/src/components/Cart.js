@@ -65,17 +65,18 @@ const Cart = ({deliveryProp, addOrder, codes, code, codeUpdated, setCodeVerified
         calculateCartSum();
     }, [currentCart]);
 
-    const changeAmountInCart = (value, uuid, id, attributeName, attributeValue) => {
+    const changeAmountInCart = (value, uuid, id, attributeValue) => {
         const cart = JSON.parse(localStorage.getItem('hideisland-cart'));
 
         if(value === "") {
             return 0;
         }
 
-        getProductStock(id)
+        getProductStock(id, attributeValue)
             .then(res => {
                 if(res?.data?.result) {
                     const result = res.data.result[0].stock;
+                    console.log('STOCK IS EQUAL TO ' + result);
                     if(result >= parseInt(value)) {
                         localStorage.setItem('hideisland-cart', JSON.stringify(cart.map((item) => {
                             if(item.uuid === uuid) {
@@ -159,6 +160,7 @@ const Cart = ({deliveryProp, addOrder, codes, code, codeUpdated, setCodeVerified
         </h3>
         <div>
             {currentCart?.length ? currentCart?.map((item, index) => {
+                console.log(item.attributeValue);
                 return <div className="cart__item flex" key={index}>
                     <div className="cart__item__firstCol flex">
                         <figure className="cart__item__imgWrapper">
@@ -198,7 +200,7 @@ const Cart = ({deliveryProp, addOrder, codes, code, codeUpdated, setCodeVerified
                     Wartość koszyka
                 </h4>
                 <h5>
-                    {sum} PLN
+                    {sum.toFixed(2)} PLN
                 </h5>
             </div>
             <div className="cart__sum cart__sum--noBorder flex">
@@ -222,7 +224,7 @@ const Cart = ({deliveryProp, addOrder, codes, code, codeUpdated, setCodeVerified
                     Łączna wartość zamówienia
                 </h4>
                 <h5>
-                    {sum + delivery - discountInPLN} PLN
+                    {(sum + delivery - discountInPLN).toFixed(2)} PLN
                 </h5>
             </div>
             <a className="btn btn--cart" href={isLoggedIn ? "/koszyk" : "/zakupy"}>

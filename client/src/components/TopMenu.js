@@ -2,7 +2,7 @@ import React from 'react';
 import instaIcon from '../static/assets/instagram.svg'
 import fbIcon from '../static/assets/facebook.svg'
 
-const TopMenu = () => {
+const TopMenu = ({homepage}) => {
     const menu = [
         {
             name: 'Strona główna',
@@ -14,15 +14,15 @@ const TopMenu = () => {
         },
         {
             name: 'Nowości',
-            link: '/#nowosci'
+            link: '/sklep/nowosci'
         },
         {
             name: 'Najczęściej wybierane',
-            link: '/#popularne'
+            link: '/sklep/najczesciej-wybierane'
         },
         {
             name: 'O nas',
-            link: '/#o-nas'
+            link: homepage ? '#o-nas' : '/?s=o-nas'
         }
     ]
 
@@ -36,7 +36,7 @@ const TopMenu = () => {
                 </li>
             })}
             <li className="topMenu__list__item">
-                <a className="topMenu__list__link" href="" target="_blank">
+                <a className="topMenu__list__link" href="https://www.instagram.com/bio_stories/" target="_blank">
                     <img className="topMenu__icon" src={instaIcon} alt="instagram" />
                 </a>
             </li>

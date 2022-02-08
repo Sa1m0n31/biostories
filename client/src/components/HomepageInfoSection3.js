@@ -15,10 +15,10 @@ const HomepageInfoSection3 = ({img, article}) => {
     return <>
         <section className="infoSection infoSection--3 flex">
             <span className="anchor" id="o-nas"></span>
-            <figure className="infoSection__imgWrapper infoSection__imgWrapper--3">
+            <figure className="infoSection__imgWrapper infoSection__imgWrapper--3" data-aos-offset="1600" data-aos="fade-right">
                 <img className="btn__img" src={`${settings.API_URL}/image?url=/media/fields/${img}`} alt="info" />
             </figure>
-            <article className="infoSection__content">
+            <article className="infoSection__content" data-aos="fade-left" data-aos-offset="1600">
                 <main className="infoSection__content__main" dangerouslySetInnerHTML={{__html: desc}}>
 
                 </main>

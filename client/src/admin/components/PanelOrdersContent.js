@@ -93,36 +93,36 @@ const PanelOrdersContent = () => {
         </header>
 
         <main className="panelContent__contentWrapper">
-            <header className="panelContent__filters">
-                <section className="panelContent__filters__item">
-                    <span className="panelContent__filters__label">
-                        Wyszukiwanie:
-                    </span>
-                    <label className="panelContent__input__label">
-                        <input className="panelContent__input"
-                               placeholder="Szukaj..."
-                               onChange={(e) => { search(e) }}
-                               name="search" />
+            {/*<header className="panelContent__filters">*/}
+            {/*    <section className="panelContent__filters__item">*/}
+            {/*        <span className="panelContent__filters__label">*/}
+            {/*            Wyszukiwanie:*/}
+            {/*        </span>*/}
+            {/*        <label className="panelContent__input__label">*/}
+            {/*            <input className="panelContent__input"*/}
+            {/*                   placeholder="Szukaj..."*/}
+            {/*                   onChange={(e) => { search(e) }}*/}
+            {/*                   name="search" />*/}
 
-                        <span className="panelContent__input__span">
-                            <img className="panelContent__input__icon" src={searchImg} alt="szukaj" />
-                        </span>
-                    </label>
-                </section>
+            {/*            <span className="panelContent__input__span">*/}
+            {/*                <img className="panelContent__input__icon" src={searchImg} alt="szukaj" />*/}
+            {/*            </span>*/}
+            {/*        </label>*/}
+            {/*    </section>*/}
 
-                <section className="panelContent__filters__item">
-                    <span className="panelContent__filters__label">
-                        Sortuj wg daty:
-                    </span>
+            {/*    <section className="panelContent__filters__item">*/}
+            {/*        <span className="panelContent__filters__label">*/}
+            {/*            Sortuj wg daty:*/}
+            {/*        </span>*/}
 
-                    <button className={sorting === 0 ? "panelContent__sortBtn panelContent__sortBtn--active" : "panelContent__sortBtn"} onClick={() => { setOrders(sortByDate(true)); setSorting(0); }}>
-                        Najnowsze
-                    </button>
-                    <button className={sorting === 1 ? "panelContent__sortBtn panelContent__sortBtn--active" : "panelContent__sortBtn"} onClick={() => { setOrders(sortByDate(false)); setSorting(1); }}>
-                        Najstarsze
-                    </button>
-                </section>
-            </header>
+            {/*        <button className={sorting === 0 ? "panelContent__sortBtn panelContent__sortBtn--active" : "panelContent__sortBtn"} onClick={() => { setOrders(sortByDate(true)); setSorting(0); }}>*/}
+            {/*            Najnowsze*/}
+            {/*        </button>*/}
+            {/*        <button className={sorting === 1 ? "panelContent__sortBtn panelContent__sortBtn--active" : "panelContent__sortBtn"} onClick={() => { setOrders(sortByDate(false)); setSorting(1); }}>*/}
+            {/*            Najstarsze*/}
+            {/*        </button>*/}
+            {/*    </section>*/}
+            {/*</header>*/}
 
             <main className="panelContent__content">
                 {orders?.map((item, index) => {

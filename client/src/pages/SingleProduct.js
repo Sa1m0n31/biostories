@@ -23,6 +23,8 @@ const SingleProduct = () => {
     const [attribute, setAttribute] = useState(null);
     const [attributeValues, setAttributeValues] = useState([]);
     const [icons, setIcons] = useState([]);
+    const [price, setPrice] = useState(0);
+    const [stock, setStock] = useState(2);
 
     const [desc1, setDesc1] = useState(null);
     const [desc2, setDesc2] = useState(null);
@@ -30,6 +32,7 @@ const SingleProduct = () => {
     const [desc4, setDesc4] = useState(null);
     const [amount, setAmount] = useState(1);
     const [render, setRender] = useState(false);
+    const [initial, setInitial] = useState(true);
 
     const [container, setContainer] = useState(null);
     const [closeModalBtn, setCloseModalBtn] = useState(null);
@@ -47,10 +50,24 @@ const SingleProduct = () => {
                 if(result) {
                     const productInfo = result[0];
                     if(productInfo) {
-                        setAttributeValues(result?.map((item) => {
-                            return item.attribute_value;
-                        }));
-                        setAttribute(productInfo.attribute_value);
+                        const filteredAttributeValues = result?.map((item) => {
+                            return {
+                                value: item.attribute_value,
+                                price: item.attribute_price,
+                                stock: item.attribute_stock
+                            }
+                        }).filter((item) => {
+                            return item.stock > 0
+                        });
+                        setAttributeValues(filteredAttributeValues);
+                        setPrice(result[0]?.attribute_price ? result[0].attribute_price : productInfo.price);
+                        setAttribute(filteredAttributeValues?.length ? filteredAttributeValues[0].value : null);
+                        if(result?.length > 1 && filteredAttributeValues?.length === 0) {
+                            setStock(0);
+                        }
+                        else {
+                            setStock(filteredAttributeValues?.length ? filteredAttributeValues[0].stock : productInfo.stock);
+                        }
                         if(productInfo.description && productInfo.description !== '0') setDesc1(stateToHTML((convertFromRaw(JSON.parse(productInfo.description)))));
                         if(productInfo.second_description && productInfo.second_description !== '0') setDesc2(stateToHTML((convertFromRaw(JSON.parse(productInfo.second_description)))));
                         if(productInfo.third_description && productInfo.third_description !== '0') setDesc3(stateToHTML((convertFromRaw(JSON.parse(productInfo.third_description)))));
@@ -125,6 +142,19 @@ const SingleProduct = () => {
         }, 200);
     }
 
+    const getPriceByAttributeName = (val) => {
+        return attributeValues.find((item) => {
+            return item.value === val;
+        })?.price;
+    }
+
+    useEffect(() => {
+        console.log(initial);
+        console.log(attribute);
+        if(initial) setInitial(false);
+        else setPrice(getPriceByAttributeName(attribute));
+    }, [attribute]);
+
     return <div className="container container--single">
         <Header topSmall={true} />
         <TopMenu />
@@ -170,7 +200,7 @@ const SingleProduct = () => {
                             {product?.name}
                         </h2>
                         <h2 className="single__price">
-                            {product?.price} zł
+                            {price} zł
                         </h2>
                     </header>
                     <article className="single__desc" dangerouslySetInnerHTML={{__html: desc1}}>
@@ -186,20 +216,22 @@ const SingleProduct = () => {
                             })}
                         </div> : ""}
                         <div className="flex">
-                            <h3 className="smallHeader">
+                            {stock > 0 ? <><h3 className="smallHeader">
                                 Ilość:
                             </h3>
-                            <div className="cart__item__secondCol flex">
-                                <button className="cart__item__btn" onClick={() => { setAmount(amount-1); }}>
+                                <div className="cart__item__secondCol flex">
+                                <button className="cart__item__btn" onClick={() => { setAmount(Math.max(1, amount-1)); }}>
                                     -
                                 </button>
                                 <h4 className="cart__item__count">
                                     {amount}
                                 </h4>
-                                <button className="cart__item__btn" onClick={() => { setAmount(amount+1); }}>
+                                <button className="cart__item__btn" onClick={() => { if(amount+1 <= stock) setAmount(amount+1); }}>
                                     +
                                 </button>
-                            </div>
+                            </div></> : <h4 className="outOfStock">
+                                Produkt niedostępny
+                            </h4>}
                         </div>
                     </div>
                     {attributeValues?.length && product?.attribute_name ? <div className="single__icons single__icons--attributeSection flex">
@@ -208,20 +240,20 @@ const SingleProduct = () => {
                         </h3>
                         <select onChange={(e) => { setAttribute(e.target.value); }}>
                             {attributeValues.map((item, index) => {
-                                return <option>
-                                    {item}
+                                return <option key={index}>
+                                    {item.value}
                                 </option>
                             })}
                         </select>
                     </div> : ""}
-                    <button className="addToCartBtn addToCartBtn--single w-100" onClick={(e) => {
+                    {stock > 0 ? <button className="addToCartBtn addToCartBtn--single w-100" onClick={(e) => {
                         e.preventDefault();
-                        addToCart(product.id, product.name, amount, `${settings.API_URL}/image?url=/media/products/${product.main_image}`, product.attribute_name ? product.attribute_name : '', attribute ? attribute : '', product.price);
+                        addToCart(product.id, product.name, amount, `${settings.API_URL}/image?url=/media/products/${product.main_image}`, product.attribute_name ? product.attribute_name : '', attribute ? attribute : '', price);
                         openCart();
                     }}>
                         Do koszyka
                         <img className="addToCartBtn__img" src={plusIcon} alt="dodaj" />
-                    </button>
+                    </button> : ""}
                 </main>
             </section>
             {desc2 ? <section className="singleMiddle flex">

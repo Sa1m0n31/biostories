@@ -28,7 +28,6 @@ const TyPage = () => {
             // localStorage.removeItem('order-id');
             getOrderDetails(localStorage.getItem('order-id'))
                 .then((res) => {
-                    console.log(res.data.result);
                     setOrder(res?.data?.result);
                     setRender(true);
                 });
@@ -91,7 +90,7 @@ const TyPage = () => {
                                     Cena jednostkowa
                                 </h4>
                                 <h4 className="cartCol__value">
-                                    {item.price} zł
+                                    {item.attribute_price ? item.attribute_price : item.price} zł
                                 </h4>
                             </div>
                             <div className="cartCol">
@@ -99,7 +98,7 @@ const TyPage = () => {
                                     Wartość zamówienia
                                 </h4>
                                 <h4 className="cartCol__value">
-                                    {item.price * item.quantity} zł
+                                    {(item.attribute_price ? item.attribute_price : item.price) * item.quantity} zł
                                 </h4>
                             </div>
                         </div>

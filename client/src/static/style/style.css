@@ -91,7 +91,8 @@ a {
     justify-content: flex-end;
     align-items: center;
     flex-direction: column;
-    font-size: 14px;
+    font-size: 15px;
+    text-transform: uppercase;
     text-align: center;
 }
 
@@ -121,10 +122,10 @@ a {
 .topMenu__list__link {
     text-transform: uppercase;
     text-decoration: none;
-    color: inherit;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 500;
     display: block;
+    color: var(--main);
     transition: .2s all;
 }
 
@@ -190,10 +191,12 @@ a {
 }
 
 .preview__imgWrapper {
-    width: 100%;
+    width: 350px;
+    max-width: 100%;
     height: 390px;
     position: relative;
     overflow: hidden;
+    margin: auto;
 }
 
 .preview__imgWrapper .btn__img {
@@ -202,6 +205,9 @@ a {
     left: 50%;
     transform: translate(-50%, -50%);
     transition: .4s all;
+    height: 100%;
+    width: auto;
+    min-width: 100%;
 }
 
 .previewImg2 {
@@ -407,6 +413,7 @@ label {
 }
 
 .error {
+    max-width: 100%;
     position: absolute;
     bottom: -30px;
     font-size: 13px;
@@ -719,6 +726,19 @@ h4.afterLogin {
     transform-origin: top right;
 }
 
+.background {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    opacity: 0;
+    z-index: -1;
+    transition: .2s opacity;
+}
+
 .siteHeader__menuBtn {
     cursor: pointer;
 }
@@ -734,6 +754,7 @@ h4.afterLogin {
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
+.panelContent::-webkit-scrollbar,
 .menu__search--mobile::-webkit-scrollbar,
 .panelMenu__list::-webkit-scrollbar,
 .menu__main::-webkit-scrollbar,
@@ -742,6 +763,7 @@ h4.afterLogin {
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
+.panelContent::-webkit-scrollbar,
 .menu__main,
 .panelMenu__list,
 .menu__search--mobile,
@@ -760,7 +782,7 @@ h4.afterLogin {
 .menu {
     right: unset;
     left: 0;
-    width: 85%;
+    width: 1250px;
     transform-origin: top left;
     max-width: 95vw;
 }
@@ -872,7 +894,7 @@ h4.afterLogin {
 }
 
 .page--beforeCheckout > main > div {
-    width: auto;
+    width: 44%;
 }
 
 .page--beforeCheckout > main > div:first-of-type {
@@ -921,15 +943,22 @@ h4.afterLogin {
     margin-top: 20px;
 }
 
-.page--beforeCheckout__back {
-    text-decoration: underline;
+.page--beforeCheckout__backWrapper {
     position: absolute;
     top: 30px;
-    left: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: clamp(200px, 90vw, 1600px);
+}
+
+.page--beforeCheckout__back {
+    text-decoration: underline;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     font-size: 13px;
+    width: fit-content;
+    width: -moz-max-content;
     opacity: .75;
 }
 
@@ -1023,15 +1052,12 @@ h4.afterLogin {
 }
 
 .products {
+    align-items: flex-start;
     justify-content: flex-start;
 }
 
 .products > * {
     margin-right: 60px;
-}
-
-.products .preview__imgWrapper {
-    border: 2px solid var(--main);
 }
 
 .cartPage__main {
@@ -1268,7 +1294,8 @@ h4.afterLogin {
 
 .single__desc {
     margin-top: 15px;
-    font-size: 15px;
+    font-size: 16px;
+    line-height: 1.7em;
 }
 
 .single__icons__item {
@@ -1526,6 +1553,7 @@ h4.afterLogin {
 .row > main.flex {
     display: grid;
     grid-template-columns: repeat(4, 22%);
+    grid-row-gap: 40px;
     grid-column-gap: 4%;
 }
 
@@ -1661,10 +1689,13 @@ h4.afterLogin {
 
 .afterSlider {
     margin-bottom: 100px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-column-gap: 30px;
 }
 
 .afterSlider__imgWrapper {
-    width: 48%;
+    width: 100%;
     height: 250px;
     overflow: hidden;
 }
@@ -1718,7 +1749,7 @@ h4.afterLogin {
     transition: .2s all;
     position: absolute;
     top: 200px;
-    left: 6%;
+    left: 9.2%;
 }
 
 .menu__main {
@@ -1758,6 +1789,7 @@ h4.afterLogin {
     transform: translateY(-50%);
     opacity: 0;
     z-index: -2;
+    width: 0;
     transition: .2s all;
 }
 
@@ -1869,7 +1901,6 @@ h4.afterLogin {
 
 .circle-outer-border {
     position: relative;
-    border: 1px solid #E3E3E3;
     border-radius: 100px;
     -moz-border-radius: 100px;
     -webkit-border-radius: 100px;
@@ -1945,6 +1976,10 @@ h4.afterLogin {
     margin-left: 5px;
 }
 
+.infoSection {
+    overflow: hidden;
+}
+
 .shop__filters {
     position: absolute;
     right: 0;
@@ -1962,3 +1997,23 @@ h4.afterLogin {
     margin-top: -50px;
 }
 
+.inPostModalWrapper {
+    display: block;
+    height: auto;
+    visibility: visible;
+}
+
+.modalHidden {
+    visibility: hidden;
+    height: 0;
+}
+
+.container--registerTy .ty__header {
+    margin: auto;
+}
+
+.outOfStock {
+    font-size: 15px;
+    font-weight: 600;
+    color: #941212;
+}

@@ -21,7 +21,6 @@ const PanelProductsContent = () => {
     useEffect(() => {
         getAllProducts()
             .then(res => {
-               console.log(res.data);
                const result = res.data.result;
                setProducts(result);
             });
@@ -51,7 +50,6 @@ const PanelProductsContent = () => {
     }
 
     return <main className="panelContent">
-
         <Modal
             portalClassName="panelModal"
             isOpen={modal}>
@@ -94,23 +92,23 @@ const PanelProductsContent = () => {
                     </a>
                 </section>
             </h1>
-            <header className="panelContent__filters">
-                <section className="panelContent__filters__item">
-                    <span className="panelContent__filters__label">
-                        Wyszukiwanie:
-                    </span>
-                    <label className="panelContent__input__label">
-                        <input className="panelContent__input"
-                               placeholder="Szukaj..."
-                               onChange={(e) => { search(e) }}
-                               name="search" />
+            {/*<header className="panelContent__filters">*/}
+            {/*    <section className="panelContent__filters__item">*/}
+            {/*        <span className="panelContent__filters__label">*/}
+            {/*            Wyszukiwanie:*/}
+            {/*        </span>*/}
+            {/*        <label className="panelContent__input__label">*/}
+            {/*            <input className="panelContent__input"*/}
+            {/*                   placeholder="Szukaj..."*/}
+            {/*                   onChange={(e) => { search(e) }}*/}
+            {/*                   name="search" />*/}
 
-                        <span className="panelContent__input__span">
-                            <img className="panelContent__input__icon" src={searchImg} alt="szukaj" />
-                        </span>
-                    </label>
-                </section>
-            </header>
+            {/*            <span className="panelContent__input__span">*/}
+            {/*                <img className="panelContent__input__icon" src={searchImg} alt="szukaj" />*/}
+            {/*            </span>*/}
+            {/*        </label>*/}
+            {/*    </section>*/}
+            {/*</header>*/}
             <main className="panelContent__content">
                 {products?.map((item, index) => (
                     <section className="panelContent__item productItem">

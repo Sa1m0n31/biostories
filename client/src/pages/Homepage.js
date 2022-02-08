@@ -25,6 +25,16 @@ const Homepage = () => {
     }
 
     useEffect(() => {
+        setTimeout(() => {
+            const s = new URLSearchParams(window.location.search).get('s');
+            if(s) {
+                document.querySelector(`#${s}`).scrollIntoView({
+                    behavior: 'smooth',
+                    top: 0
+                });
+            }
+        }, 1000);
+
         getCustomFields()
             .then(res => {
                 setFields(res?.data?.result);
@@ -33,7 +43,7 @@ const Homepage = () => {
 
     return <div className="container w">
         <Header />
-        <TopMenu />
+        <TopMenu homepage={true} />
         <Slider
             slider1={getCustomField('image1')}
             slider2={getCustomField('image2')}
@@ -50,7 +60,7 @@ const Homepage = () => {
         <HomepageInfoSection3 img={getCustomField('image8')} article={getCustomField('article3')} />
         <Merits />
         <Newsletter />
-        <Footer />
+        <Footer homepage={true} />
     </div>
 };
 

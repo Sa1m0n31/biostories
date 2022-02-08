@@ -4,7 +4,7 @@ import TopMenu from "../components/TopMenu";
 import Footer from "../components/Footer";
 
 const TyAfterRegister = () => {
-    return <div className="container">
+    return <div className="container container--registerTy">
         <Header />
         <TopMenu />
         <main className="page page--ty">

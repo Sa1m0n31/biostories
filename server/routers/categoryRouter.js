@@ -78,7 +78,7 @@ con.connect(err => {
 
     /* GET ALL CATEGORIES */
     router.get("/get-all", (request, response) => {
-        con.query('SELECT c1.name as parent_name, c2.id, c2.name as name, c2.parent_id, c2.permalink, c2.hidden, c2.priority FROM categories c1 RIGHT OUTER JOIN categories c2 ON c1.id = c2.parent_id', (err, res) => {
+        con.query('SELECT c1.name as parent_name, c2.id, c2.name as name, c2.parent_id, c2.permalink, c2.hidden, c2.priority FROM categories c1 RIGHT OUTER JOIN categories c2 ON c1.id = c2.parent_id ORDER BY c2.priority DESC', (err, res) => {
             response.send({
                result: res
            });
@@ -153,6 +153,8 @@ con.connect(err => {
     /* UPDATE CATEGORY */
     router.post("/update", (request, response) => {
         let { id, name, parent, priority, hidden } = request.body;
+
+        console.log(priority);
 
         const values = [name, parent, convertToURL(name), priority, hidden, id];
         const query = 'UPDATE categories SET name = ?, parent_id = ?, permalink = ?, priority = ?, hidden = ? WHERE id = ?';

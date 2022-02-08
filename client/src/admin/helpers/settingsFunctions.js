@@ -34,7 +34,9 @@ const getCustomFields = () => {
     return axios.get(`${API_URL}/user/get-custom-fields`);
 }
 
-const updateCustomFields = (img1, img2, img3, img4, img5, img6, img7, img8, article1, article2, article3) => {
+const updateCustomFields = (img1, img2, img3, img4, img5, img6, img7, img8, article1, article2, article3,
+                            link1, link2, link3, link4, link5, mediaType1, mediaType2, mediaType3
+                            ) => {
     const config = { headers: { 'Content-Type': 'multipart/form-data' } };
     const formData = new FormData();
     formData.append('img1', img1?.file);
@@ -45,7 +47,14 @@ const updateCustomFields = (img1, img2, img3, img4, img5, img6, img7, img8, arti
     formData.append('img6', img6?.file);
     formData.append('img7', img7?.file);
     formData.append('img8', img8?.file);
-    console.log(article2);
+    formData.append('link1', link1);
+    formData.append('link2', link2);
+    formData.append('link3', link3);
+    formData.append('link4', link4);
+    formData.append('link5', link5);
+    formData.append('mediaType1', mediaType1);
+    formData.append('mediaType2', mediaType2);
+    formData.append('mediaType3', mediaType3);
     formData.append('article1', article1 ? JSON.stringify(convertToRaw(article1?.getCurrentContent())) : '');
     formData.append('article2', article2 ? JSON.stringify(convertToRaw(article2?.getCurrentContent())) : '');
     formData.append('article3', article3 ? JSON.stringify(convertToRaw(article3?.getCurrentContent())) : '');

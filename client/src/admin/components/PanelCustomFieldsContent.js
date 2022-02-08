@@ -45,6 +45,17 @@ const PanelCustomFieldsContent = () => {
     const [description2, setDescription2] = useState(null);
     const [description3, setDescription3] = useState(null);
 
+    const [link1, setLink1] = useState("");
+    const [link2, setLink2] = useState("");
+    const [link3, setLink3] = useState("");
+    const [link4, setLink4] = useState("");
+    const [link5, setLink5] = useState("");
+
+    // 0 - image, 1 - video
+    const [media1Type, setMedia1Type] = useState(0);
+    const [media2Type, setMedia2Type] = useState(0);
+    const [media3Type, setMedia3Type] = useState(0);
+
     const getCustomField = (key) => {
         return customFields.find((item) => {
             return item.custom_key === key;
@@ -68,6 +79,10 @@ const PanelCustomFieldsContent = () => {
             setUpdateImage6(getCustomField('image6'));
             setUpdateImage7(getCustomField('image7'));
             setUpdateImage8(getCustomField('image8'));
+
+            setLink1(getCustomField('link1'));
+            setLink2(getCustomField('link2'));
+            setLink3(getCustomField('link3'));
 
             setDescription1(EditorState.createWithContent(convertFromRaw(JSON.parse(getCustomField('article1')))));
             setDescription2(EditorState.createWithContent(convertFromRaw(JSON.parse(getCustomField('article2')))));
@@ -274,7 +289,8 @@ const PanelCustomFieldsContent = () => {
 
     const handleSubmit = () => {
         updateCustomFields(img, img2, img3, img4, img5, img6, img7, img8,
-            description1, description2, description3)
+            description1, description2, description3, link1, link2, link3, link4, link5,
+            media1Type, media2Type, media3Type)
             .then((res) => {
                 if(res?.data?.result) {
                     setResponse("Treści zostały zaktualizowane");
@@ -291,7 +307,7 @@ const PanelCustomFieldsContent = () => {
             });
     }
 
-    return <main className="panelContent">
+    return <main className="panelContent panelContent--customFields">
         <main className="panelContent__frame">
             <h1 className="panelContent__frame__header">
                 Edytuj treść
@@ -300,93 +316,138 @@ const PanelCustomFieldsContent = () => {
                     </span> : ""}
             </h1>
             <div className="flex mt-4">
-                <label className="admin__label admin__flex admin__label--imgUpload">
-                    Pierwsze zdjęcie w górnym sliderze
-                    <span className="admin__label__imgUpload">
+                <div>
+                    <label className="admin__label admin__flex admin__label--imgUpload">
+                        Pierwsze zdjęcie w górnym sliderze
+                        <span className="admin__label__imgUpload">
                             {updateImage ? <figure className="admin__label__imgUpload__updateImgWrapper">
                                 <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/fields/${updateImage}`} alt="foto" />
                             </figure> : ""}
-                        {img || updateImage ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg(); }}>
-                            <img className="btn__img" src={trashIcon} alt="usun" />
-                        </button> : ""}
-                        <Dropzone
-                            canRemove={true}
-                            getUploadParams={getUploadImage}
-                            onChangeStatus={(status) => { handleChangeStatus(status); }}
-                            accept="image/*"
-                            maxFiles={1} />
+                            {img || updateImage ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg(); }}>
+                                <img className="btn__img" src={trashIcon} alt="usun" />
+                            </button> : ""}
+                            <Dropzone
+                                canRemove={true}
+                                getUploadParams={getUploadImage}
+                                onChangeStatus={(status) => { handleChangeStatus(status); }}
+                                accept="image/*"
+                                maxFiles={1} />
                         </span>
-                </label>
-                <label className="admin__label admin__flex admin__label--imgUpload">
-                    Drugie zdjęcie w górnym sliderze
-                    <span className="admin__label__imgUpload">
+                    </label>
+                    <label>
+                        <input className="addProduct__input"
+                               name="link1"
+                               value={link1}
+                               onChange={(e) => { setLink1(e.target.value) }}
+                               placeholder="Link do pierwszego zdjęcia" />
+                    </label>
+                </div>
+                <div>
+                    <label className="admin__label admin__flex admin__label--imgUpload">
+                        Drugie zdjęcie w górnym sliderze
+                        <span className="admin__label__imgUpload">
                             {updateImage2 ? <figure className="admin__label__imgUpload__updateImgWrapper">
                                 <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/fields/${updateImage2}`} alt="foto" />
                             </figure> : ""}
-                        {img2 || updateImage2 ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg2(); }}>
-                            <img className="btn__img" src={trashIcon} alt="usun" />
-                        </button> : ""}
-                        <Dropzone
-                            canRemove={true}
-                            getUploadParams={getUploadImage2}
-                            onChangeStatus={(status) => { handleChangeStatus2(status); }}
-                            accept="image/*"
-                            maxFiles={1} />
+                            {img2 || updateImage2 ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg2(); }}>
+                                <img className="btn__img" src={trashIcon} alt="usun" />
+                            </button> : ""}
+                            <Dropzone
+                                canRemove={true}
+                                getUploadParams={getUploadImage2}
+                                onChangeStatus={(status) => { handleChangeStatus2(status); }}
+                                accept="image/*"
+                                maxFiles={1} />
                         </span>
-                </label>
-                <label className="admin__label admin__flex admin__label--imgUpload">
-                    Trzecie zdjęcie w górnym sliderze
-                    <span className="admin__label__imgUpload">
+                    </label>
+                    <label>
+                        <input className="addProduct__input"
+                               name="link2"
+                               value={link2}
+                               onChange={(e) => { setLink2(e.target.value) }}
+                               placeholder="Link do drugiego zdjęcia" />
+                    </label>
+                </div>
+                <div>
+                    <label className="admin__label admin__flex admin__label--imgUpload">
+                        Trzecie zdjęcie w górnym sliderze
+                        <span className="admin__label__imgUpload">
                             {updateImage3 ? <figure className="admin__label__imgUpload__updateImgWrapper">
                                 <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/fields/${updateImage3}`} alt="foto" />
                             </figure> : ""}
-                        {img3 || updateImage3 ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg3(); }}>
-                            <img className="btn__img" src={trashIcon} alt="usun" />
-                        </button> : ""}
-                        <Dropzone
-                            canRemove={true}
-                            getUploadParams={getUploadImage3}
-                            onChangeStatus={(status) => { handleChangeStatus3(status); }}
-                            accept="image/*"
-                            maxFiles={1} />
+                            {img3 || updateImage3 ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg3(); }}>
+                                <img className="btn__img" src={trashIcon} alt="usun" />
+                            </button> : ""}
+                            <Dropzone
+                                canRemove={true}
+                                getUploadParams={getUploadImage3}
+                                onChangeStatus={(status) => { handleChangeStatus3(status); }}
+                                accept="image/*"
+                                maxFiles={1} />
                         </span>
-                </label>
+                    </label>
+                    <label>
+                        <input className="addProduct__input"
+                               name="link3"
+                               value={link3}
+                               onChange={(e) => { setLink3(e.target.value) }}
+                               placeholder="Link do trzeciego zdjęcia" />
+                    </label>
+                </div>
             </div>
-            <div className="flex alignTop center">
-                <label className="admin__label admin__flex admin__label--imgUpload admin__label--imgUpload--section">
-                    Zdjęcie po lewej stronie
-                    <span className="admin__label__imgUpload">
+            <div className="flex alignTop twoImages">
+                <div>
+                    <label className="admin__label admin__flex admin__label--imgUpload admin__label--imgUpload--section">
+                        Zdjęcie po lewej stronie
+                        <span className="admin__label__imgUpload">
                             {updateImage4 ? <figure className="admin__label__imgUpload__updateImgWrapper">
                                 <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/fields/${updateImage4}`} alt="foto" />
                             </figure> : ""}
-                        {img4 || updateImage4 ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg4(); }}>
-                            <img className="btn__img" src={trashIcon} alt="usun" />
-                        </button> : ""}
-                        <Dropzone
-                            canRemove={true}
-                            getUploadParams={getUploadImage4}
-                            onChangeStatus={(status) => { handleChangeStatus4(status); }}
-                            accept="image/*"
-                            maxFiles={1} />
+                            {img4 || updateImage4 ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg4(); }}>
+                                <img className="btn__img" src={trashIcon} alt="usun" />
+                            </button> : ""}
+                            <Dropzone
+                                canRemove={true}
+                                getUploadParams={getUploadImage4}
+                                onChangeStatus={(status) => { handleChangeStatus4(status); }}
+                                accept="image/*"
+                                maxFiles={1} />
                         </span>
-                </label>
-                <label className="admin__label admin__flex admin__label--imgUpload admin__label--imgUpload--section">
-                    Zdjęcie po prawej stronie
-                    <span className="admin__label__imgUpload">
+                    </label>
+                    <label>
+                        <input className="addProduct__input mt"
+                               name="link4"
+                               value={link4}
+                               onChange={(e) => { setLink4(e.target.value) }}
+                               placeholder="Link do czwartego zdjęcia" />
+                    </label>
+                </div>
+                <div>
+                    <label className="admin__label admin__flex admin__label--imgUpload admin__label--imgUpload--section">
+                        Zdjęcie po prawej stronie
+                        <span className="admin__label__imgUpload">
                             {updateImage5 ? <figure className="admin__label__imgUpload__updateImgWrapper">
                                 <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/fields/${updateImage5}`} alt="foto" />
                             </figure> : ""}
-                        {img5 || updateImage5 ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg5(); }}>
-                            <img className="btn__img" src={trashIcon} alt="usun" />
-                        </button> : ""}
-                        <Dropzone
-                            canRemove={true}
-                            getUploadParams={getUploadImage5}
-                            onChangeStatus={(status) => { handleChangeStatus5(status); }}
-                            accept="image/*"
-                            maxFiles={1} />
+                            {img5 || updateImage5 ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg5(); }}>
+                                <img className="btn__img" src={trashIcon} alt="usun" />
+                            </button> : ""}
+                            <Dropzone
+                                canRemove={true}
+                                getUploadParams={getUploadImage5}
+                                onChangeStatus={(status) => { handleChangeStatus5(status); }}
+                                accept="image/*"
+                                maxFiles={1} />
                         </span>
-                </label>
+                    </label>
+                    <label>
+                        <input className="addProduct__input mt"
+                               name="link5"
+                               value={link5}
+                               onChange={(e) => { setLink5(e.target.value) }}
+                               placeholder="Link do piątego zdjęcia" />
+                    </label>
+                </div>
             </div>
             <div className="flex alignTop mt-4">
                 <label className="admin__label admin__flex admin__label--imgUpload admin__label--imgUpload--section">

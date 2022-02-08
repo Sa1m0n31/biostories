@@ -6,7 +6,7 @@ const { API_URL } = settings;
 const addProduct = (formData, title, subtitle, price, stock, attribute, attributeValues,
                     description, secondDescription, thirdDescription, fourthDescription,
                     img, img2, img3, img4, img5,
-                    categories, recommendation, top, hidden) => {
+                    categories, recommendation, top, hidden, prices, stocks) => {
     const config = { headers: { 'Content-Type': 'multipart/form-data' } };
     console.log(img);
     console.log(img2);
@@ -28,6 +28,8 @@ const addProduct = (formData, title, subtitle, price, stock, attribute, attribut
     formData.append('img3', img3?.file);
     formData.append('img4', img4?.file);
     formData.append('img5', img5?.file);
+    formData.append('prices', prices);
+    formData.append('stocks', stocks);
     formData.append('description', description ? JSON.stringify(convertToRaw(description?.getCurrentContent())) : '');
     formData.append('secondDescription', secondDescription ? JSON.stringify(convertToRaw(secondDescription?.getCurrentContent())) : '');
     formData.append('thirdDescription', thirdDescription ? JSON.stringify(convertToRaw(thirdDescription?.getCurrentContent())) : '');
@@ -39,7 +41,7 @@ const addProduct = (formData, title, subtitle, price, stock, attribute, attribut
 const updateProduct = (formData, id, title, subtitle, price, stock, attribute, attributeValues,
                     description, secondDescription, thirdDescription, fourthDescription,
                     img, img2, img3, img4, img5,
-                    categories, recommendation, top, hidden) => {
+                    categories, recommendation, top, hidden, prices, stocks) => {
     const config = { headers: { 'Content-Type': 'multipart/form-data' } };
     formData.append('title', title);
     formData.append('id', id);
@@ -57,6 +59,8 @@ const updateProduct = (formData, id, title, subtitle, price, stock, attribute, a
     formData.append('img3', img3?.file);
     formData.append('img4', img4?.file);
     formData.append('img5', img5?.file);
+    formData.append('prices', prices);
+    formData.append('stocks', stocks);
     formData.append('description', description ? JSON.stringify(convertToRaw(description?.getCurrentContent())) : '');
     formData.append('secondDescription', secondDescription ? JSON.stringify(convertToRaw(secondDescription?.getCurrentContent())) : '');
     formData.append('thirdDescription', thirdDescription ? JSON.stringify(convertToRaw(thirdDescription?.getCurrentContent())) : '');

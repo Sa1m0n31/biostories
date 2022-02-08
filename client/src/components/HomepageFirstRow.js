@@ -12,7 +12,7 @@ const HomepageFirstRow = () => {
     useEffect(() => {
         getTopProducts()
             .then((res) => {
-                setProducts(res?.data?.result);
+                setProducts(res?.data?.result?.slice(0, 4));
             })
     }, []);
 
@@ -28,6 +28,7 @@ const HomepageFirstRow = () => {
                     title={item.name}
                     subtitle={item.subtitle}
                     price={item.price}
+                    stock={item.stock}
                     link={convertToURL(item.name)}
                     img1={`${settings.API_URL}/image?url=/media/products/${item.main_image}`}
                     img2={`${settings.API_URL}/image?url=/media/products/${item.second_image}`} />

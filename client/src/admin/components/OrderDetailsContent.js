@@ -211,7 +211,7 @@ const OrderDetailsContent = () => {
                                         Cena jednostkowa
                                     </h4>
                                     <h4 className="cartCol__value">
-                                        {item.price} zł
+                                        {item.attribute_price ? item.attribute_price : item.price} zł
                                     </h4>
                                 </div>
                                 <div className="cartCol">
@@ -219,7 +219,7 @@ const OrderDetailsContent = () => {
                                         Wartość zamówienia
                                     </h4>
                                     <h4 className="cartCol__value">
-                                        {item.price * item.quantity} zł
+                                        {(item.attribute_price ? item.attribute_price : item.price) * item.quantity} zł
                                     </h4>
                                 </div>
                             </div>

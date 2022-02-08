@@ -1,15 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import Header from "../components/Header";
-import Menu from "../components/Menu";
 import TopMenu from "../components/TopMenu";
 import Footer from "../components/Footer";
-import {getAllProducts, getProductsByCategory} from "../helpers/productFunctions";
+import {
+    getAllProducts,
+    getNewProducts,
+    getPopularProducts,
+    getProductsByCategory,
+    getTopProducts
+} from "../helpers/productFunctions";
 import ProductPreview from "../components/ProductPreview";
 import convertToURL from "../helpers/convertToURL";
 import settings from "../helpers/settings";
 import {getCategoryBySlug} from "../helpers/categoryFunctions";
 import Loader from "../components/Loader";
-import HomepageInfoSection3 from "../components/HomepageInfoSection3";
 import {getCustomFields} from "../admin/helpers/settingsFunctions";
 import HomepageInfoSection2 from "../components/HomepageInfoSection2";
 import arrowIcon from '../static/img/slider-arrow.png'
@@ -28,6 +32,12 @@ const Shop = () => {
             return item.custom_key === key;
         })?.custom_value;
     }
+
+    useEffect(() => {
+        Array.from(document.querySelectorAll('.infoSection>*')).forEach((item) => {
+            item.removeAttribute('data-aos');
+        });
+    }, []);
 
     useEffect(() => {
         getCustomFields()
@@ -49,17 +59,47 @@ const Shop = () => {
         }
         else if(hrefItems.length > 4) {
             categoryPermalink = hrefItems[hrefItems.length-1];
-            getCategoryBySlug(categoryPermalink, null)
-                .then((res) => {
-                    setCategory(res?.data?.result[0]);
-                });
+            console.log(categoryPermalink);
+            if(categoryPermalink === 'nowosci') {
+                getNewProducts()
+                    .then((res) => {
+                        setProducts(res?.data?.result);
+                        setProductsFiltered(res?.data?.result);
+                        setRender(true);
+                    });
+            }
+            else if(categoryPermalink === 'idealne-polaczenie') {
+                getTopProducts()
+                    .then((res) => {
+                        setProducts(res?.data?.result);
+                        setProductsFiltered(res?.data?.result);
+                        setRender(true);
+                    });
+            }
+            else if(categoryPermalink === 'najczesciej-wybierane') {
+                getPopularProducts()
+                    .then((res) => {
+                        setProducts(res?.data?.result);
+                        setProductsFiltered(res?.data?.result);
+                        setRender(true);
+                    });
+            }
+            else {
+                getCategoryBySlug(categoryPermalink, null)
+                    .then((res) => {
+                        setCategory(res?.data?.result[0]);
+                    });
+            }
         }
         else {
             getAllProducts()
                 .then((res) => {
-                    console.log(res.data.result);
-                    setProducts(res?.data?.result);
-                    setProductsFiltered(res?.data?.result);
+                    setProducts(res?.data?.result?.filter((item) => {
+                        return !item.hidden;
+                    }));
+                    setProductsFiltered(res?.data?.result?.filter((item) => {
+                        return !item.hidden;
+                    }));
                     setRender(true);
                 })
         }
@@ -80,7 +120,7 @@ const Shop = () => {
         if(asc) {
             setRender(false);
             setProductsFiltered(products.sort((a, b) => {
-                return a.price <= b.price ? -1 : 1;
+                return parseFloat(a.price.split('-')[0]) <= parseFloat(b.price.split('-')[0]) ? -1 : 1;
             }).map((item) => {
                 return item;
             }));
@@ -88,7 +128,7 @@ const Shop = () => {
         }
         else {
             setProductsFiltered(products.sort((a, b) => {
-                return a.price <= b.price ? 1 : -1;
+                return parseFloat(a.price.split('-')[0]) <= parseFloat(b.price.split('-')[0]) ? 1 : -1;
             }).map((item) => {
                 return item;
             }));
@@ -166,6 +206,7 @@ const Shop = () => {
                             subtitle={item.subtitle}
                             link={convertToURL(item.name)}
                             price={item.price}
+                            stock={item.stock}
                             img1={`${settings.API_URL}/image?url=/media/products/${item.main_image}`}
                             img2={`${settings.API_URL}/image?url=/media/products/${item.second_image}`} />
                     }) : <div className="noProductsWrapper">

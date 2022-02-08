@@ -21,10 +21,12 @@ const BeforeCheckout = () => {
     }
 
     return <div className="page page--login page--beforeCheckout">
-        <a className="page--beforeCheckout__back" href="/sklep">
-            <img className="icon" src={arrowBack} alt="wroc" />
-            Wróć
-        </a>
+        <div className="page--beforeCheckout__backWrapper">
+            <a className="page--beforeCheckout__back" href="/sklep">
+                <img className="icon" src={arrowBack} alt="wroc" />
+                Wróć
+            </a>
+        </div>
         <h1 className="page__header">
             Zaloguj się lub kontynuuj bez rejestracji
         </h1>
@@ -57,9 +59,9 @@ const BeforeCheckout = () => {
                 {error ? <h4 className="error">
                     {error}
                 </h4> : ""}
-                <button className="afterLogin">
-                    Nie pamiętasz hasła?
-                </button>
+                {/*<button className="afterLogin">*/}
+                {/*    Nie pamiętasz hasła?*/}
+                {/*</button>*/}
             </div>
             <span className="beforeCheckoutDivider"></span>
             <div>

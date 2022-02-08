@@ -1,11 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react'
-
+import React, { useEffect, useState } from 'react'
 import {
-    addAllergens,
-    getNewId,
     getProductCategories,
     getProductDetails,
-    getProductGallery
 } from "../helpers/productFunctions";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -13,8 +9,7 @@ import { useLocation } from "react-router";
 import {getAllCategories} from "../helpers/categoriesFunctions";
 import Dropzone from "react-dropzone-uploader";
 import settings from "../helpers/settings";
-import axios from "axios";
-import { convertFromRaw, convertToRaw, EditorState } from 'draft-js';
+import { convertFromRaw, EditorState } from 'draft-js';
 import {logoutUser} from "../../helpers/userFunctions";
 import RUG from 'react-upload-gallery'
 import 'react-upload-gallery/dist/style.css'
@@ -38,6 +33,8 @@ const AddProductContent = () => {
     const [attributeValues, setAttributeValues] = useState('');
     const [updateMode, setUpdateMode] = useState(false);
     const [top, setTop] = useState(false);
+    const [stocks, setStocks] = useState('');
+    const [prices, setPrices] = useState('');
 
     const [updateImage, setUpdateImage] = useState(false);
     const [img, setImg] = useState(false);
@@ -97,7 +94,6 @@ const AddProductContent = () => {
                 }));
                 await getProductCategories(param)
                     .then(res => {
-                        console.log(res?.data?.result);
                         if(res.data.result) {
                             initializeCategories(res.data.result);
                         }
@@ -116,6 +112,12 @@ const AddProductContent = () => {
                     setProduct(res.data.result[0]);
                     setAttributeValues(res?.data?.result?.map((item) => {
                         return item.attribute_value;
+                    }).join(','));
+                    setPrices(res?.data?.result?.map((item) => {
+                        return item.attribute_price;
+                    }).join(','));
+                    setStocks(res?.data?.result?.map((item) => {
+                        return item.attribute_stock;
                     }).join(','));
                     setInitialValues(res.data.result[0]);
                 });
@@ -313,7 +315,7 @@ const AddProductContent = () => {
                                             updateProduct(formData, id, name, subtitle, price, stock, attribute, attributeValues,
                                                 shortDescription, description2, description3, description4,
                                                 img, img2, img3, img4, img5,
-                                                choosenCategories, recommendation, top, hidden)
+                                                choosenCategories, recommendation, top, hidden, prices, stocks)
                                                 .then((res) => {
                                                     if(res?.data?.result) {
                                                         setResponse("Produkt został zaktualizowany");
@@ -329,7 +331,7 @@ const AddProductContent = () => {
                                             addProduct(formData, name, subtitle, price, stock, attribute, attributeValues,
                                                 shortDescription, description2, description3, description4,
                                                 img, img2, img3, img4, img5,
-                                                choosenCategories, recommendation, top, hidden
+                                                choosenCategories, recommendation, top, hidden, prices, stocks
                                             )
                                                 .then((res) => {
                                                     if(res?.data?.result) {
@@ -353,7 +355,7 @@ const AddProductContent = () => {
                                 updateProduct(formData, id, name, subtitle, price, stock, attribute, attributeValues,
                                     shortDescription, description2, description3, description4,
                                     img, img2, img3, img4, img5,
-                                    choosenCategories, recommendation, top, hidden)
+                                    choosenCategories, recommendation, top, hidden, prices, stocks)
                                     .then((res) => {
                                         if(res?.data?.result) {
                                             setResponse("Produkt został zaktualizowany");
@@ -369,7 +371,7 @@ const AddProductContent = () => {
                                 addProduct(formData, name, subtitle, price, stock, attribute, attributeValues,
                                     shortDescription, description2, description3, description4,
                                     img, img2, img3, img4, img5,
-                                    choosenCategories, recommendation, top, hidden
+                                    choosenCategories, recommendation, top, hidden, prices, stocks
                                 )
                                     .then((res) => {
                                         if(res?.data?.result) {
@@ -405,7 +407,7 @@ const AddProductContent = () => {
                                 updateProduct(formData, id, name, subtitle, price, stock, attribute, attributeValues,
                                     shortDescription, description2, description3, description4,
                                     img, img2, img3, img4, img5,
-                                    choosenCategories, recommendation, top, hidden)
+                                    choosenCategories, recommendation, top, hidden, prices, stocks)
                                     .then((res) => {
                                         if(res?.data?.result) {
                                             setResponse("Produkt został zaktualizowany");
@@ -421,7 +423,7 @@ const AddProductContent = () => {
                                 addProduct(formData, name, subtitle, price, stock, attribute, attributeValues,
                                     shortDescription, description2, description3, description4,
                                     img, img2, img3, img4, img5,
-                                    choosenCategories, recommendation, top, hidden
+                                    choosenCategories, recommendation, top, hidden, prices, stocks
                                 )
                                     .then((res) => {
                                         if(res?.data?.result) {
@@ -445,7 +447,7 @@ const AddProductContent = () => {
                     updateProduct(formData, id, name, subtitle, price, stock, attribute, attributeValues,
                         shortDescription, description2, description3, description4,
                         img, img2, img3, img4, img5,
-                        choosenCategories, recommendation, top, hidden)
+                        choosenCategories, recommendation, top, hidden, prices, stocks)
                         .then((res) => {
                             if(res?.data?.result) {
                                 setResponse("Produkt został zaktualizowany");
@@ -461,7 +463,7 @@ const AddProductContent = () => {
                     addProduct(formData, name, subtitle, price, stock, attribute, attributeValues,
                         shortDescription, description2, description3, description4,
                         img, img2, img3, img4, img5,
-                        choosenCategories, recommendation, top, hidden
+                        choosenCategories, recommendation, top, hidden, prices, stocks
                     )
                         .then((res) => {
                             if(res?.data?.result) {
@@ -524,7 +526,7 @@ const AddProductContent = () => {
                        value={imagesChanged[4]} />
 
 
-                <label className="addProduct__label">
+                <label className="addProduct__label mt">
                     Nazwa produktu
                     <input className="addProduct__input"
                            name="name"
@@ -544,8 +546,7 @@ const AddProductContent = () => {
                     Cena
                     <input className="addProduct__input"
                            name="price"
-                           type="number"
-                           step={0.01}
+                           type="text"
                            value={price}
                            onChange={(e) => { setPrice(e.target.value) }}
                            placeholder="Cena" />
@@ -584,6 +585,22 @@ const AddProductContent = () => {
                            value={attributeValues}
                            onChange={(e) => { setAttributeValues(e.target.value) }}
                            placeholder="Wartości atrybutów (po przecinku)" />
+                </label>
+                <label className="addProduct__label">
+                    Ceny dla poszczególnych wartości atrybutów (po przecinku, separator dziesiętny to kropka np: 99.50,100,299.99)
+                    <input className="addProduct__input"
+                           name="prices"
+                           value={prices}
+                           onChange={(e) => { setPrices(e.target.value) }}
+                           placeholder="Ceny dla wariantów (po przecinku)" />
+                </label>
+                <label className="addProduct__label">
+                    Stany magazynowe dla poszczególnych wartości atrybutów (po przecinku, np: 10,200,5)
+                    <input className="addProduct__input"
+                           name="stocks"
+                           value={stocks}
+                           onChange={(e) => { setStocks(e.target.value) }}
+                           placeholder="Stany magazynowe dla wariantów (po przecinku)" />
                 </label>
 
                 <div className="flex">

@@ -23,7 +23,10 @@ con.connect(err => {
     console.log('sending ver...');
     const sendVerificationMail = (email, token, response) => {
         let mailOptions = {
-            from: process.env.MAIL,
+            from: {
+                name: 'BIO STORIES',
+                address: process.env.MAIL
+            },
             to: email,
             subject: 'Potwierdź swój adres e-mail',
             html: `<head>
@@ -47,9 +50,8 @@ con.connect(err => {
 </head>
 <body>
 <main style="width: 100%; max-width: 600px;">
-    <img style="max-width: 100%; width: 800px; margin: 0;" src="https://hideisland.pl/image?url=/media/notification/logo.jpg" alt="zamowienie-zostalo-zlozone"/>
     <table
-            style="display: block; padding: 20px; max-width: 100%; width: 800px; background: #59545A; margin-top: -5px; color: #fff; font-weight: 300; font-family: 'Open Sans', sans-serif;">
+            style="display: block; padding: 20px; max-width: 100%; width: 800px; background: #250C37; margin-top: -5px; color: #fff; font-weight: 300; font-family: 'Open Sans', sans-serif;">
         <thead style="display: block;">
         <tr style="display: block;">
             <th style="font-weight: 700; font-size: 32px; display: block; margin-top: 20px; text-align: left;">
@@ -67,7 +69,7 @@ con.connect(err => {
         <tr></tr>
         <tr style="display: block;">
             <td style="display: block; width: 100%; max-width: 350px; height: 60px; background: #000; margin: 40px auto;">
-                <a style="display: block; height: 100%; background: #000; text-decoration: none; color: #fff; font-weight: 700; line-height: 60px; font-size: 24px; text-align: center; vertical-align: middle; cursor: pointer;" target="_blank" href="https://hideisland.pl/potwierdzenie-subskrypcji-newslettera?token=${token}">
+                <a style="display: block; height: 100%; background: #fff; color: #313131; text-decoration: none; color: #fff; font-weight: 700; line-height: 60px; font-size: 24px; text-align: center; vertical-align: middle; cursor: pointer;" target="_blank" href="http://biostories.skylo-test3.pl/potwierdzenie-subskrypcji-newslettera?token=${token}">
                     Potwierdź adres email
                 </a>
             </td>
@@ -81,17 +83,17 @@ con.connect(err => {
         <tr></tr>
         <tr style="display: block; position: relative; padding-left: 70%; margin-top: 20px;">
             <td style="display: inline-block; margin-right: 20px;">
-                <a href="https://www.facebook.com/HideIslandwear" target="_blank">
+                <a href="https://www.facebook.com/biostories" target="_blank">
                     <img style="width: 40px; height: 40px; display: block;" src="https://hideisland.pl/image?url=/media/notification/facebook-color.png" alt="facebook" />
                 </a>
             </td>
             <td style="display: inline-block; margin-right: 20px;">
-                <a href="https://www.instagram.com/HideIsland_wear/?fbclid=IwAR3Y8NLYGmXQ-_pvGE1UZLO1oR0iMfT0uNWYZgvrpKHv40N4fKvsfdC4UPc" target="_blank">
+                <a href="https://www.instagram.com/bio_stories/" target="_blank">
                     <img style="width: 40px; height: 40px; display: block;" src="https://hideisland.pl/image?url=/media/notification/instagram-color.png" alt="instagram" />
                 </a>
             </td>
             <td style="display: inline-block;">
-                <a href="https://hideisland.pl" target="_blank">
+                <a href="https://biostories.pl" target="_blank">
                     <img style="width: 40px; height: 40px; display: block;" src="https://hideisland.pl/image?url=/media/notification/world-wide-web-color.png" alt="hideisland" />
                 </a>
             </td>
@@ -137,7 +139,10 @@ con.connect(err => {
         con.query(query, values, (err, res) => {
            if(res) {
                let mailOptions = {
-                   from: process.env.MAIL,
+                   from: {
+                       name: 'BIO STORIES',
+                       address: process.env.MAIL
+                   },
                    to: email,
                    subject: 'Cieszymy się, że jesteś z nami',
                    html: `<head>
@@ -150,9 +155,8 @@ con.connect(err => {
 </head>
 <body>
 <main style="width: 100%; max-width: 600px;">
-    <img style="max-width: 100%; width: 800px; margin: 0;" src="https://hideisland.pl/image?url=/media/notification/logo.jpg" alt="zamowienie-zostalo-zlozone"/>
     <table
-            style="display: block; padding: 20px; max-width: 100%; width: 800px; background: #59545A; margin-top: -5px; color: #fff; font-weight: 300; font-family: 'Open Sans', sans-serif;">
+            style="display: block; padding: 20px; max-width: 100%; width: 800px; background: #250C37; margin-top: -5px; color: #fff; font-weight: 300; font-family: 'Open Sans', sans-serif;">
         <thead style="display: block;">
         <tr style="display: block;">
             <th style="font-weight: 700; font-size: 32px; display: block; margin-top: 20px; text-align: left;">
@@ -198,7 +202,7 @@ con.connect(err => {
         <tr></tr>
         <tr style="display: block;">
             <td style="display: block; margin: 20px auto; width: 400px;">
-                <a style="color: #fff; text-decoration: none; font-size: 21px; text-align: center; max-width: 95%;" target="_blank" href="https://hideisland.pl">
+                <a style="color: #fff; text-decoration: none; font-size: 21px; text-align: center; max-width: 95%;" target="_blank" href="https://biostories.pl">
                     Kliknij tutaj aby przejść do sklepu
                     <img style="vertical-align: middle; width: 50px; height: auto; margin-left: 20px;" src="https://hideisland.pl/image?url=/media/notification/arrow-right-long.png" alt="przejdz-do-sklepu" />
                 </a>
@@ -209,13 +213,13 @@ con.connect(err => {
         <tr></tr>
         <tr></tr>
         <tr style="display: block; position: relative; margin-top: 20px; padding-left: 70%;">
-            <td style="display: inline-block; margin-right: 20px;">
-                <a href="https://www.facebook.com/HideIslandwear" target="_blank">
+             <td style="display: inline-block; margin-right: 20px;">
+                <a href="https://www.facebook.com/biostories" target="_blank">
                     <img style="width: 40px; height: 40px; display: block;" src="https://hideisland.pl/image?url=/media/notification/facebook-color.png" alt="facebook" />
                 </a>
             </td>
             <td style="display: inline-block; margin-right: 20px;">
-                <a href="https://www.instagram.com/HideIsland_wear/?fbclid=IwAR3Y8NLYGmXQ-_pvGE1UZLO1oR0iMfT0uNWYZgvrpKHv40N4fKvsfdC4UPc" target="_blank">
+                <a href="https://www.instagram.com/bio_stories/" target="_blank">
                     <img style="width: 40px; height: 40px; display: block;" src="https://hideisland.pl/image?url=/media/notification/instagram-color.png" alt="instagram" />
                 </a>
             </td>
@@ -224,12 +228,12 @@ con.connect(err => {
         <tfoot style="display: block;">
         <tr style="display: block;">
             <td style="font-size: 12px; margin-top: 50px; display: block; text-align: center">
-                Otrzymałeś/aś tego maila, ponieważ zapisałeś/aś się do newslettera na naszej stronie internetowej HideIsland.pl
+                Otrzymałeś/aś tego maila, ponieważ zapisałeś/aś się do newslettera na naszej stronie internetowej Biostories.pl
             </td>
         </tr>
         <tr style="display: block;">
             <td style="font-size: 12px; margin-top: 15px; display: block; text-align: center">
-                Nie chcesz otrzymywać od nas żadnych e-maili? W każdej chwili możesz <a style="color: #fff; text-decoration: underline;" href="https://hideisland.pl/rezygnacja-z-subskrypcji?token=${resignToken}">zrezygnować z subskrypcji</a> wszystkich komercyjnych wiadomości przesyłanych przez Hideisland.pl
+                Nie chcesz otrzymywać od nas żadnych e-maili? W każdej chwili możesz <a style="color: #fff; text-decoration: underline;" href="https://biostories.pl/rezygnacja-z-subskrypcji?token=${resignToken}">zrezygnować z subskrypcji</a> wszystkich komercyjnych wiadomości przesyłanych przez Biostories.pl
             </td>
         </tr>
         <tr style="display: block;">
@@ -278,22 +282,29 @@ con.connect(err => {
 
        con.query(query, values, (err, res) => {
            if(res) {
-               const email = res[0].email;
-               const resignToken = res[0].resign_token;
+               if(res.length) {
+                   const email = res[0].email;
+                   const resignToken = res[0].resign_token;
 
-               /* Change token value in database */
-               const query = 'UPDATE newsletter SET token = NULL WHERE token = ?';
-               const values = [token];
-               con.query(query, values, (err, res) => {
-                    if(res) {
-                        sendMailWithDiscountCode(email, resignToken, response);
-                    }
-                    else {
-                        response.send({
-                            result: 0
-                        });
-                    }
-               });
+                   /* Change token value in database */
+                   const query = 'UPDATE newsletter SET token = NULL WHERE token = ?';
+                   const values = [token];
+                   con.query(query, values, (err, res) => {
+                       if(res) {
+                           sendMailWithDiscountCode(email, resignToken, response);
+                       }
+                       else {
+                           response.send({
+                               result: 0
+                           });
+                       }
+                   });
+               }
+               else {
+                   response.send({
+                       result: 0
+                   });
+               }
            }
            else {
                response.send({

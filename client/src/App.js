@@ -55,6 +55,8 @@ import OrderHistoryPage from "./pages/OrderHistoryPage";
 import PanelCustomFields from "./admin/pages/PanelCustomFields";
 import Page from "./pages/Page";
 import SingleOrder from "./pages/SingleOrder";
+import SubscriptionValidationPage from "./admin/pages/SubscriptionValidationPage";
+import SubscriptionResignationPage from "./admin/pages/SubscriptionResignationPage";
 require('dotenv').config();
 
 axios.defaults.headers.common['Authorization'] = credentials.AUTH_HEADER;
@@ -70,12 +72,8 @@ function App() {
 
         let existedUuid, existedAmount = 0;
 
-        console.log(id, title, amount, img, attributeName, attributeValue, price);
-
-        console.log(cartContent);
         /* If product already in cart - increase amount */
         if(cartContent.findIndex((item) => {
-            console.log(item.id, item.attributeName, item.attributeValue);
            if((item.id === id)&&(item.attributeName === attributeName)&&(item.attributeValue === attributeValue)) {
                existedUuid = item.uuid;
                existedAmount = item.amount;
@@ -83,9 +81,8 @@ function App() {
            }
            else return false;
         }) !== -1) {
-            console.log(existedUuid);
             if(existedUuid) {
-                getProductStock(id)
+                getProductStock(id, attributeValue)
                     .then(res => {
                         console.log(res?.data?.result);
                         const result = res?.data?.result[0].stock;
@@ -147,7 +144,7 @@ function App() {
     useEffect(() => {
         /* Initialize AOS */
         AOS.init({
-            offset: -50,
+            offset: 650,
             mirror: true
         });
 
@@ -167,10 +164,11 @@ function App() {
 
   return (<CartContext.Provider value={{cartContent, addToCart, editCart, removeFromCart}}>
       <Helmet>
-          <title>HideIsland - ubrania dla Ciebie</title>
-          <link rel="icon" type="image/png" href="./static/img/favicon.ico" sizes="16x16" />
+          <title>BIO STORIES</title>
+          <link rel="icon" type="image/png" href="./static/assets/logo.png" sizes="16x16" />
       </Helmet>
       <div className="App">
+         <span className="background"></span>
         <Router>
           {/* Website routes */}
           <Route exact path="/">
@@ -238,6 +236,12 @@ function App() {
                 <Page
                     title="Reklamacje"
                     content={shippingAndPayment} />
+            </Route>
+            <Route path="/potwierdzenie-subskrypcji-newslettera">
+                <SubscriptionValidationPage />
+            </Route>
+            <Route path="/rezygnacja-z-subskrypcji">
+                <SubscriptionResignationPage />
             </Route>
 
             {/* Admin routes */}

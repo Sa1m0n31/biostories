@@ -20,7 +20,7 @@ const basicAuth = new auth().basicAuth;
 app.use(cors({
     credentials: true,
     // origin: "*"
-    origin: ['http://localhost:3000', 'http://localhost:5000', 'https://biostories.skylo-test3.pl', 'http://biostories.skylo-test3.pl', `${process.env.API_URL}:3000`, `${process.env.API_URL}:5000`]
+    origin: ['http://localhost:3000', 'https://biostories.skylo-test3.pl', 'https://biostories.skylo-test3.pl', 'http://biostories.skylo-test3.pl', `${process.env.API_URL}:3000`, `${process.env.API_URL}:5000`]
 }));
 app.use(bodyParser({
     limit: "50mb"
@@ -164,6 +164,9 @@ app.get("/zakupy", (req, res) => {
 app.get("/zakupy", (req, res) => {
     res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
+app.get("/rejestracja", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
 
 /* Routers */
 const authRouter = require("./routers/authRouter");
@@ -181,6 +184,7 @@ const newsletterRouter = require("./routers/newsletterRouter");
 const homepageRouter = require("./routers/homepageRouter");
 const notificationRouter = require("./routers/notificationRouter");
 const stockRouter = require("./routers/stockRouter");
+const videoRouter = require('./routers/videoRouter')
 
 app.use("/auth", basicAuth, authRouter);
 app.use("/user", basicAuth, userRouter);
@@ -197,6 +201,7 @@ app.use("/newsletter", newsletterRouter);
 app.use("/homepage", homepageRouter);
 app.use("/notification", notificationRouter);
 app.use("/stock", basicAuth, stockRouter);
+app.use('/video', videoRouter);
 
 app.listen(5000, () => {
     console.log("Listening on port 5000");

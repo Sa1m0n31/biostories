@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from '../static/assets/logo.png'
 
-const Footer = () => {
+const Footer = ({homepage}) => {
     return <footer className="footer">
         <section className="footer__main flex">
             <section className="footer__col flex">
@@ -10,7 +10,7 @@ const Footer = () => {
                 </a>
                 <section className="footer__col__content">
                     <h4 className="footer__header">
-                        BIO Stories
+                        BIO STORIES
                     </h4>
                     <span className="footer__text">
                         Sklep stacjonarny:
@@ -67,17 +67,17 @@ const Footer = () => {
                     </a>
                 </span>
                 <span className="footer__text">
-                    <a href="/idealne-polaczenie">
+                    <a href="/sklep/idealne-polaczenie">
                         Idealne połączenie
                     </a>
                 </span>
                 <span className="footer__text">
-                    <a href="/nowosci">
+                    <a href="/sklep/nowosci">
                         Nowości
                     </a>
                 </span>
                 <span className="footer__text">
-                    <a href="/najczesciej-wybierane">
+                    <a href="/sklep/najczesciej-wybierane">
                         Najczęściej wybierane
                     </a>
                 </span>
@@ -106,7 +106,7 @@ const Footer = () => {
         </section>
         <aside className="footer__bottom">
             <h5 className="footer__bottom__header">
-                &copy; { new Date().getFullYear() } BIO Stories. Wszystkie prawa zastrzeżone
+                &copy; { new Date().getFullYear() } BIO STORIES. Wszystkie prawa zastrzeżone
             </h5>
             <h6 className="footer__bottom__header">
                 <a href="https://skylo.pl" target="_blank">
