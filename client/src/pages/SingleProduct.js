@@ -15,6 +15,7 @@ import arrowIcon from '../static/img/arrow-white.svg'
 import HomepagePopular from "../components/HomepagePopular";
 import Loader from "../components/Loader";
 import SimilarProducts from "../components/SimilarProducts";
+import axios from "axios";
 
 const SingleProduct = () => {
     const { cartContent, addToCart } = useContext(CartContext);
@@ -33,6 +34,9 @@ const SingleProduct = () => {
     const [amount, setAmount] = useState(1);
     const [render, setRender] = useState(false);
     const [initial, setInitial] = useState(true);
+    const [notificationInput, setNotificationInput] = useState(false);
+    const [email, setEmail] = useState("");
+    const [notificationStatus, setNotificationStatus] = useState("");
 
     const [container, setContainer] = useState(null);
     const [closeModalBtn, setCloseModalBtn] = useState(null);
@@ -68,10 +72,29 @@ const SingleProduct = () => {
                         else {
                             setStock(filteredAttributeValues?.length ? filteredAttributeValues[0].stock : productInfo.stock);
                         }
-                        if(productInfo.description && productInfo.description !== '0') setDesc1(stateToHTML((convertFromRaw(JSON.parse(productInfo.description)))));
-                        if(productInfo.second_description && productInfo.second_description !== '0') setDesc2(stateToHTML((convertFromRaw(JSON.parse(productInfo.second_description)))));
-                        if(productInfo.third_description && productInfo.third_description !== '0') setDesc3(stateToHTML((convertFromRaw(JSON.parse(productInfo.third_description)))));
-                        if(productInfo.fourth_description && productInfo.fourth_description !== '0') setDesc4(stateToHTML((convertFromRaw(JSON.parse(productInfo.fourth_description)))));
+
+                        let options = {
+                            entityStyleFn: (entity) => {
+                                const entityType = entity.get('type');
+                                if (entityType === "EMBEDDED_LINK") {
+                                    const data = entity.getData();
+                                    return {
+                                        element: 'iframe',
+                                        attributes: {
+                                            width: 500,
+                                            height: 250,
+                                            src: data.src,
+                                        },
+                                    };
+                                }
+                                return null;
+                            }
+                        }
+
+                        if(productInfo.description && productInfo.description !== '0') setDesc1(stateToHTML((convertFromRaw(JSON.parse(productInfo.description))), options));
+                        if(productInfo.second_description && productInfo.second_description !== '0') setDesc2(stateToHTML((convertFromRaw(JSON.parse(productInfo.second_description))), options));
+                        if(productInfo.third_description && productInfo.third_description !== '0') setDesc3(stateToHTML((convertFromRaw(JSON.parse(productInfo.third_description))), options));
+                        if(productInfo.fourth_description && productInfo.fourth_description !== '0') setDesc4(stateToHTML((convertFromRaw(JSON.parse(productInfo.fourth_description))), options));
 
                         setProduct(productInfo);
 
@@ -99,6 +122,10 @@ const SingleProduct = () => {
                 }
             });
     }, []);
+
+    useEffect(() => {
+        console.log(desc1);
+    }, [desc1]);
 
     const closeModal = () => {
         galleryModal.current.style.opacity = '0';
@@ -149,11 +176,27 @@ const SingleProduct = () => {
     }
 
     useEffect(() => {
-        console.log(initial);
-        console.log(attribute);
         if(initial) setInitial(false);
         else setPrice(getPriceByAttributeName(attribute));
     }, [attribute]);
+
+    const addNotification = (e) => {
+        e.preventDefault();
+        if(email) {
+            console.log(product);
+            axios.post(`${settings.API_URL}/notification/add`, {
+                productId: product.id,
+                email: email
+            })
+                .then(res => {
+                    if(res.data?.result) setNotificationStatus("Poinformujemy Cię drogą mailową, gdy Twój produkt będzie dostępny!");
+                    else setNotificationStatus("Coś poszło nie tak... Prosimy spróbować później");
+                });
+        }
+        else {
+            setNotificationStatus("Wpisz poprawny adres email");
+        }
+    }
 
     return <div className="container container--single">
         <Header topSmall={true} />
@@ -229,9 +272,26 @@ const SingleProduct = () => {
                                 <button className="cart__item__btn" onClick={() => { if(amount+1 <= stock) setAmount(amount+1); }}>
                                     +
                                 </button>
-                            </div></> : <h4 className="outOfStock">
-                                Produkt niedostępny
-                            </h4>}
+                            </div></> : <div className="outOfStock">
+                                <h4 className="outOfStock__header">
+                                    Produkt niedostępny
+                                </h4>
+                                {!notificationStatus ? (notificationInput ? <div className="notificationForm flex">
+                                    <label>
+                                        <input className="input"
+                                               placeholder="Wpisz swój adres email"
+                                               value={email}
+                                               onChange={(e) => { setEmail(e.target.value); }} />
+                                    </label>
+                                    <button className="addToCartBtn outOfStock__formSubmit" onClick={(e) => { addNotification(e); }}>
+                                        Powiadom mnie
+                                    </button>
+                                </div>:  <button className="addToCartBtn addToCartBtn--single w-100 outOfStock__btn" onClick={() => { setNotificationInput(true); }}>
+                                    Powiadom mnie, gdy produkt będzie dostępny
+                                </button>) : <h3 className="notificationStatus">
+                                    {notificationStatus}
+                                </h3> }
+                            </div>}
                         </div>
                     </div>
                     {attributeValues?.length && product?.attribute_name ? <div className="single__icons single__icons--attributeSection flex">

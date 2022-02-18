@@ -7,7 +7,7 @@ import axios from "axios";
 import settings from "../helpers/settings";
 import { removePolishChars } from "../../helpers/others";
 
-const VideoUploader = ({setVideoUpload, videoUpload, closeUploader, key}) => {
+const VideoUploader = ({setVideoUpload, videoUpload, closeUploader, keyText}) => {
     const [loading, setLoading] = useState(false);
     const [response, setResponse] = useState(-1);
     const [progress, setProgress] = useState(0);
@@ -24,7 +24,7 @@ const VideoUploader = ({setVideoUpload, videoUpload, closeUploader, key}) => {
         }
         let formData = new FormData();
         formData.append('file', file);
-        formData.append('key', key);
+        formData.append('key', keyText);
 
        return axios.post(`${settings.API_URL}/video/upload`, formData, config)
            .then((res) => {
@@ -62,13 +62,13 @@ const VideoUploader = ({setVideoUpload, videoUpload, closeUploader, key}) => {
                 </figure>
                 {!fileToLarge ? <>
                     <h3 className="videoUploader__text">
-                        Przeciągnij i upuść pliki wideo, które chcesz przesłać
+                        Przeciągnij i upuść plik wideo, który chcesz przesłać
                     </h3>
                     <h4 className="videoUploader__smallText">
-                        Akceptowane są pliki z rozszerzeniem .mp4, .webm oraz .mov. Postaraj się, aby Twój plik nie ważył więcej niż 100 MB. Pliki powyżej 500 MB nie będą akceptowane.
+                        Akceptowane są pliki z rozszerzeniem .mp4, .webm oraz .mov. Postaraj się, aby Twój plik nie ważył więcej niż 5 MB.
                     </h4>
                     <button className="button button--hover button--videoUploader">
-                        <img className="btn__img" src={wybierzPlikBtn} alt="wybierz-plik" />
+                        Dodaj video
                     </button>
                 </> : <h4 className="videoUploader__text">
                     Wysłane video jest za duże. Skompresuj swój plik do maksymalnie 500MB i ponów próbę.

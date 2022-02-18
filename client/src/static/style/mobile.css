@@ -64,6 +64,10 @@
         font-size: 18px;
     }
 
+    .infoSection__imgWrapper iframe {
+        min-height: 350px;
+    }
+
     .deliveryData {
         max-width: 46%;
     }

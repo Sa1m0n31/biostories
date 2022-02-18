@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@draft-js-plugins/editor": "^4.1.2",
     "@testing-library/jest-dom": "^5.13.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
@@ -12,6 +13,9 @@
     "dotenv": "^10.0.0",
     "draft-js": "^0.11.7",
     "draft-js-export-html": "^1.4.1",
+    "draft-js-video-plugin": "^2.0.2",
+    "draftjs-to-html": "^0.9.1",
+    "embed-video": "^2.0.4",
     "formik": "^2.2.9",
     "jodit-react": "^1.1.1",
     "react": "^17.0.2",
@@ -34,6 +38,7 @@
     "react-siema": "^1.0.1",
     "react-tooltip": "^4.2.21",
     "react-upload-gallery": "^0.4.0",
+    "video-react": "^0.15.0",
     "web-vitals": "^1.1.2",
     "yup": "^0.32.9"
   },
@@ -60,5 +65,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@draft-js-plugins/video": "^4.1.1"
   }
 }

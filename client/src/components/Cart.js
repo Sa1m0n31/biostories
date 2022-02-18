@@ -75,8 +75,8 @@ const Cart = ({deliveryProp, addOrder, codes, code, codeUpdated, setCodeVerified
         getProductStock(id, attributeValue)
             .then(res => {
                 if(res?.data?.result) {
+                    console.log(res?.data?.result);
                     const result = res.data.result[0].stock;
-                    console.log('STOCK IS EQUAL TO ' + result);
                     if(result >= parseInt(value)) {
                         localStorage.setItem('hideisland-cart', JSON.stringify(cart.map((item) => {
                             if(item.uuid === uuid) {

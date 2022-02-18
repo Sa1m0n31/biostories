@@ -4,7 +4,7 @@ const path = require("path");
 const { v4: uuidv4 } = require('uuid');
 const con = require("../databaseConnection");
 const multer  = require('multer');
-const upload = multer({ dest: 'media/products' });
+const upload = multer({ dest: 'media/videos' });
 
 router.get("/get", (request, response) => {
     const { url } = request.query;
@@ -14,6 +14,9 @@ router.get("/get", (request, response) => {
 
 router.post("/upload", upload.single('file'), (request, response) => {
     const { key } = request.body;
+
+    console.log('KEY');
+    console.log(key);
 
     let progress = 0;
     let fileSize = request.headers['content-length'] ? parseInt(request.headers['content-length']) : 0;
@@ -25,7 +28,6 @@ router.post("/upload", upload.single('file'), (request, response) => {
         }
     });
 
-    /* Get video category id */
     const query = `UPDATE custom_fields SET custom_value = ? WHERE custom_key = ?`;
     const values = [request.file.filename, key];
 

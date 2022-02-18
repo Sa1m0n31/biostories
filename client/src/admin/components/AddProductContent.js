@@ -15,6 +15,10 @@ import RUG from 'react-upload-gallery'
 import 'react-upload-gallery/dist/style.css'
 import trashIcon from '../static/img/trash-can.svg'
 import {addProduct, updateProduct} from "../../helpers/productFunctions";
+import createVideoPlugin from '@draft-js-plugins/video';
+import embed from "embed-video";
+
+const videoPlugin = createVideoPlugin();
 
 const AddProductContent = () => {
     const [update, setUpdate] = useState(false);
@@ -486,6 +490,7 @@ const AddProductContent = () => {
                 top: 0,
                 behavior: 'smooth'
             });
+            setStatus(-1);
         }
     }, [status]);
 
@@ -567,6 +572,17 @@ const AddProductContent = () => {
                         toolbarClassName="toolbarClassName"
                         wrapperClassName="wrapperClassName"
                         editorClassName="editor"
+                        toolbar={{
+                            link: {
+                                linkCallback: params => ({ ...params })
+                            },
+                            embedded: {
+                                embedCallback: link => {
+                                    const detectedSrc = /<iframe.*? src="(.*?)"/.exec(embed(link));
+                                    return (detectedSrc && detectedSrc[1]) || link;
+                                }
+                            }
+                        }}
                         onEditorStateChange={(text) => { setShortDescription(text); }}
                     />
                 </main>
@@ -687,6 +703,17 @@ const AddProductContent = () => {
                             toolbarClassName="toolbarClassName"
                             wrapperClassName="wrapperClassName"
                             editorClassName="editor"
+                            toolbar={{
+                                link: {
+                                    linkCallback: params => ({ ...params })
+                                },
+                                embedded: {
+                                    embedCallback: link => {
+                                        const detectedSrc = /<iframe.*? src="(.*?)"/.exec(embed(link));
+                                        return (detectedSrc && detectedSrc[1]) || link;
+                                    }
+                                }
+                            }}
                             onEditorStateChange={(text) => { setDescription2(text); }}
                         />
                     </main>
@@ -717,6 +744,17 @@ const AddProductContent = () => {
                             toolbarClassName="toolbarClassName"
                             wrapperClassName="wrapperClassName"
                             editorClassName="editor"
+                            toolbar={{
+                                link: {
+                                    linkCallback: params => ({ ...params })
+                                },
+                                embedded: {
+                                    embedCallback: link => {
+                                        const detectedSrc = /<iframe.*? src="(.*?)"/.exec(embed(link));
+                                        return (detectedSrc && detectedSrc[1]) || link;
+                                    }
+                                }
+                            }}
                             onEditorStateChange={(text) => { setDescription3(text); }}
                         />
                     </main>
@@ -747,6 +785,17 @@ const AddProductContent = () => {
                             toolbarClassName="toolbarClassName"
                             wrapperClassName="wrapperClassName"
                             editorClassName="editor"
+                            toolbar={{
+                                link: {
+                                    linkCallback: params => ({ ...params })
+                                },
+                                embedded: {
+                                    embedCallback: link => {
+                                        const detectedSrc = /<iframe.*? src="(.*?)"/.exec(embed(link));
+                                        return (detectedSrc && detectedSrc[1]) || link;
+                                    }
+                                }
+                            }}
                             onEditorStateChange={(text) => { setDescription4(text); }}
                         />
                     </main>

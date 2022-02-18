@@ -1834,3 +1834,262 @@ input[type=file] {
 .twoImages {
     justify-content: space-evenly !important;
 }
+
+
+.videoUploaderWrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, .5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 300;
+    transition: .4s all;
+}
+
+.videoUploader {
+    background: #fff;
+    border-radius: 30px;
+    width: clamp(200px, 80vw, 1200px);
+    height: 700px;
+    max-height: 80vh;
+    position: relative;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.videoLoadingWrapper {
+    margin-top: 7%;
+}
+
+.videoLoadingWrapper > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.progressBar {
+    width: 400px;
+    height: 10px;
+    border-radius: 10px;
+    display: block;
+    margin: 60px auto 0;
+    background: var(--dark);
+    position: relative;
+    overflow: hidden;
+}
+
+.progressBar__inner {
+    height: 100%;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: .2s all;
+    background: var(--gold);
+}
+
+.progressBar__percent {
+    font-size: 20px;
+    color: #313131;
+    font-weight: 700;
+    font-family: 'Oxanium', cursive;
+    text-align: center;
+    display: block;
+    margin-top: 60px;
+}
+
+.player__header--videoUploader {
+    position: absolute;
+    top: 50px;
+    left: 80px;
+}
+
+.videoUploader__imgWrapper {
+    background: transparent;
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    margin: 0 0 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.videoUploader__img {
+    width: 50%;
+}
+
+.videoUploader__text {
+    text-align: center;
+    color: #3d3d3d;
+    margin: 20px 0;
+    font-size: 28px;
+    max-width: 400px;
+}
+
+.videoUploader__smallText {
+    font-weight: 500;
+    margin-bottom: 30px;
+    text-align: center;
+    max-width: 500px;
+}
+
+.button--videoUploader {
+    width: 400px;
+    max-width: 80%;
+}
+
+.videoUploader .dzu-dropzone {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    height: 90%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.dzu-inputLabel {
+    cursor: pointer;
+}
+
+.videoUploader .dzu-dropzone::after {
+    display: none;
+}
+
+.videoUploader__responseHeader {
+    color: #3d3d3d;
+    text-align: center;
+    margin-top: 30px;
+}
+
+.registerModal__closeBtn {
+    background: transparent;
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    border: none;
+    outline: none;
+    z-index: 100;
+    width: 30px;
+    cursor: pointer;
+}
+
+.registerModal__closeBtn__img {
+    width: 100%;
+    height: auto;
+}
+
+.dzu-inputLabel {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 11;
+    opacity: 0;
+}
+
+.button--videoUploader {
+    padding: 10px 20px;
+    height: 50px;
+    border-radius: 50px;
+    background: var(--main);
+    color: #fff;
+    font-weight: 700;
+}
+
+.panelContent--customFields .panelContent__frame {
+    position: relative;
+    z-index: 10;
+}
+
+.addVideoBtn {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    height: 40px;
+    border-radius: 40px;
+    color: #fff;
+    background: var(--main);
+    cursor: pointer;
+    border: none;
+    outline: none;
+}
+
+.videoTable__item__miniature {
+    max-width: 80%;
+}
+
+.mediaType {
+    margin-top: 30px;
+}
+
+.mediaType label {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.mediaType__btn {
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: 1px solid var(--main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.mediaType__btn span {
+    display: none;
+}
+
+.mediaType__btn--selected span {
+    background: var(--main);
+    display: block;
+    width: 15px;
+    height: 15px;
+}
+
+.align-top > .admin__label--imgUpload {
+    width: auto;
+}
+
+.align-top {
+    margin: 10px 0 40px;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.admin--grey {
+    font-size: 14px;
+    color: #6B6B6B;
+}
+
+.align-top > * {
+    margin-right: 10%;
+    margin-top: 4px;
+}
+
+.admin--grey .video-react {
+    overflow: hidden;
+}
+
+.align-top .videoTable__item__miniature {
+    width: 100%;
+    max-width: 100%;
+}

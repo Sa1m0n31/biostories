@@ -209,6 +209,10 @@ con.connect(err => {
             if(attribute && attributeValues.split(',').length && prices && stocks) {
                await addAttribute(attribute, attributeValues.split(','), prices.split(','), stocks.split(','), id);
             }
+            got.post(`${process.env.API_URL}/notification/check-notifications`, {
+               json: { productId: id },
+               responseType: "json"
+            });
             response.send({
                result: 1
             });

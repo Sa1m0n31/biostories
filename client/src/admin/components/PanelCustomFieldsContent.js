@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {getCustomFields, updateCustomFields} from "../helpers/settingsFunctions";
-import {useLocation} from "react-router";
-import {getAllCategories} from "../helpers/categoriesFunctions";
-import {getProductCategories, getProductDetails} from "../helpers/productFunctions";
 import {convertFromRaw, EditorState} from "draft-js";
 import settings from "../helpers/settings";
 import trashIcon from "../static/img/trash-can.svg";
 import Dropzone from "react-dropzone-uploader";
 import {Editor} from "react-draft-wysiwyg";
+import embed from "embed-video";
+import VideoUploader from "./VideoUploader";
+import {removePolishChars} from "../../helpers/others";
+import { Player } from 'video-react';
+import ModalVideoPlayer from "./ModalVideoPlayer";
 
 const PanelCustomFieldsContent = () => {
     const [customFields, setCustomFields] = useState([]);
@@ -15,6 +17,8 @@ const PanelCustomFieldsContent = () => {
     const [response, setResponse] = useState("");
     const [status, setStatus] = useState(-1);
     const [updateMode, setUpdateMode] = useState(true);
+
+    const [currentKey, setCurrentKey] = useState(null);
 
     const [updateImage, setUpdateImage] = useState(false);
     const [img, setImg] = useState(false);
@@ -51,10 +55,34 @@ const PanelCustomFieldsContent = () => {
     const [link4, setLink4] = useState("");
     const [link5, setLink5] = useState("");
 
+    const [video1, setVideo1] = useState(null);
+    const [video2, setVideo2] = useState(null);
+    const [video3, setVideo3] = useState(null);
+    const [video4, setVideo4] = useState(null);
+    const [video5, setVideo5] = useState(null);
+    const [video6, setVideo6] = useState(null);
+    const [video7, setVideo7] = useState(null);
+    const [video8, setVideo8] = useState(null);
+
     // 0 - image, 1 - video
-    const [media1Type, setMedia1Type] = useState(0);
-    const [media2Type, setMedia2Type] = useState(0);
-    const [media3Type, setMedia3Type] = useState(0);
+    const [media1Type, setMedia1Type] = useState('image');
+    const [media2Type, setMedia2Type] = useState('image');
+    const [media3Type, setMedia3Type] = useState('image');
+    const [media4Type, setMedia4Type] = useState('image');
+    const [media5Type, setMedia5Type] = useState('image');
+    const [media6Type, setMedia6Type] = useState('image');
+    const [media7Type, setMedia7Type] = useState('image');
+    const [media8Type, setMedia8Type] = useState('image');
+
+    const [videos, setVideos] = useState([1, 2, 3, 4, 5]);
+    const [uploaderOpen, setUploaderOpen] = useState(false);
+    const [userId, setUserId] = useState("");
+    const [playVideo, setPlayVideo] = useState(-1);
+    const [videoName, setVideoName] = useState("");
+    const [deleteModal, setDeleteModal] = useState(false);
+    const [playToDelete, setPlayToDelete] = useState("");
+    const [videoUpload, setVideoUpload] = useState(0);
+    const [loader, setLoader] = useState(true);
 
     const getCustomField = (key) => {
         return customFields.find((item) => {
@@ -80,9 +108,29 @@ const PanelCustomFieldsContent = () => {
             setUpdateImage7(getCustomField('image7'));
             setUpdateImage8(getCustomField('image8'));
 
+            setVideo1(getCustomField('video1'));
+            setVideo2(getCustomField('video2'));
+            setVideo3(getCustomField('video3'));
+            setVideo4(getCustomField('video4'));
+            setVideo5(getCustomField('video5'));
+            setVideo6(getCustomField('video6'));
+            setVideo7(getCustomField('video7'));
+            setVideo8(getCustomField('video8'));
+
+            setMedia1Type(getCustomField('mediaType1'));
+            setMedia2Type(getCustomField('mediaType2'));
+            setMedia3Type(getCustomField('mediaType3'));
+            setMedia4Type(getCustomField('mediaType4'));
+            setMedia5Type(getCustomField('mediaType5'));
+            setMedia6Type(getCustomField('mediaType6'));
+            setMedia7Type(getCustomField('mediaType7'));
+            setMedia8Type(getCustomField('mediaType8'));
+
             setLink1(getCustomField('link1'));
             setLink2(getCustomField('link2'));
             setLink3(getCustomField('link3'));
+            setLink4(getCustomField('link4'));
+            setLink5(getCustomField('link5'));
 
             setDescription1(EditorState.createWithContent(convertFromRaw(JSON.parse(getCustomField('article1')))));
             setDescription2(EditorState.createWithContent(convertFromRaw(JSON.parse(getCustomField('article2')))));
@@ -290,7 +338,7 @@ const PanelCustomFieldsContent = () => {
     const handleSubmit = () => {
         updateCustomFields(img, img2, img3, img4, img5, img6, img7, img8,
             description1, description2, description3, link1, link2, link3, link4, link5,
-            media1Type, media2Type, media3Type)
+            media1Type, media2Type, media3Type, media4Type, media5Type, media6Type, media7Type, media8Type)
             .then((res) => {
                 if(res?.data?.result) {
                     setResponse("Treści zostały zaktualizowane");
@@ -307,7 +355,16 @@ const PanelCustomFieldsContent = () => {
             });
     }
 
+    const closeUploader = () => {
+        setUploaderOpen(false);
+    }
+
     return <main className="panelContent panelContent--customFields">
+        {uploaderOpen && currentKey ? <VideoUploader setVideoUpload={setVideoUpload}
+                                                     keyText={currentKey}
+                                                     videoUpload={videoUpload}
+                                                     closeUploader={closeUploader} /> : ""}
+
         <main className="panelContent__frame">
             <h1 className="panelContent__frame__header">
                 Edytuj treść
@@ -315,14 +372,14 @@ const PanelCustomFieldsContent = () => {
                         {response}
                     </span> : ""}
             </h1>
-            <div className="flex mt-4">
-                <div>
+            <div>
+                <div className="flex align-top">
                     <label className="admin__label admin__flex admin__label--imgUpload">
                         Pierwsze zdjęcie w górnym sliderze
                         <span className="admin__label__imgUpload">
-                            {updateImage ? <figure className="admin__label__imgUpload__updateImgWrapper">
-                                <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/fields/${updateImage}`} alt="foto" />
-                            </figure> : ""}
+                        {updateImage ? <figure className="admin__label__imgUpload__updateImgWrapper">
+                            <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/fields/${updateImage}`} alt="foto" />
+                        </figure> : ""}
                             {img || updateImage ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg(); }}>
                                 <img className="btn__img" src={trashIcon} alt="usun" />
                             </button> : ""}
@@ -332,23 +389,56 @@ const PanelCustomFieldsContent = () => {
                                 onChangeStatus={(status) => { handleChangeStatus(status); }}
                                 accept="image/*"
                                 maxFiles={1} />
-                        </span>
+                    </span>
                     </label>
-                    <label>
-                        <input className="addProduct__input"
-                               name="link1"
-                               value={link1}
-                               onChange={(e) => { setLink1(e.target.value) }}
-                               placeholder="Link do pierwszego zdjęcia" />
-                    </label>
+                    <div className="admin--grey">
+                        Film 1.
+                        <section className="videoTable__item__miniature"
+                                 onClick={(e) => { e.stopPropagation(); setPlayVideo(video1); }}>
+                            {video1 ? <Player
+                                width={250}
+                                height={380}
+                                playsInline
+                                src={`${settings.API_URL}/video/get?url=/media/videos/${video1}`}
+                            /> : ''}
+                        </section>
+                        <button className="addVideoBtn" onClick={() => { setUploaderOpen(true); setCurrentKey('video1'); }}>
+                            Dodaj video
+                        </button>
+                    </div>
+                    <div className="mediaType admin--grey">
+                        Wyświetlaj na stronie
+                        <label>
+                            <button className={media1Type === 'image' ? "mediaType__btn mediaType__btn--selected" : "mediaType__btn"} onClick={() => { setMedia1Type('image'); }}>
+                                <span></span>
+                            </button>
+                            Zdjęcie
+                        </label>
+                        <label>
+                            <button className={media1Type === 'video' ? "mediaType__btn mediaType__btn--selected" : "mediaType__btn"} onClick={() => { setMedia1Type('video'); }}>
+                                <span></span>
+                            </button>
+                            Film
+                        </label>
+                    </div>
                 </div>
-                <div>
+                <label className="admin--grey">
+                    Link do 1. zdjęcia w sliderze
+                    <input className="addProduct__input"
+                           name="link1"
+                           value={link1}
+                           onChange={(e) => { setLink1(e.target.value) }}
+                           placeholder="Link do pierwszego zdjęcia" />
+                </label>
+            </div>
+            <div>
+                <div className="flex align-top">
                     <label className="admin__label admin__flex admin__label--imgUpload">
                         Drugie zdjęcie w górnym sliderze
                         <span className="admin__label__imgUpload">
-                            {updateImage2 ? <figure className="admin__label__imgUpload__updateImgWrapper">
-                                <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/fields/${updateImage2}`} alt="foto" />
-                            </figure> : ""}
+                        {updateImage2 ? <figure className="admin__label__imgUpload__updateImgWrapper">
+                            <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/fields/${updateImage2}`} alt="foto" />
+                        </figure> : ""}
                             {img2 || updateImage2 ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg2(); }}>
                                 <img className="btn__img" src={trashIcon} alt="usun" />
                             </button> : ""}
@@ -358,23 +448,55 @@ const PanelCustomFieldsContent = () => {
                                 onChangeStatus={(status) => { handleChangeStatus2(status); }}
                                 accept="image/*"
                                 maxFiles={1} />
-                        </span>
+                    </span>
                     </label>
-                    <label>
-                        <input className="addProduct__input"
-                               name="link2"
-                               value={link2}
-                               onChange={(e) => { setLink2(e.target.value) }}
-                               placeholder="Link do drugiego zdjęcia" />
-                    </label>
+                    <div className="admin--grey">
+                        Film 2.
+                        <section className="videoTable__item__miniature"
+                                 onClick={(e) => { e.stopPropagation(); setPlayVideo(video2); }}>
+                            {video2 ? <Player
+                                width={250}
+                                height={380}
+                                playsInline
+                                src={`${settings.API_URL}/video/get?url=/media/videos/${video2}`}
+                            /> : ''}
+                        </section>
+                        <button className="addVideoBtn" onClick={() => { setUploaderOpen(true); setCurrentKey('video2'); }}>
+                            Dodaj video
+                        </button>
+                    </div>
+                    <div className="mediaType admin--grey">
+                        Wyświetlaj na stronie
+                        <label>
+                            <button className={media2Type === 'image' ? "mediaType__btn mediaType__btn--selected" : "mediaType__btn"} onClick={() => { setMedia2Type('image'); }}>
+                                <span></span>
+                            </button>
+                            Zdjęcie
+                        </label>
+                        <label>
+                            <button className={media2Type === 'video' ? "mediaType__btn mediaType__btn--selected" : "mediaType__btn"} onClick={() => { setMedia2Type('video'); }}>
+                                <span></span>
+                            </button>
+                            Film
+                        </label>
+                    </div>
                 </div>
-                <div>
+                <label>
+                    <input className="addProduct__input"
+                           name="link2"
+                           value={link2}
+                           onChange={(e) => { setLink2(e.target.value) }}
+                           placeholder="Link do drugiego zdjęcia" />
+                </label>
+            </div>
+            <div>
+                <div className="flex align-top">
                     <label className="admin__label admin__flex admin__label--imgUpload">
                         Trzecie zdjęcie w górnym sliderze
                         <span className="admin__label__imgUpload">
-                            {updateImage3 ? <figure className="admin__label__imgUpload__updateImgWrapper">
-                                <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/fields/${updateImage3}`} alt="foto" />
-                            </figure> : ""}
+                        {updateImage3 ? <figure className="admin__label__imgUpload__updateImgWrapper">
+                            <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/fields/${updateImage3}`} alt="foto" />
+                        </figure> : ""}
                             {img3 || updateImage3 ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg3(); }}>
                                 <img className="btn__img" src={trashIcon} alt="usun" />
                             </button> : ""}
@@ -384,25 +506,55 @@ const PanelCustomFieldsContent = () => {
                                 onChangeStatus={(status) => { handleChangeStatus3(status); }}
                                 accept="image/*"
                                 maxFiles={1} />
-                        </span>
+                    </span>
                     </label>
-                    <label>
-                        <input className="addProduct__input"
-                               name="link3"
-                               value={link3}
-                               onChange={(e) => { setLink3(e.target.value) }}
-                               placeholder="Link do trzeciego zdjęcia" />
-                    </label>
+                    <div className="admin--grey">
+                        Film 3.
+                        <section className="videoTable__item__miniature"
+                                 onClick={(e) => { e.stopPropagation(); setPlayVideo(video3); }}>
+                            {video3 ? <Player
+                                width={250}
+                                height={380}
+                                playsInline
+                                src={`${settings.API_URL}/video/get?url=/media/videos/${video3}`}
+                            /> : ''}
+                        </section>
+                        <button className="addVideoBtn" onClick={() => { setUploaderOpen(true); setCurrentKey('video3'); }}>
+                            Dodaj video
+                        </button>
+                    </div>
+                    <div className="mediaType admin--grey">
+                        Wyświetlaj na stronie
+                        <label>
+                            <button className={media3Type === 'image' ? "mediaType__btn mediaType__btn--selected" : "mediaType__btn"} onClick={() => { setMedia3Type('image'); }}>
+                                <span></span>
+                            </button>
+                            Zdjęcie
+                        </label>
+                        <label>
+                            <button className={media3Type === 'video' ? "mediaType__btn mediaType__btn--selected" : "mediaType__btn"} onClick={() => { setMedia3Type('video'); }}>
+                                <span></span>
+                            </button>
+                            Film
+                        </label>
+                    </div>
                 </div>
+                <label>
+                    <input className="addProduct__input"
+                           name="link3"
+                           value={link3}
+                           onChange={(e) => { setLink3(e.target.value) }}
+                           placeholder="Link do trzeciego zdjęcia" />
+                </label>
             </div>
-            <div className="flex alignTop twoImages">
-                <div>
+            <div>
+                <div className="flex align-top">
                     <label className="admin__label admin__flex admin__label--imgUpload admin__label--imgUpload--section">
                         Zdjęcie po lewej stronie
                         <span className="admin__label__imgUpload">
-                            {updateImage4 ? <figure className="admin__label__imgUpload__updateImgWrapper">
-                                <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/fields/${updateImage4}`} alt="foto" />
-                            </figure> : ""}
+                        {updateImage4 ? <figure className="admin__label__imgUpload__updateImgWrapper">
+                            <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/fields/${updateImage4}`} alt="foto" />
+                        </figure> : ""}
                             {img4 || updateImage4 ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg4(); }}>
                                 <img className="btn__img" src={trashIcon} alt="usun" />
                             </button> : ""}
@@ -412,23 +564,55 @@ const PanelCustomFieldsContent = () => {
                                 onChangeStatus={(status) => { handleChangeStatus4(status); }}
                                 accept="image/*"
                                 maxFiles={1} />
-                        </span>
+                    </span>
                     </label>
-                    <label>
-                        <input className="addProduct__input mt"
-                               name="link4"
-                               value={link4}
-                               onChange={(e) => { setLink4(e.target.value) }}
-                               placeholder="Link do czwartego zdjęcia" />
-                    </label>
+                    <div className="admin--grey">
+                        Film po lewej stronie
+                        <section className="videoTable__item__miniature"
+                                 onClick={(e) => { e.stopPropagation(); setPlayVideo(video4); }}>
+                            {video4 ? <Player
+                                width={250}
+                                height={380}
+                                playsInline
+                                src={`${settings.API_URL}/video/get?url=/media/videos/${video4}`}
+                            /> : ''}
+                        </section>
+                        <button className="addVideoBtn" onClick={() => { setUploaderOpen(true); setCurrentKey('video4'); }}>
+                            Dodaj video
+                        </button>
+                    </div>
+                    <div className="mediaType admin--grey">
+                        Wyświetlaj na stronie
+                        <label>
+                            <button className={media4Type === 'image' ? "mediaType__btn mediaType__btn--selected" : "mediaType__btn"} onClick={() => { setMedia4Type('image'); }}>
+                                <span></span>
+                            </button>
+                            Zdjęcie
+                        </label>
+                        <label>
+                            <button className={media4Type === 'video' ? "mediaType__btn mediaType__btn--selected" : "mediaType__btn"} onClick={() => { setMedia4Type('video'); }}>
+                                <span></span>
+                            </button>
+                            Film
+                        </label>
+                    </div>
                 </div>
-                <div>
+                <label>
+                    <input className="addProduct__input mt"
+                           name="link4"
+                           value={link4}
+                           onChange={(e) => { setLink4(e.target.value) }}
+                           placeholder="Link do czwartego zdjęcia" />
+                </label>
+            </div>
+            <div>
+                <div className="flex align-top">
                     <label className="admin__label admin__flex admin__label--imgUpload admin__label--imgUpload--section">
                         Zdjęcie po prawej stronie
                         <span className="admin__label__imgUpload">
-                            {updateImage5 ? <figure className="admin__label__imgUpload__updateImgWrapper">
-                                <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/fields/${updateImage5}`} alt="foto" />
-                            </figure> : ""}
+                        {updateImage5 ? <figure className="admin__label__imgUpload__updateImgWrapper">
+                            <img className="admin__label__imgUpload__updateImg" src={`${settings.API_URL}/image?url=/media/fields/${updateImage5}`} alt="foto" />
+                        </figure> : ""}
                             {img5 || updateImage5 ? <button className="admin__label__imgUpload__trashBtn" onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteImg5(); }}>
                                 <img className="btn__img" src={trashIcon} alt="usun" />
                             </button> : ""}
@@ -438,16 +622,46 @@ const PanelCustomFieldsContent = () => {
                                 onChangeStatus={(status) => { handleChangeStatus5(status); }}
                                 accept="image/*"
                                 maxFiles={1} />
-                        </span>
+                    </span>
                     </label>
-                    <label>
-                        <input className="addProduct__input mt"
-                               name="link5"
-                               value={link5}
-                               onChange={(e) => { setLink5(e.target.value) }}
-                               placeholder="Link do piątego zdjęcia" />
-                    </label>
+                    <div className="admin--grey">
+                        Film po prawej stronie
+                        <section className="videoTable__item__miniature"
+                                 onClick={(e) => { e.stopPropagation(); setPlayVideo(video5); }}>
+                            {video5 ? <Player
+                                width={250}
+                                height={380}
+                                playsInline
+                                src={`${settings.API_URL}/video/get?url=/media/videos/${video5}`}
+                            /> : ''}
+                        </section>
+                        <button className="addVideoBtn" onClick={() => { setUploaderOpen(true); setCurrentKey('video5'); }}>
+                            Dodaj video
+                        </button>
+                    </div>
+                    <div className="mediaType admin--grey">
+                        Wyświetlaj na stronie
+                        <label>
+                            <button className={media5Type === 'image' ? "mediaType__btn mediaType__btn--selected" : "mediaType__btn"} onClick={() => { setMedia5Type('image'); }}>
+                                <span></span>
+                            </button>
+                            Zdjęcie
+                        </label>
+                        <label>
+                            <button className={media5Type === 'video' ? "mediaType__btn mediaType__btn--selected" : "mediaType__btn"} onClick={() => { setMedia5Type('video'); }}>
+                                <span></span>
+                            </button>
+                            Film
+                        </label>
+                    </div>
                 </div>
+                <label>
+                    <input className="addProduct__input mt"
+                           name="link5"
+                           value={link5}
+                           onChange={(e) => { setLink5(e.target.value) }}
+                           placeholder="Link do piątego zdjęcia" />
+                </label>
             </div>
             <div className="flex alignTop mt-4">
                 <label className="admin__label admin__flex admin__label--imgUpload admin__label--imgUpload--section">
@@ -465,7 +679,37 @@ const PanelCustomFieldsContent = () => {
                             onChangeStatus={(status) => { handleChangeStatus6(status); }}
                             accept="image/*"
                             maxFiles={1} />
-                        </span>
+                    </span>
+                    <div className="mt-4">
+                        Film do artykułu 1.
+                        <section className="videoTable__item__miniature"
+                                 onClick={(e) => { e.stopPropagation(); setPlayVideo(video6); }}>
+                            {video6 ? <Player
+                                width={150}
+                                height={180}
+                                playsInline
+                                src={`${settings.API_URL}/video/get?url=/media/videos/${video6}`}
+                            /> : ''}
+                        </section>
+                        <button className="addVideoBtn" onClick={() => { setUploaderOpen(true); setCurrentKey('video6'); }}>
+                            Dodaj video
+                        </button>
+                    </div>
+                    <div className="mediaType">
+                        Wyświetlaj na stronie
+                        <label>
+                            <button className={media6Type === 'image' ? "mediaType__btn mediaType__btn--selected" : "mediaType__btn"} onClick={() => { setMedia6Type('image'); }}>
+                                <span></span>
+                            </button>
+                            Zdjęcie
+                        </label>
+                        <label>
+                            <button className={media6Type === 'video' ? "mediaType__btn mediaType__btn--selected" : "mediaType__btn"} onClick={() => { setMedia6Type('video'); }}>
+                                <span></span>
+                            </button>
+                            Film
+                        </label>
+                    </div>
                 </label>
                 <main className="admin__editorWrapper">
                     Artykuł 1.
@@ -474,6 +718,17 @@ const PanelCustomFieldsContent = () => {
                         toolbarClassName="toolbarClassName"
                         wrapperClassName="wrapperClassName"
                         editorClassName="editor"
+                        toolbar={{
+                            link: {
+                                linkCallback: params => ({ ...params })
+                            },
+                            embedded: {
+                                embedCallback: link => {
+                                    const detectedSrc = /<iframe.*? src="(.*?)"/.exec(embed(link));
+                                    return (detectedSrc && detectedSrc[1]) || link;
+                                }
+                            }
+                        }}
                         onEditorStateChange={(text) => { setDescription1(text); }}
                     />
                 </main>
@@ -495,6 +750,36 @@ const PanelCustomFieldsContent = () => {
                             accept="image/*"
                             maxFiles={1} />
                         </span>
+                    <div className="mt-4">
+                        Film do artykułu 2.
+                        <section className="videoTable__item__miniature"
+                                 onClick={(e) => { e.stopPropagation(); setPlayVideo(video7); }}>
+                            {video7 ? <Player
+                                width={150}
+                                height={180}
+                                playsInline
+                                src={`${settings.API_URL}/video/get?url=/media/videos/${video7}`}
+                            /> : ''}
+                        </section>
+                        <button className="addVideoBtn" onClick={() => { setUploaderOpen(true); setCurrentKey('video7'); }}>
+                            Dodaj video
+                        </button>
+                    </div>
+                    <div className="mediaType">
+                        Wyświetlaj na stronie
+                        <label>
+                            <button className={media7Type === 'image' ? "mediaType__btn mediaType__btn--selected" : "mediaType__btn"} onClick={() => { setMedia7Type('image'); }}>
+                                <span></span>
+                            </button>
+                            Zdjęcie
+                        </label>
+                        <label>
+                            <button className={media7Type === 'video' ? "mediaType__btn mediaType__btn--selected" : "mediaType__btn"} onClick={() => { setMedia7Type('video'); }}>
+                                <span></span>
+                            </button>
+                            Film
+                        </label>
+                    </div>
                 </label>
                 <main className="admin__editorWrapper">
                     Artykuł 2.
@@ -502,6 +787,17 @@ const PanelCustomFieldsContent = () => {
                         editorState={description2}
                         toolbarClassName="toolbarClassName"
                         wrapperClassName="wrapperClassName"
+                        toolbar={{
+                            link: {
+                                linkCallback: params => ({ ...params })
+                            },
+                            embedded: {
+                                embedCallback: link => {
+                                    const detectedSrc = /<iframe.*? src="(.*?)"/.exec(embed(link));
+                                    return (detectedSrc && detectedSrc[1]) || link;
+                                }
+                            }
+                        }}
                         editorClassName="editor"
                         onEditorStateChange={(text) => { setDescription2(text); }}
                     />
@@ -524,6 +820,37 @@ const PanelCustomFieldsContent = () => {
                             accept="image/*"
                             maxFiles={1} />
                         </span>
+
+                    <div className="mt-4">
+                        Film do artykułu 3.
+                        <section className="videoTable__item__miniature"
+                                 onClick={(e) => { e.stopPropagation(); setPlayVideo(video8); }}>
+                            {video8 ? <Player
+                                width={150}
+                                height={180}
+                                playsInline
+                                src={`${settings.API_URL}/video/get?url=/media/videos/${video8}`}
+                            /> : ''}
+                        </section>
+                        <button className="addVideoBtn" onClick={() => { setUploaderOpen(true); setCurrentKey('video8'); }}>
+                            Dodaj video
+                        </button>
+                    </div>
+                    <div className="mediaType">
+                        Wyświetlaj na stronie
+                        <label>
+                            <button className={media8Type === 'image' ? "mediaType__btn mediaType__btn--selected" : "mediaType__btn"} onClick={() => { setMedia8Type('image'); }}>
+                                <span></span>
+                            </button>
+                            Zdjęcie
+                        </label>
+                        <label>
+                            <button className={media8Type === 'video' ? "mediaType__btn mediaType__btn--selected" : "mediaType__btn"} onClick={() => { setMedia8Type('video'); }}>
+                                <span></span>
+                            </button>
+                            Film
+                        </label>
+                    </div>
                 </label>
                 <main className="admin__editorWrapper">
                     Artykuł 3.
@@ -531,6 +858,17 @@ const PanelCustomFieldsContent = () => {
                         editorState={description3}
                         toolbarClassName="toolbarClassName"
                         wrapperClassName="wrapperClassName"
+                        toolbar={{
+                            link: {
+                                linkCallback: params => ({ ...params })
+                            },
+                            embedded: {
+                                embedCallback: link => {
+                                    const detectedSrc = /<iframe.*? src="(.*?)"/.exec(embed(link));
+                                    return (detectedSrc && detectedSrc[1]) || link;
+                                }
+                            }
+                        }}
                         editorClassName="editor"
                         onEditorStateChange={(text) => { setDescription3(text); }}
                     />

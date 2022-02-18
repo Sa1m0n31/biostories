@@ -35,7 +35,7 @@ const getCustomFields = () => {
 }
 
 const updateCustomFields = (img1, img2, img3, img4, img5, img6, img7, img8, article1, article2, article3,
-                            link1, link2, link3, link4, link5, mediaType1, mediaType2, mediaType3
+                            link1, link2, link3, link4, link5, mediaType1, mediaType2, mediaType3, mediaType4, mediaType5, mediaType6, mediaType7, mediaType8,
                             ) => {
     const config = { headers: { 'Content-Type': 'multipart/form-data' } };
     const formData = new FormData();
@@ -55,6 +55,11 @@ const updateCustomFields = (img1, img2, img3, img4, img5, img6, img7, img8, arti
     formData.append('mediaType1', mediaType1);
     formData.append('mediaType2', mediaType2);
     formData.append('mediaType3', mediaType3);
+    formData.append('mediaType4', mediaType4);
+    formData.append('mediaType5', mediaType5);
+    formData.append('mediaType6', mediaType6);
+    formData.append('mediaType7', mediaType7);
+    formData.append('mediaType8', mediaType8);
     formData.append('article1', article1 ? JSON.stringify(convertToRaw(article1?.getCurrentContent())) : '');
     formData.append('article2', article2 ? JSON.stringify(convertToRaw(article2?.getCurrentContent())) : '');
     formData.append('article3', article3 ? JSON.stringify(convertToRaw(article3?.getCurrentContent())) : '');

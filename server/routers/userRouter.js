@@ -228,9 +228,7 @@ con.connect((err) => {
         { name: 'img8', maxCount: 1 }
     ]), (request, response) => {
         const files = request.files;
-        const { article1, article2, article3 } =  request.body;
-
-        console.log(article2);
+        const { article1, article2, article3, link1, link2, link3, link4, link5, mediaType1, mediaType2, mediaType3, mediaType4, mediaType5, mediaType6, mediaType7, mediaType8 } =  request.body;
 
         const queryImg1 = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = "image1"';
         const queryImg2 = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = "image2"';
@@ -245,6 +243,21 @@ con.connect((err) => {
         const query2 = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = "article2"';
         const query3 = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = "article3"';
 
+        const queryLink1 = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = "link1"';
+        const queryLink2 = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = "link2"';
+        const queryLink3 = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = "link3"';
+        const queryLink4 = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = "link4"';
+        const queryLink5 = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = "link5"';
+
+        const queryMediaType1 = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = "mediaType1"';
+        const queryMediaType2 = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = "mediaType2"';
+        const queryMediaType3 = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = "mediaType3"';
+        const queryMediaType4 = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = "mediaType4"';
+        const queryMediaType5 = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = "mediaType5"';
+        const queryMediaType6 = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = "mediaType6"';
+        const queryMediaType7 = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = "mediaType7"';
+        const queryMediaType8 = 'UPDATE custom_fields SET custom_value = ? WHERE custom_key = "mediaType8"';
+
         if(files.img1) con.query(queryImg1, [files.img1[0].filename]);
         if(files.img2) con.query(queryImg2, [files.img2[0].filename]);
         if(files.img3) con.query(queryImg3, [files.img3[0].filename]);
@@ -256,6 +269,20 @@ con.connect((err) => {
         if(article1) con.query(query1, [article1]);
         if(article2) con.query(query2, [article2]);
         if(article3) con.query(query3, [article3]);
+        if(link1) con.query(queryLink1, [link1]);
+        if(link2) con.query(queryLink2, [link2]);
+        if(link3) con.query(queryLink3, [link3]);
+        if(link4) con.query(queryLink4, [link4]);
+        if(link5) con.query(queryLink5, [link5]);
+
+        if(queryMediaType1) con.query(queryMediaType1, [mediaType1]);
+        if(queryMediaType2) con.query(queryMediaType2, [mediaType2]);
+        if(queryMediaType3) con.query(queryMediaType3, [mediaType3]);
+        if(queryMediaType4) con.query(queryMediaType4, [mediaType4]);
+        if(queryMediaType5) con.query(queryMediaType5, [mediaType5]);
+        if(queryMediaType6) con.query(queryMediaType6, [mediaType6]);
+        if(queryMediaType7) con.query(queryMediaType7, [mediaType7]);
+        if(queryMediaType8) con.query(queryMediaType8, [mediaType8]);
 
         response.send({
             result: 1

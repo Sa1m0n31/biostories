@@ -183,6 +183,7 @@ con.connect(err => {
        }
        con.query(query, values, (err, res) => {
            console.log(err);
+           console.log(res);
           if(res) {
               response.send({
                   result: res
